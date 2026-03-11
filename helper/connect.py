@@ -5,10 +5,10 @@ import pymysql
 
 
 DB_CONFIG = {
-    "host": os.getenv("MYSQL_HOST", "mysql"),
-    "user": os.getenv("MYSQL_USER", "mic"),
-    "password": os.getenv("MYSQL_PASSWORD", "180780Kaf!"),
-    "database": os.getenv("MYSQL_DATABASE", "micbd"),
+    "host": os.getenv("MYSQL_HOST"),
+    "user": os.getenv("MYSQL_USER"),
+    "password": os.getenv("MYSQL_PASSWORD"),
+    "database": os.getenv("MYSQL_DATABASE"),
     "charset": "utf8mb4",
     "cursorclass": pymysql.cursors.DictCursor,
     "autocommit": False,
@@ -22,6 +22,10 @@ def bit_to_int(value):
 
 
 def get_connection(retries=15, delay=2):
+    required_keys = ("host", "user", "password", "database")
+    missing = [key for key in required_keys if not DB_CONFIG.get(key)]
+    if missing:
+        raise RuntimeError(f"Missing database environment variables: {', '.join(missing)}")
     last_error = None
 
     for attempt in range(retries):
@@ -34,3 +38,4 @@ def get_connection(retries=15, delay=2):
             time.sleep(delay)
 
     raise last_error
+
