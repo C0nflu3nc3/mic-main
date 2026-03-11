@@ -33,9 +33,11 @@ def get_leaderboard_table(conn, table_name):
 
     with conn.cursor() as cursor:
         sql = f"""
-            SELECT name AS Name, score AS Scores
-            FROM {table_name}
-            ORDER BY score DESC, name ASC
+            SELECT leaderboard.name AS Name, leaderboard.score AS Scores
+            FROM {table_name} AS leaderboard
+            JOIN users ON users.id = leaderboard.user_id
+            WHERE users.isAdmin = b'0' AND users.isJournalist = b'0'
+            ORDER BY leaderboard.score DESC, leaderboard.name ASC
         """
         cursor.execute(sql)
         return cursor.fetchall()
