@@ -20,9 +20,8 @@
             <div class="menu-toolbar">
                 <button
                     class="btn menu-toggle-button"
+                    id="menuToggleButton"
                     type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#mainMenuCollapse"
                     aria-expanded="false"
                     aria-controls="mainMenuCollapse"
                 >
@@ -41,7 +40,7 @@
                 </li>
             </ul>
 
-            <div class="collapse menu-collapse" id="mainMenuCollapse">
+            <div class="menu-collapse" id="mainMenuCollapse">
                 <ul class="nav section-nav" id="main-sections">
                     <li class="nav-item main-nav-item">
                         <a class="nav-link {% if active_section == 'home' %}active{% endif %}" href="/home">Главная</a>

@@ -1,19 +1,25 @@
 document.addEventListener("DOMContentLoaded", function () {
     const menuCollapseElement = document.getElementById("mainMenuCollapse");
+    const menuToggleButton = document.getElementById("menuToggleButton");
     const sourceSelect = document.getElementById("userSRC");
     const amountInput = document.getElementById("PLT");
     const submitButton = document.getElementById("transferSubmit");
     const stateBlock = document.getElementById("transferState");
 
-    if (menuCollapseElement && window.bootstrap) {
-        const collapseInstance = window.bootstrap.Collapse.getOrCreateInstance(menuCollapseElement, {
-            toggle: false,
-        });
+    if (menuCollapseElement && menuToggleButton) {
         const menuLinks = menuCollapseElement.querySelectorAll(".nav-link");
+        const setMenuState = function (isOpen) {
+            menuCollapseElement.classList.toggle("is-open", isOpen);
+            menuToggleButton.setAttribute("aria-expanded", isOpen ? "true" : "false");
+        };
+
+        menuToggleButton.addEventListener("click", function () {
+            setMenuState(!menuCollapseElement.classList.contains("is-open"));
+        });
 
         menuLinks.forEach(function (link) {
             link.addEventListener("click", function () {
-                collapseInstance.hide();
+                setMenuState(false);
             });
         });
     }

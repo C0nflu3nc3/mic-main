@@ -149,16 +149,45 @@ a {
 .menu-toolbar {
   display: flex;
   align-items: center;
-  margin-right: auto;
+  flex: 0 0 auto;
+  margin-right: 0;
 }
 
 .menu-toggle-button {
   min-width: 140px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 22px;
+  color: #170f08;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background:
+    linear-gradient(180deg, rgba(234, 196, 125, 1) 0%, rgba(164, 116, 56, 1) 100%);
+  border: 1px solid rgba(236, 199, 132, 0.85);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 244, 214, 0.42),
+    0 12px 26px rgba(0, 0, 0, 0.24);
+}
+
+.menu-toggle-button:hover,
+.menu-toggle-button:focus {
+  color: #120c08;
+  background:
+    linear-gradient(180deg, rgba(245, 210, 142, 1) 0%, rgba(180, 126, 59, 1) 100%);
+  border-color: rgba(255, 223, 162, 0.95);
 }
 
 .menu-collapse {
   width: 100%;
   padding-top: 12px;
+  display: none;
+}
+
+.menu-collapse.is-open {
+  display: block;
 }
 
 .main-nav-item {
@@ -210,6 +239,7 @@ a {
   flex-wrap: wrap;
   justify-content: flex-end;
   margin-left: auto;
+  margin-bottom: 0;
 }
 
 .cartheader {
@@ -219,6 +249,7 @@ a {
   align-items: start;
   justify-content: space-between;
   gap: 16px;
+  flex-wrap: wrap;
   padding: 10px 18px 18px;
   margin-left: 0;
   margin-right: 0;
@@ -829,7 +860,14 @@ img {
   .menu-toolbar {
     width: 100%;
     justify-content: center;
-    margin-right: 0;
+  }
+
+  .menu-collapse {
+    margin: 0;
+  }
+
+  .menu-collapse.is-open {
+    display: block;
   }
 
   .header #user-controls {
