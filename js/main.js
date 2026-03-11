@@ -1,8 +1,22 @@
 document.addEventListener("DOMContentLoaded", function () {
+    const menuCollapseElement = document.getElementById("mainMenuCollapse");
     const sourceSelect = document.getElementById("userSRC");
     const amountInput = document.getElementById("PLT");
     const submitButton = document.getElementById("transferSubmit");
     const stateBlock = document.getElementById("transferState");
+
+    if (menuCollapseElement && window.bootstrap) {
+        const collapseInstance = window.bootstrap.Collapse.getOrCreateInstance(menuCollapseElement, {
+            toggle: false,
+        });
+        const menuLinks = menuCollapseElement.querySelectorAll(".nav-link");
+
+        menuLinks.forEach(function (link) {
+            link.addEventListener("click", function () {
+                collapseInstance.hide();
+            });
+        });
+    }
 
     if (!amountInput || !submitButton) {
         return;

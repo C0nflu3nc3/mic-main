@@ -127,11 +127,23 @@ a {
 .section-nav {
   display: flex;
   flex: 1;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 10px;
   justify-content: flex-start;
   align-self: center;
   padding: 14px 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+}
+
+.section-nav::-webkit-scrollbar {
+  height: 6px;
+}
+
+.section-nav::-webkit-scrollbar-thumb {
+  background: rgba(194, 149, 78, 0.38);
+  border-radius: 999px;
 }
 
 .menu-toolbar {
@@ -151,6 +163,10 @@ a {
 
 .main-nav-item {
   margin-right: 12px;
+}
+
+.section-nav .nav-item {
+  flex: 0 0 auto;
 }
 
 .section-nav .nav-link {
@@ -882,7 +898,7 @@ img {
   }
 
   .section-nav .nav-item {
-    width: calc(50% - 4px);
+    width: auto;
   }
 
   .section-nav .nav-link {
@@ -893,6 +909,7 @@ img {
     padding: 10px 12px;
     font-size: 13px;
     text-align: center;
+    width: auto;
   }
 
   .main-nav-item {
@@ -976,12 +993,12 @@ img {
   }
 
   .section-nav .nav-link {
-    width: 100%;
+    width: auto;
     text-align: center;
   }
 
   .section-nav .nav-item {
-    width: 100%;
+    width: auto;
   }
 
   .placeholder-hero h1 {
