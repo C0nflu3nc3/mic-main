@@ -413,11 +413,21 @@ a {
   gap: 22px;
 }
 
+.leaderboard-page {
+  max-width: 880px;
+  margin: 0 auto;
+}
+
+.leaderboard-hero {
+  max-width: 780px;
+  margin-bottom: 28px;
+}
+
 .leaderboard-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 24px;
-  max-width: 920px;
+  max-width: 780px;
   margin: 0 auto;
 }
 
@@ -428,7 +438,8 @@ a {
 }
 
 .leaderboard-panel .table-responsive {
-  max-width: 920px;
+  width: 100%;
+  max-width: 780px;
   margin: 0 auto 16px;
 }
 
@@ -693,6 +704,7 @@ a {
 }
 
 .leaderboard-panel .elegant-table {
+  width: 100%;
   table-layout: fixed;
 }
 
@@ -730,7 +742,8 @@ a {
 
 .leaderboard-panel .elegant-table tbody td:last-child,
 .leaderboard-panel .elegant-table thead th:last-child {
-  width: 180px;
+  width: 140px;
+  text-align: center;
 }
 
 .elegant-table thead th:first-child {
@@ -920,6 +933,13 @@ img {
 
   .placeholder-hero {
     max-width: none;
+  }
+
+  .leaderboard-page,
+  .leaderboard-hero,
+  .leaderboard-grid,
+  .leaderboard-panel .table-responsive {
+    max-width: 100%;
   }
 }
 
@@ -1136,6 +1156,27 @@ img {
     gap: 16px;
   }
 
+  .leaderboard-page {
+    padding-top: 16px;
+  }
+
+  .leaderboard-hero {
+    margin-bottom: 20px;
+    padding: 18px 16px;
+    border-radius: 18px;
+  }
+
+  .leaderboard-hero h1 {
+    font-size: 32px;
+    line-height: 1.05;
+    margin-bottom: 8px;
+  }
+
+  .leaderboard-hero p {
+    font-size: 15px;
+    line-height: 1.45;
+  }
+
   .menu-collapse {
     margin-top: 4px;
   }
@@ -1155,6 +1196,24 @@ img {
 
   .elegant-table tbody td {
     font-size: 14px;
+  }
+
+  .leaderboard-page .table {
+    min-width: 0;
+  }
+
+  .leaderboard-panel .elegant-table thead th,
+  .leaderboard-panel .elegant-table tbody td {
+    padding: 10px 12px;
+  }
+
+  .leaderboard-panel .elegant-table thead th {
+    font-size: 16px;
+  }
+
+  .leaderboard-panel .elegant-table tbody td:last-child,
+  .leaderboard-panel .elegant-table thead th:last-child {
+    width: 92px;
   }
 
   .modal .form-control,
@@ -1189,6 +1248,24 @@ img {
 
   .leaderboard-grid {
     grid-template-columns: 1fr;
+  }
+
+  .leaderboard-hero {
+    padding: 16px 14px;
+  }
+
+  .leaderboard-hero h1 {
+    font-size: 28px;
+  }
+
+  .leaderboard-panel .elegant-table thead th,
+  .leaderboard-panel .elegant-table tbody td {
+    padding: 9px 10px;
+  }
+
+  .leaderboard-panel .elegant-table thead th:last-child,
+  .leaderboard-panel .elegant-table tbody td:last-child {
+    width: 76px;
   }
 
   .section-nav .nav-link {
