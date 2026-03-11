@@ -1,0 +1,28 @@
+<div class="row content">
+    <div class="scoreboard-panel">
+        <div class="placeholder-hero section-title-panel">
+            <h1>ГЕРЦЫ ЛЕГИОНОВ</h1>
+        </div>
+
+        <section class="placeholder-card table-card">
+            <div class="table-responsive">
+                <table class="table elegant-table">
+                    <thead>
+                        <tr>
+                            <th>НАЗВАНИЕ ЛЕГИОНА:</th>
+                            <th>Итого:</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in scoreboard %}
+                        <tr>
+                            <td>{{ row.Name }}</td>
+                            <td>{{ row.Scores }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</div>

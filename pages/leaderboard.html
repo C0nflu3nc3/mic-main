@@ -1,0 +1,60 @@
+{% include 'header.html' %}
+
+<div class="section-page">
+    <div class="placeholder-hero">
+        <h1>Таблица лидеров</h1>
+        <p>Здесь отображаются отдельные таблицы общего рейтинга и дуэльных очков.</p>
+    </div>
+
+    <div class="leaderboard-grid">
+        <section class="leaderboard-panel">
+            <h3 class="leaderboard-title">Очки влияния</h3>
+            <div class="placeholder-card table-card">
+                <div class="table-responsive">
+                    <table class="table elegant-table">
+                        <thead>
+                            <tr>
+                                <th>Название легиона</th>
+                                <th>Количество очков</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in overall_leaderboard %}
+                            <tr>
+                                <td>{{ row.Name }}</td>
+                                <td>{{ row.Scores }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section class="leaderboard-panel">
+            <h3 class="leaderboard-title">Турнирные очки</h3>
+            <div class="placeholder-card table-card">
+                <div class="table-responsive">
+                    <table class="table elegant-table">
+                        <thead>
+                            <tr>
+                                <th>Название легиона</th>
+                                <th>Количество очков</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in duel_leaderboard %}
+                            <tr>
+                                <td>{{ row.Name }}</td>
+                                <td>{{ row.Scores }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+{% include 'footer.html' %}

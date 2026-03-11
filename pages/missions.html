@@ -1,0 +1,95 @@
+{% include 'header.html' %}
+
+<div class="section-page">
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="mt-3">
+                {% for msg in messages %}
+                    <div class="alert alert-info">{{ msg }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="placeholder-hero">
+        <h1>Миссии за валюту</h1>
+        <p>Отряд может взять до 3 заданий одновременно. На одно задание могут откликнуться не более 3 отрядов.</p>
+    </div>
+
+    {% if is_admin %}
+    <section class="placeholder-card mission-form-card">
+        <h3>Добавить задание</h3>
+        <form method="POST" action="/missions/add">
+            <div class="mb-3">
+                <label class="form-label" for="title">Название задания</label>
+                <input class="form-control" id="title" name="title" type="text" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="description">Текст задания</label>
+                <textarea class="form-control" id="description" name="description" rows="5" required></textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="reward">Награда</label>
+                <input class="form-control" id="reward" name="reward" type="number" min="1" step="1" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Опубликовать задание</button>
+        </form>
+    </section>
+    {% else %}
+    <div class="mission-limit-note">
+        {% if can_take_missions %}
+        Активных заданий у отряда: {{ current_team_mission_count }} / 3
+        {% else %}
+        Журналисты могут только просматривать задания и не могут их принимать.
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="news-list">
+        {% for mission in missions %}
+        <article class="placeholder-card mission-card">
+            <div class="news-meta">
+                <span>{{ mission.author_name }}</span>
+                <span>{{ mission.created_at.strftime('%d.%m.%Y %H:%M') if mission.created_at else '' }}</span>
+            </div>
+            <h3>{{ mission.title }}</h3>
+            <p class="news-content">{{ mission.description }}</p>
+            <div class="mission-info">
+                <span>Награда: {{ mission.reward }} GRZ</span>
+                <span>Откликнулось отрядов: {{ mission.accepted_count }} / 3</span>
+            </div>
+            {% if mission.accepted_teams %}
+            <div class="mission-teams">
+                Приняли задание: {{ mission.accepted_teams | join(', ') }}
+            </div>
+            {% endif %}
+
+            {% if can_take_missions %}
+                {% if mission.user_has_taken %}
+                <button type="button" class="btn btn-secondary" disabled>Задание уже выбрано вашим отрядом</button>
+                {% elif mission.accepted_count >= 3 %}
+                <button type="button" class="btn btn-secondary" disabled>Лимит отрядов достигнут</button>
+                {% elif current_team_mission_count >= 3 %}
+                <button type="button" class="btn btn-secondary" disabled>Отряд уже взял 3 задания</button>
+                {% else %}
+                <form method="POST" action="/missions/accept">
+                    <input type="hidden" name="mission_id" value="{{ mission.id }}">
+                    <button type="submit" class="btn btn-primary">Принять задание</button>
+                </form>
+                {% endif %}
+            {% elif not is_admin %}
+                <button type="button" class="btn btn-secondary" disabled>Журналист не может принимать задания</button>
+            {% endif %}
+        </article>
+        {% endfor %}
+
+        {% if not missions %}
+        <section class="placeholder-card">
+            <h3>Заданий пока нет</h3>
+            <p>Добавленные администратором задания отображаются здесь.</p>
+        </section>
+        {% endif %}
+    </div>
+</div>
+
+{% include 'footer.html' %}

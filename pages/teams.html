@@ -1,0 +1,10 @@
+{% include 'header.html' %}
+
+{% if is_admin %}
+    {% include 'admin.html' %}
+{% else %}
+    {% include 'user.html' %}
+{% endif %}
+
+{% include 'base-content.html' %}
+{% include 'footer.html' %}

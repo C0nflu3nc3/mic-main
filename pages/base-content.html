@@ -1,0 +1,133 @@
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <div class="mt-3">
+            {% for msg in messages %}
+                <div class="alert alert-info">{{ msg }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+
+{% set transfer_possible = is_admin or current_plt > 0 %}
+{% set default_score = 1 if transfer_possible and (is_admin or current_plt >= 1) else 0 %}
+
+<div class="bank-action-bar">
+    <button
+        type="button"
+        class="btn btn-primary bank-action-button"
+        data-bs-toggle="modal"
+        data-bs-target="#exampleModal"
+    >
+        Отправить Герцы ЛЕГИОНУ
+    </button>
+</div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <form method="POST" action="/api/add_operation">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Форма отправки Герцев</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+
+                <div class="modal-body">
+                    {% if not is_admin %}
+                        <input name="parent" type="hidden" id="parent" value="{{ current_team_id }}">
+                    {% else %}
+                        <label for="userSRC">Выберите ЛЕГИОН отправителя:</label>
+                        <select class="form-control" id="userSRC" name="parent">
+                            {% for team in teams_for_select %}
+                                <option
+                                    value="{{ team.id }}"
+                                    data-balance="{{ team.balance }}"
+                                    {% if team.isAdmin %}selected{% endif %}
+                                >
+                                    {{ team.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    {% endif %}
+
+                    <label for="usersDST">Выберите ЛЕГИОН получателя:</label>
+                    <select class="form-control" id="usersDST" name="user">
+                        {% for team in teams_for_select %}
+                            <option value="{{ team.id }}" {% if team.isAdmin %}selected{% endif %}>
+                                {{ team.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+
+                    <label for="PLT">Количество GRZ:</label>
+                    <input
+                        name="score"
+                        type="number"
+                        min="0"
+                        max="{{ current_plt if not is_admin else (teams_for_select[0].balance if teams_for_select else 0) }}"
+                        step="1"
+                        value="{{ default_score }}"
+                        id="PLT"
+                        class="form-control"
+                        placeholder="цена"
+                        {% if not transfer_possible and not is_admin %}disabled{% endif %}
+                    >
+
+                    <label for="comment">Комментарий:</label>
+                    <input
+                        name="comment"
+                        type="text"
+                        class="form-control"
+                        id="comment"
+                        placeholder="Введите сообщение команде"
+                    >
+
+                    <div class="form-text" id="transferState">
+                        {% if not is_admin and current_plt <= 0 %}
+                            Перевод недоступен: у текущего легиона нулевой баланс.
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                        id="transferSubmit"
+                        {% if not transfer_possible and not is_admin %}disabled{% endif %}
+                    >
+                        Отправить
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="events-panel">
+    <h3 class="events-title">Все события:</h3>
+    <section class="placeholder-card table-card">
+        <div class="table-responsive">
+            <table class="table elegant-table">
+                <thead>
+                    <tr>
+                        <th>Период:</th>
+                        <th>Название ЛЕГИОНА:</th>
+                        <th>Герцы:</th>
+                        <th>Комментарий:</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in operations %}
+                    <tr>
+                        <td>{{ row.Period.strftime('%d.%m.%Y') if row.Period else '' }}</td>
+                        <td>{{ row.Name }}</td>
+                        <td>{{ row.Score }}</td>
+                        <td>{{ row.Comment }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>

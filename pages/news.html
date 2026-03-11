@@ -1,0 +1,87 @@
+{% include 'header.html' %}
+
+<div class="section-page">
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="mt-3">
+                {% for msg in messages %}
+                    <div class="alert alert-info">{{ msg }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="placeholder-hero">
+        <h1>Новости</h1>
+        <p>Здесь публикуются новости проекта, изображения и комментарии пользователей.</p>
+    </div>
+
+    {% if can_manage_news %}
+    <section class="placeholder-card news-form-card">
+        <h3>Добавить новость</h3>
+        <form method="POST" action="/news/add" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label class="form-label" for="title">Заголовок</label>
+                <input class="form-control" id="title" name="title" type="text" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="content">Текст новости</label>
+                <textarea class="form-control" id="content" name="content" rows="5" required></textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="image">Изображение</label>
+                <input class="form-control" id="image" name="image" type="file" accept=".png,.jpg,.jpeg,.gif,.webp">
+            </div>
+            <button type="submit" class="btn btn-primary">Опубликовать</button>
+        </form>
+    </section>
+    {% endif %}
+
+    <div class="news-list">
+        {% for item in news_items %}
+        <article class="placeholder-card news-card">
+            <div class="news-meta">
+                <span>{{ item.author_name }}</span>
+                <span>{{ item.created_at.strftime('%d.%m.%Y %H:%M') if item.created_at else '' }}</span>
+            </div>
+            <h3>{{ item.title }}</h3>
+            {% if item.image_path %}
+            <img class="news-image" src="{{ url_for('static', filename=item.image_path) }}" alt="{{ item.title }}">
+            {% endif %}
+            <p class="news-content">{{ item.content }}</p>
+
+            <div class="news-comments">
+                <h4>Комментарии</h4>
+                {% for comment in item.comments %}
+                <div class="news-comment">
+                    <div class="news-comment-meta">
+                        <strong>{{ comment.author_name }}</strong>
+                        <span>{{ comment.created_at.strftime('%d.%m.%Y %H:%M') if comment.created_at else '' }}</span>
+                    </div>
+                    <p>{{ comment.comment }}</p>
+                </div>
+                {% endfor %}
+
+                {% if not item.comments %}
+                <p class="news-empty">Комментариев пока нет.</p>
+                {% endif %}
+
+                <form method="POST" action="/news/comment" class="news-comment-form">
+                    <input type="hidden" name="news_id" value="{{ item.id }}">
+                    <textarea class="form-control mb-2" name="comment" rows="3" placeholder="Напишите комментарий" required></textarea>
+                    <button type="submit" class="btn btn-outline-light">Отправить комментарий</button>
+                </form>
+            </div>
+        </article>
+        {% endfor %}
+
+        {% if not news_items %}
+        <section class="placeholder-card">
+            <h3>Новостей пока нет</h3>
+            <p>Опубликованные новости отображаются здесь.</p>
+        </section>
+        {% endif %}
+    </div>
+</div>
+
+{% include 'footer.html' %}
