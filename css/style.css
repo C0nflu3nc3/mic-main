@@ -134,6 +134,21 @@ a {
   padding: 14px 0;
 }
 
+.menu-toolbar {
+  display: flex;
+  align-items: center;
+  margin-right: auto;
+}
+
+.menu-toggle-button {
+  min-width: 140px;
+}
+
+.menu-collapse {
+  width: 100%;
+  padding-top: 12px;
+}
+
 .main-nav-item {
   margin-right: 12px;
 }
@@ -795,6 +810,12 @@ img {
     width: 100%;
   }
 
+  .menu-toolbar {
+    width: 100%;
+    justify-content: center;
+    margin-right: 0;
+  }
+
   .header #user-controls {
     justify-content: center;
     width: 100%;
@@ -854,6 +875,10 @@ img {
   .section-nav {
     gap: 6px;
     padding: 10px 0;
+  }
+
+  .menu-toggle-button {
+    width: 100%;
   }
 
   .section-nav .nav-item {

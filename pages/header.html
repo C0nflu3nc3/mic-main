@@ -17,28 +17,18 @@
 <body>
     <div class="container-fluid text-center" id="header">
         <div class="row header white cartheader">
-            <ul class="nav section-nav" id="main-sections">
-                <li class="nav-item main-nav-item">
-                    <a class="nav-link {% if active_section == 'home' %}active{% endif %}" href="/home">Главная</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {% if active_section == 'studios' %}active{% endif %}" href="/studios">Студии</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {% if active_section == 'history' %}active{% endif %}" href="/history">История</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {% if active_section == 'bonus' %}active{% endif %}" href="/bonus">Бонусная Система</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {% if active_section == 'bank' %}active{% endif %}" href="/teams">Банк</a>
-                </li>
-                {% if is_admin %}
-                <li class="nav-item">
-                    <a class="nav-link {% if active_section == 'approve' %}active{% endif %}" href="/approve">Approve</a>
-                </li>
-                {% endif %}
-            </ul>
+            <div class="menu-toolbar">
+                <button
+                    class="btn menu-toggle-button"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#mainMenuCollapse"
+                    aria-expanded="false"
+                    aria-controls="mainMenuCollapse"
+                >
+                    Меню
+                </button>
+            </div>
 
             <ul class="nav justify-content-end" id="user-controls">
                 <li class="nav-item">
@@ -50,6 +40,31 @@
                     <a class="nav-link" href="/logout">Выход</a>
                 </li>
             </ul>
+
+            <div class="collapse menu-collapse" id="mainMenuCollapse">
+                <ul class="nav section-nav" id="main-sections">
+                    <li class="nav-item main-nav-item">
+                        <a class="nav-link {% if active_section == 'home' %}active{% endif %}" href="/home">Главная</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if active_section == 'studios' %}active{% endif %}" href="/studios">Студии</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if active_section == 'history' %}active{% endif %}" href="/history">История</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if active_section == 'bonus' %}active{% endif %}" href="/bonus">Бонусная система</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if active_section == 'bank' %}active{% endif %}" href="/teams">Банк</a>
+                    </li>
+                    {% if is_admin %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if active_section == 'approve' %}active{% endif %}" href="/approve">Approve</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
         </div>
     </div>
     <div class="container">
