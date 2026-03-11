@@ -1358,6 +1358,11 @@ img {
     font-size: 14px;
   }
 
+  .bank-page .bank-table tbody td + td {
+    padding-top: 8px;
+    border-top: 1px solid rgba(194, 149, 78, 0.18);
+  }
+
   .bank-page .bank-table tbody td::before {
     content: attr(data-label);
     color: #dfbb76;
