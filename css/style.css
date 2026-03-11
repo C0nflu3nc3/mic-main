@@ -128,7 +128,7 @@ a {
   display: flex;
   flex: 1;
   flex-wrap: nowrap;
-  gap: 10px;
+  gap: 6px;
   justify-content: flex-start;
   align-self: center;
   padding: 14px 0;
@@ -200,7 +200,7 @@ a {
 }
 
 .main-nav-item {
-  margin-right: 12px;
+  margin-right: 6px;
 }
 
 .section-nav .nav-item {
@@ -988,7 +988,7 @@ img {
   }
 
   .section-nav {
-    gap: 8px;
+    gap: 6px;
     padding: 4px 0 0;
     flex-wrap: wrap;
     overflow: visible;
