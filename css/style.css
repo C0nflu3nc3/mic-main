@@ -417,12 +417,19 @@ a {
   display: grid;
   grid-template-columns: 1fr;
   gap: 24px;
+  max-width: 920px;
+  margin: 0 auto;
 }
 
 .leaderboard-panel {
   display: flex;
   flex-direction: column;
   gap: 14px;
+}
+
+.leaderboard-panel .table-responsive {
+  max-width: 920px;
+  margin: 0 auto 16px;
 }
 
 .leaderboard-title {
@@ -685,6 +692,10 @@ a {
     0 12px 26px rgba(0, 0, 0, 0.12);
 }
 
+.leaderboard-panel .elegant-table {
+  table-layout: fixed;
+}
+
 .elegant-table thead th {
   padding: 18px 20px;
   border-top: 1px solid rgba(255, 231, 185, 0.16);
@@ -715,6 +726,11 @@ a {
 .elegant-table tbody td:last-child,
 .elegant-table thead th:last-child {
   border-right: 0;
+}
+
+.leaderboard-panel .elegant-table tbody td:last-child,
+.leaderboard-panel .elegant-table thead th:last-child {
+  width: 180px;
 }
 
 .elegant-table thead th:first-child {
