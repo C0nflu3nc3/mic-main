@@ -46,7 +46,7 @@
             </div>
             <h3>{{ item.title }}</h3>
             {% if item.image_path %}
-            <img class="news-image" src="{{ url_for('static', filename=item.image_path) }}" alt="{{ item.title }}">
+            <img class="news-image" src="/{{ item.image_path }}" alt="{{ item.title }}">
             {% endif %}
             <p class="news-content">{{ item.content }}</p>
 

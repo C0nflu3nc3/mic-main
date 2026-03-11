@@ -1,8 +1,6 @@
 import os
-import uuid
 
 from flask import Flask, flash, redirect, render_template, request, send_from_directory, session, url_for
-from werkzeug.utils import secure_filename
 
 from api.add_operation import create_transfer
 from api.functions import (
@@ -28,7 +26,7 @@ from helper.signin import sign_in_user
 
 app = Flask(__name__, template_folder="pages", static_folder="static")
 app.secret_key = "super_secret_key_change_me"
-app.config["UPLOAD_FOLDER"] = os.path.join(app.static_folder, "uploads", "news")
+app.config["UPLOAD_FOLDER"] = os.path.join(app.root_path, "uploads", "news")
 app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024
 
 ALLOWED_IMAGE_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
@@ -63,12 +61,13 @@ def save_news_image(uploaded_file):
     if not is_allowed_image(uploaded_file.filename):
         return None
 
-    filename = secure_filename(uploaded_file.filename)
-    extension = filename.rsplit(".", 1)[1].lower()
-    generated_name = f"{uuid.uuid4().hex}.{extension}"
-    file_path = os.path.join(app.config["UPLOAD_FOLDER"], generated_name)
+    filename = uploaded_file.filename.rsplit("/", 1)[-1].rsplit("\\", 1)[-1].strip()
+    if not filename or not is_allowed_image(filename):
+        return None
+
+    file_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
     uploaded_file.save(file_path)
-    return f"uploads/news/{generated_name}"
+    return f"uploads/news/{filename}"
 
 
 @app.route("/css/<path:filename>")
@@ -79,6 +78,11 @@ def css_files(filename):
 @app.route("/js/<path:filename>")
 def js_files(filename):
     return send_from_directory("js", filename)
+
+
+@app.route("/uploads/<path:filename>")
+def uploaded_files(filename):
+    return send_from_directory(os.path.join(app.root_path, "uploads"), filename)
 
 
 @app.route("/favicon.ico")
