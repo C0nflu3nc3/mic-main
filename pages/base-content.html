@@ -104,11 +104,11 @@
     </form>
 </div>
 
-<div class="events-panel">
+<div class="events-panel bank-operations-panel">
     <h3 class="events-title">Все события:</h3>
-    <section class="placeholder-card table-card">
-        <div class="table-responsive">
-            <table class="table elegant-table">
+    <section class="placeholder-card table-card bank-table-card">
+        <div class="table-responsive bank-table-responsive">
+            <table class="table elegant-table bank-table bank-operations-table">
                 <thead>
                     <tr>
                         <th>Период:</th>
@@ -120,10 +120,10 @@
                 <tbody>
                     {% for row in operations %}
                     <tr>
-                        <td>{{ row.Period.strftime('%d.%m.%Y') if row.Period else '' }}</td>
-                        <td>{{ row.Name }}</td>
-                        <td>{{ row.Score }}</td>
-                        <td>{{ row.Comment }}</td>
+                        <td data-label="Период">{{ row.Period.strftime('%d.%m.%Y') if row.Period else '' }}</td>
+                        <td data-label="Легион">{{ row.Name }}</td>
+                        <td data-label="Герцы">{{ row.Score }}</td>
+                        <td data-label="Комментарий">{{ row.Comment }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

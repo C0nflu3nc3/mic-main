@@ -1,10 +1,12 @@
 {% include 'header.html' %}
 
-{% if is_admin %}
-    {% include 'admin.html' %}
-{% else %}
-    {% include 'user.html' %}
-{% endif %}
+<div class="bank-page section-page">
+    {% if is_admin %}
+        {% include 'admin.html' %}
+    {% else %}
+        {% include 'user.html' %}
+    {% endif %}
 
-{% include 'base-content.html' %}
+    {% include 'base-content.html' %}
+</div>
 {% include 'footer.html' %}
