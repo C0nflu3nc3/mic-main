@@ -17,28 +17,30 @@
 <body>
     <div class="container-fluid text-center" id="header">
         <div class="row header white cartheader">
-            <div class="menu-toolbar">
-                <button
-                    class="btn menu-toggle-button"
-                    id="menuToggleButton"
-                    type="button"
-                    aria-expanded="false"
-                    aria-controls="mainMenuCollapse"
-                >
-                    Меню
-                </button>
-            </div>
+            <div class="header-topbar">
+                <div class="menu-toolbar">
+                    <button
+                        class="btn menu-toggle-button"
+                        id="menuToggleButton"
+                        type="button"
+                        aria-expanded="false"
+                        aria-controls="mainMenuCollapse"
+                    >
+                        Меню
+                    </button>
+                </div>
 
-            <ul class="nav justify-content-end" id="user-controls">
-                <li class="nav-item">
-                    <a class="nav-link disabled" href="#">
-                        <span class="badge text-bg-info">{{ user.view }}</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/logout">Выход</a>
-                </li>
-            </ul>
+                <ul class="nav justify-content-end" id="user-controls">
+                    <li class="nav-item">
+                        <a class="nav-link disabled" href="#">
+                            <span class="badge text-bg-info">{{ user.view }}</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">Выход</a>
+                    </li>
+                </ul>
+            </div>
 
             <div class="menu-collapse" id="mainMenuCollapse">
                 <ul class="nav section-nav" id="main-sections">

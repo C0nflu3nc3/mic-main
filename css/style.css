@@ -154,6 +154,14 @@ a {
   margin-right: auto;
 }
 
+.header-topbar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
 .menu-toggle-button {
   min-width: 140px;
   display: inline-flex;
@@ -240,6 +248,7 @@ a {
   width: auto;
   align-self: center;
   display: flex;
+  align-items: center;
   gap: 10px;
   flex-wrap: wrap;
   justify-content: flex-end;
@@ -847,6 +856,12 @@ img {
     flex-direction: column;
     justify-content: center;
     padding-bottom: 16px;
+  }
+
+  .header-topbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
   }
 
   .placeholder-grid {
