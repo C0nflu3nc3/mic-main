@@ -150,7 +150,8 @@ a {
   display: flex;
   align-items: center;
   flex: 0 0 auto;
-  margin-right: 0;
+  justify-content: flex-start;
+  margin-right: auto;
 }
 
 .menu-toggle-button {
@@ -196,6 +197,10 @@ a {
 
 .section-nav .nav-item {
   flex: 0 0 auto;
+}
+
+.menu-extra-item {
+  display: none;
 }
 
 .section-nav .nav-link {
@@ -401,7 +406,7 @@ a {
 
 .leaderboard-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: 1fr;
   gap: 24px;
 }
 
@@ -859,11 +864,12 @@ img {
 
   .menu-toolbar {
     width: 100%;
-    justify-content: center;
+    justify-content: flex-start;
   }
 
   .menu-collapse {
-    margin: 0;
+    width: 100%;
+    margin: 6px 0 0;
   }
 
   .menu-collapse.is-open {
@@ -873,8 +879,12 @@ img {
   .header #user-controls {
     justify-content: center;
     width: 100%;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
     margin-left: 0;
+  }
+
+  .menu-extra-item {
+    display: block;
   }
 
   .placeholder-hero {
@@ -927,8 +937,11 @@ img {
   }
 
   .section-nav {
-    gap: 6px;
-    padding: 10px 0;
+    gap: 8px;
+    padding: 4px 0 0;
+    flex-wrap: wrap;
+    overflow: visible;
+    width: 100%;
   }
 
   .menu-toggle-button {
@@ -936,7 +949,8 @@ img {
   }
 
   .section-nav .nav-item {
-    width: auto;
+    width: 100%;
+    flex: 1 1 100%;
   }
 
   .section-nav .nav-link {
@@ -944,10 +958,10 @@ img {
     align-items: center;
     justify-content: center;
     min-height: 48px;
-    padding: 10px 12px;
+    padding: 10px 14px;
     font-size: 13px;
     text-align: center;
-    width: auto;
+    width: 100%;
   }
 
   .main-nav-item {
@@ -1010,6 +1024,10 @@ img {
     width: 100%;
   }
 
+  .leaderboard-panel {
+    gap: 10px;
+  }
+
   .elegant-table thead th {
     font-size: 20px;
   }
@@ -1025,18 +1043,18 @@ img {
   }
 
   .cartheader {
-    gap: 12px;
-    padding: 8px 10px 14px;
+    gap: 10px;
+    padding: 8px 10px 12px;
     align-items: stretch;
   }
 
   .section-nav .nav-link {
-    width: auto;
+    width: 100%;
     text-align: center;
   }
 
   .section-nav .nav-item {
-    width: auto;
+    width: 100%;
   }
 
   .placeholder-hero h1 {
@@ -1051,7 +1069,7 @@ img {
 
   .header #user-controls {
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
     align-items: stretch;
   }
 
@@ -1085,6 +1103,10 @@ img {
   .leaderboard-grid,
   .news-list {
     gap: 16px;
+  }
+
+  .menu-collapse {
+    margin-top: 4px;
   }
 
   .table {
@@ -1132,6 +1154,10 @@ img {
     width: 100%;
     font-size: 22px;
     text-align: center;
+  }
+
+  .leaderboard-grid {
+    grid-template-columns: 1fr;
   }
 
   .section-nav .nav-link {
