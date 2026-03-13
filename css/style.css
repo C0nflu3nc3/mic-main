@@ -728,6 +728,10 @@ a {
   overflow: hidden;
 }
 
+.bank-page .bank-table-card::after {
+  display: none;
+}
+
 .badge {
   border-radius: 999px;
   padding: 10px 14px;
@@ -1395,6 +1399,9 @@ img {
   .bank-page .events-title {
     font-size: 20px;
     padding: 7px 14px;
+    width: min(calc(100vw - 44px), 420px);
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .bank-page .bank-scoreboard-hero,
@@ -1600,6 +1607,9 @@ img {
   .bank-page .events-title {
     font-size: 18px;
     padding: 6px 12px;
+    width: min(calc(100vw - 30px), 336px);
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .bank-scoreboard-table tbody td {
