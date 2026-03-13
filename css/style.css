@@ -1476,7 +1476,7 @@ img {
   }
 
   .bank-operations-table tbody td {
-    grid-template-columns: minmax(116px, 136px) minmax(0, 1fr);
+    grid-template-columns: minmax(132px, 156px) minmax(0, 1fr);
     gap: 14px;
     font-size: 15px;
   }
@@ -1579,7 +1579,7 @@ img {
   }
 
   .bank-operations-table tbody td {
-    grid-template-columns: minmax(104px, 118px) minmax(0, 1fr);
+    grid-template-columns: minmax(118px, 136px) minmax(0, 1fr);
     gap: 12px;
     font-size: 14px;
   }
