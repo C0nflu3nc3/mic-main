@@ -1393,10 +1393,10 @@ img {
   }
 
   .bank-operations-panel {
-    width: calc(100vw - 12px);
+    width: calc(100vw - 28px);
     max-width: none;
-    margin-left: calc(50% - 50vw + 6px);
-    margin-right: calc(50% - 50vw + 6px);
+    margin-left: calc(50% - 50vw + 14px);
+    margin-right: calc(50% - 50vw + 14px);
   }
 
   .bank-operations-panel .bank-table-responsive {
@@ -1476,7 +1476,7 @@ img {
   }
 
   .bank-operations-table tbody td {
-    grid-template-columns: minmax(132px, 156px) minmax(0, 1fr);
+    grid-template-columns: minmax(146px, 172px) minmax(0, 1fr);
     gap: 14px;
     font-size: 15px;
   }
@@ -1560,10 +1560,10 @@ img {
   }
 
   .bank-operations-panel {
-    width: calc(100vw - 8px);
+    width: calc(100vw - 20px);
     max-width: none;
-    margin-left: calc(50% - 50vw + 4px);
-    margin-right: calc(50% - 50vw + 4px);
+    margin-left: calc(50% - 50vw + 10px);
+    margin-right: calc(50% - 50vw + 10px);
   }
 
   .bank-operations-panel .bank-table-responsive {
@@ -1579,7 +1579,7 @@ img {
   }
 
   .bank-operations-table tbody td {
-    grid-template-columns: minmax(118px, 136px) minmax(0, 1fr);
+    grid-template-columns: minmax(132px, 150px) minmax(0, 1fr);
     gap: 12px;
     font-size: 14px;
   }
