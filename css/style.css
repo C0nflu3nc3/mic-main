@@ -1399,10 +1399,10 @@ img {
 
   .bank-page .bank-scoreboard-hero,
   .bank-page .bank-scoreboard-panel {
-    width: calc(100vw - 64px);
-    max-width: none;
-    margin-left: calc(50% - 50vw + 32px);
-    margin-right: calc(50% - 50vw + 32px);
+    width: min(calc(100vw - 88px), 360px);
+    max-width: 360px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .bank-page .bank-scoreboard-hero {
@@ -1416,10 +1416,10 @@ img {
   }
 
   .bank-page .bank-operations-panel {
-    width: calc(100vw - 64px);
-    max-width: none;
-    margin-left: calc(50% - 50vw + 32px);
-    margin-right: calc(50% - 50vw + 32px);
+    width: min(calc(100vw - 88px), 360px);
+    max-width: 360px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .bank-page .bank-operations-panel .bank-table-responsive {
@@ -1500,14 +1500,14 @@ img {
   }
 
   .bank-scoreboard-table tbody td {
-    grid-template-columns: minmax(150px, 178px) minmax(0, 1fr);
-    gap: 18px;
+    grid-template-columns: minmax(132px, 150px) minmax(0, 1fr);
+    gap: 14px;
     font-size: 14px;
   }
 
   .bank-operations-table tbody td {
-    grid-template-columns: minmax(184px, 214px) minmax(0, 1fr);
-    gap: 18px;
+    grid-template-columns: minmax(148px, 168px) minmax(0, 1fr);
+    gap: 14px;
     font-size: 15px;
   }
 
@@ -1603,10 +1603,10 @@ img {
 
   .bank-page .bank-scoreboard-hero,
   .bank-page .bank-scoreboard-panel {
-    width: calc(100vw - 48px);
-    max-width: none;
-    margin-left: calc(50% - 50vw + 24px);
-    margin-right: calc(50% - 50vw + 24px);
+    width: min(calc(100vw - 56px), 320px);
+    max-width: 320px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .bank-page .bank-scoreboard-hero {
@@ -1620,10 +1620,10 @@ img {
   }
 
   .bank-page .bank-operations-panel {
-    width: calc(100vw - 48px);
-    max-width: none;
-    margin-left: calc(50% - 50vw + 24px);
-    margin-right: calc(50% - 50vw + 24px);
+    width: min(calc(100vw - 56px), 320px);
+    max-width: 320px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .bank-page .bank-operations-panel .bank-table-responsive {
@@ -1639,8 +1639,8 @@ img {
   }
 
   .bank-operations-table tbody td {
-    grid-template-columns: minmax(168px, 190px) minmax(0, 1fr);
-    gap: 16px;
+    grid-template-columns: minmax(138px, 152px) minmax(0, 1fr);
+    gap: 12px;
     font-size: 14px;
   }
 
