@@ -1523,7 +1523,7 @@ img {
 
   .bank-page .bank-operations-table tbody td {
     grid-template-columns: 136px minmax(0, 1fr);
-    gap: 10px;
+    gap: 7px;
     font-size: 15px;
     align-items: start;
   }
@@ -1670,7 +1670,7 @@ img {
 
   .bank-page .bank-operations-table tbody td {
     grid-template-columns: 126px minmax(0, 1fr);
-    gap: 8px;
+    gap: 6px;
     font-size: 14px;
     align-items: start;
   }
