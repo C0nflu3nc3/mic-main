@@ -1397,6 +1397,7 @@ img {
   }
 
   .bank-page .events-title {
+    display: block;
     font-size: 20px;
     padding: 7px 14px;
     width: min(calc(100vw - 20px), 420px);
@@ -1520,8 +1521,8 @@ img {
   }
 
   .bank-operations-table tbody td {
-    grid-template-columns: minmax(148px, 168px) minmax(0, 1fr);
-    gap: 14px;
+    grid-template-columns: minmax(176px, 198px) minmax(0, 1fr);
+    gap: 18px;
     font-size: 15px;
   }
 
@@ -1605,6 +1606,7 @@ img {
   }
 
   .bank-page .events-title {
+    display: block;
     font-size: 18px;
     padding: 6px 12px;
     width: min(calc(100vw - 30px), 336px);
@@ -1663,8 +1665,8 @@ img {
   }
 
   .bank-operations-table tbody td {
-    grid-template-columns: minmax(138px, 152px) minmax(0, 1fr);
-    gap: 12px;
+    grid-template-columns: minmax(160px, 176px) minmax(0, 1fr);
+    gap: 16px;
     font-size: 14px;
   }
 
