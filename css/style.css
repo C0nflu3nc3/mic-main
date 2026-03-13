@@ -1392,28 +1392,32 @@ img {
     margin-bottom: 12px;
   }
 
-  .bank-scoreboard-hero,
-  .bank-scoreboard-panel {
-    width: calc(100vw - 40px);
+  .bank-page .bank-scoreboard-hero,
+  .bank-page .bank-scoreboard-panel {
+    width: calc(100vw - 52px);
     max-width: none;
-    margin-left: calc(50% - 50vw + 20px);
-    margin-right: calc(50% - 50vw + 20px);
+    margin-left: calc(50% - 50vw + 26px);
+    margin-right: calc(50% - 50vw + 26px);
   }
 
-  .bank-scoreboard-hero .events-title {
+  .bank-page .bank-scoreboard-hero {
+    text-align: center;
+  }
+
+  .bank-page .bank-scoreboard-hero h1 {
     width: 100%;
     text-align: center;
-    justify-content: center;
+    margin: 0 auto;
   }
 
-  .bank-operations-panel {
-    width: calc(100vw - 40px);
+  .bank-page .bank-operations-panel {
+    width: calc(100vw - 52px);
     max-width: none;
-    margin-left: calc(50% - 50vw + 20px);
-    margin-right: calc(50% - 50vw + 20px);
+    margin-left: calc(50% - 50vw + 26px);
+    margin-right: calc(50% - 50vw + 26px);
   }
 
-  .bank-operations-panel .bank-table-responsive {
+  .bank-page .bank-operations-panel .bank-table-responsive {
     width: 100%;
     max-width: none;
     margin-left: 0;
@@ -1476,6 +1480,7 @@ img {
     font-weight: 400;
     letter-spacing: 0.035em;
     text-transform: uppercase;
+    white-space: nowrap;
   }
 
   .bank-page .bank-table tbody tr:nth-child(even) td,
@@ -1489,8 +1494,14 @@ img {
     border-radius: 18px;
   }
 
+  .bank-scoreboard-table tbody td {
+    grid-template-columns: minmax(136px, 164px) minmax(0, 1fr);
+    gap: 14px;
+    font-size: 14px;
+  }
+
   .bank-operations-table tbody td {
-    grid-template-columns: minmax(158px, 188px) minmax(0, 1fr);
+    grid-template-columns: minmax(168px, 198px) minmax(0, 1fr);
     gap: 14px;
     font-size: 15px;
   }
@@ -1571,36 +1582,41 @@ img {
 
   .bank-page .bank-table tbody td::before {
     font-size: 14px;
+    white-space: nowrap;
   }
 
   .bank-scoreboard-table tbody td {
-    grid-template-columns: minmax(116px, 136px) minmax(0, 1fr);
-    gap: 10px;
+    grid-template-columns: minmax(124px, 148px) minmax(0, 1fr);
+    gap: 12px;
     font-size: 14px;
   }
 
-  .bank-scoreboard-hero,
-  .bank-scoreboard-panel {
-    width: calc(100vw - 28px);
+  .bank-page .bank-scoreboard-hero,
+  .bank-page .bank-scoreboard-panel {
+    width: calc(100vw - 36px);
     max-width: none;
-    margin-left: calc(50% - 50vw + 14px);
-    margin-right: calc(50% - 50vw + 14px);
+    margin-left: calc(50% - 50vw + 18px);
+    margin-right: calc(50% - 50vw + 18px);
   }
 
-  .bank-scoreboard-hero .events-title {
+  .bank-page .bank-scoreboard-hero {
+    text-align: center;
+  }
+
+  .bank-page .bank-scoreboard-hero h1 {
     width: 100%;
     text-align: center;
-    justify-content: center;
+    margin: 0 auto;
   }
 
-  .bank-operations-panel {
-    width: calc(100vw - 28px);
+  .bank-page .bank-operations-panel {
+    width: calc(100vw - 36px);
     max-width: none;
-    margin-left: calc(50% - 50vw + 14px);
-    margin-right: calc(50% - 50vw + 14px);
+    margin-left: calc(50% - 50vw + 18px);
+    margin-right: calc(50% - 50vw + 18px);
   }
 
-  .bank-operations-panel .bank-table-responsive {
+  .bank-page .bank-operations-panel .bank-table-responsive {
     width: 100%;
     max-width: none;
     margin-left: 0;
@@ -1613,7 +1629,7 @@ img {
   }
 
   .bank-operations-table tbody td {
-    grid-template-columns: minmax(144px, 164px) minmax(0, 1fr);
+    grid-template-columns: minmax(152px, 176px) minmax(0, 1fr);
     gap: 12px;
     font-size: 14px;
   }
