@@ -1522,15 +1522,16 @@ img {
   }
 
   .bank-page .bank-operations-table tbody td {
-    grid-template-columns: minmax(152px, 170px) minmax(0, 1fr);
-    gap: 14px;
+    grid-template-columns: 136px minmax(0, 1fr);
+    gap: 10px;
     font-size: 15px;
+    align-items: start;
   }
 
   .bank-page .bank-operations-table tbody td::before {
     font-size: 14px;
     letter-spacing: 0.015em;
-    padding-right: 6px;
+    padding-right: 2px;
   }
 
   .bank-scoreboard-table tbody td:last-child,
@@ -1668,15 +1669,16 @@ img {
   }
 
   .bank-page .bank-operations-table tbody td {
-    grid-template-columns: minmax(142px, 154px) minmax(0, 1fr);
-    gap: 12px;
+    grid-template-columns: 126px minmax(0, 1fr);
+    gap: 8px;
     font-size: 14px;
+    align-items: start;
   }
 
   .bank-page .bank-operations-table tbody td::before {
     font-size: 13px;
     letter-spacing: 0.01em;
-    padding-right: 5px;
+    padding-right: 2px;
   }
 
   .leaderboard-hero {
