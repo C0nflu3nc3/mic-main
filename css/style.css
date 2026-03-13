@@ -1515,21 +1515,22 @@ img {
     border-radius: 18px;
   }
 
-  .bank-scoreboard-table tbody td {
+  .bank-page .bank-scoreboard-table tbody td {
     grid-template-columns: minmax(132px, 150px) minmax(0, 1fr);
     gap: 14px;
     font-size: 14px;
   }
 
-  .bank-operations-table tbody td {
+  .bank-page .bank-operations-table tbody td {
     grid-template-columns: minmax(192px, 216px) minmax(0, 1fr);
     gap: 24px;
     font-size: 15px;
   }
 
-  .bank-operations-table tbody td::before {
-    font-size: 15px;
-    letter-spacing: 0.02em;
+  .bank-page .bank-operations-table tbody td::before {
+    font-size: 14px;
+    letter-spacing: 0.015em;
+    padding-right: 12px;
   }
 
   .bank-scoreboard-table tbody td:last-child,
@@ -1616,7 +1617,7 @@ img {
     margin-right: auto;
   }
 
-  .bank-scoreboard-table tbody td {
+  .bank-page .bank-scoreboard-table tbody td {
     grid-template-columns: minmax(136px, 160px) minmax(0, 1fr);
     gap: 16px;
     font-size: 14px;
@@ -1666,15 +1667,16 @@ img {
     gap: 8px;
   }
 
-  .bank-operations-table tbody td {
+  .bank-page .bank-operations-table tbody td {
     grid-template-columns: minmax(172px, 188px) minmax(0, 1fr);
     gap: 20px;
     font-size: 14px;
   }
 
-  .bank-operations-table tbody td::before {
-    font-size: 14px;
-    letter-spacing: 0.015em;
+  .bank-page .bank-operations-table tbody td::before {
+    font-size: 13px;
+    letter-spacing: 0.01em;
+    padding-right: 10px;
   }
 
   .leaderboard-hero {
