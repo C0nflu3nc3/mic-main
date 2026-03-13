@@ -1387,11 +1387,18 @@ img {
     margin-bottom: 12px;
   }
 
-  .bank-operations-panel,
+  .bank-operations-panel {
+    width: calc(100vw - 12px);
+    max-width: none;
+    margin-left: calc(50% - 50vw + 6px);
+    margin-right: calc(50% - 50vw + 6px);
+  }
+
   .bank-operations-panel .bank-table-responsive {
-    max-width: calc(100% + 8px);
-    margin-left: -4px;
-    margin-right: -4px;
+    width: 100%;
+    max-width: none;
+    margin-left: 0;
+    margin-right: 0;
   }
 
   .bank-page .bank-table {
@@ -1456,15 +1463,18 @@ img {
   }
 
   .bank-operations-table tbody tr {
-    padding: 16px 18px;
+    padding: 16px 20px;
+    border-radius: 18px;
   }
 
   .bank-operations-table tbody td {
-    grid-template-columns: minmax(104px, 126px) minmax(0, 1fr);
-    gap: 12px;
+    grid-template-columns: minmax(116px, 136px) minmax(0, 1fr);
+    gap: 14px;
+    font-size: 15px;
   }
 
   .bank-operations-table tbody td::before {
+    font-size: 15px;
     letter-spacing: 0.02em;
   }
 
@@ -1537,26 +1547,33 @@ img {
     font-size: 14px;
   }
 
-  .bank-operations-panel,
+  .bank-operations-panel {
+    width: calc(100vw - 8px);
+    max-width: none;
+    margin-left: calc(50% - 50vw + 4px);
+    margin-right: calc(50% - 50vw + 4px);
+  }
+
   .bank-operations-panel .bank-table-responsive {
-    max-width: calc(100% + 6px);
-    margin-left: -3px;
-    margin-right: -3px;
+    width: 100%;
+    max-width: none;
+    margin-left: 0;
+    margin-right: 0;
   }
 
   .bank-operations-table tbody tr {
-    padding: 14px 16px;
+    padding: 15px 18px;
     gap: 8px;
   }
 
   .bank-operations-table tbody td {
-    grid-template-columns: 92px minmax(0, 1fr);
-    gap: 10px;
-    font-size: 13px;
+    grid-template-columns: minmax(104px, 118px) minmax(0, 1fr);
+    gap: 12px;
+    font-size: 14px;
   }
 
   .bank-operations-table tbody td::before {
-    font-size: 13px;
+    font-size: 14px;
     letter-spacing: 0.015em;
   }
 
