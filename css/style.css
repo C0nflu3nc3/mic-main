@@ -1387,6 +1387,13 @@ img {
     margin-bottom: 12px;
   }
 
+  .bank-operations-panel,
+  .bank-operations-panel .bank-table-responsive {
+    max-width: calc(100% + 8px);
+    margin-left: -4px;
+    margin-right: -4px;
+  }
+
   .bank-page .bank-table {
     display: block;
     border: 0;
@@ -1446,6 +1453,19 @@ img {
   .bank-page .bank-table tbody tr:hover td {
     background: transparent;
     color: inherit;
+  }
+
+  .bank-operations-table tbody tr {
+    padding: 16px 18px;
+  }
+
+  .bank-operations-table tbody td {
+    grid-template-columns: minmax(104px, 126px) minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .bank-operations-table tbody td::before {
+    letter-spacing: 0.02em;
   }
 
   .bank-scoreboard-table tbody td:last-child,
@@ -1515,6 +1535,29 @@ img {
 
   .bank-page .bank-table tbody td::before {
     font-size: 14px;
+  }
+
+  .bank-operations-panel,
+  .bank-operations-panel .bank-table-responsive {
+    max-width: calc(100% + 6px);
+    margin-left: -3px;
+    margin-right: -3px;
+  }
+
+  .bank-operations-table tbody tr {
+    padding: 14px 16px;
+    gap: 8px;
+  }
+
+  .bank-operations-table tbody td {
+    grid-template-columns: 92px minmax(0, 1fr);
+    gap: 10px;
+    font-size: 13px;
+  }
+
+  .bank-operations-table tbody td::before {
+    font-size: 13px;
+    letter-spacing: 0.015em;
   }
 
   .leaderboard-hero {
