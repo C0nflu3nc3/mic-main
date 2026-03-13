@@ -1429,6 +1429,13 @@ img {
     margin-right: 0;
   }
 
+  .bank-page .bank-operations-panel .bank-table-card {
+    width: 88%;
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
   .bank-page .bank-table {
     display: block;
     width: 100%;
@@ -1631,6 +1638,13 @@ img {
     max-width: none;
     margin-left: 0;
     margin-right: 0;
+  }
+
+  .bank-page .bank-operations-panel .bank-table-card {
+    width: 84%;
+    max-width: 272px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .bank-operations-table tbody tr {
