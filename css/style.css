@@ -1399,7 +1399,7 @@ img {
   .bank-page .events-title {
     font-size: 20px;
     padding: 7px 14px;
-    width: min(calc(100vw - 44px), 420px);
+    width: min(calc(100vw - 20px), 420px);
     margin-left: auto;
     margin-right: auto;
   }
