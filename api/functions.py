@@ -233,6 +233,50 @@ def accept_mission(conn, mission_id, team_id):
     return True, "Задание принято"
 
 
+def cancel_mission(conn, mission_id, team_id):
+    with conn.cursor() as cursor:
+        select_sql = """
+            SELECT id
+            FROM Mission_team
+            WHERE mission_id = %s AND team_id = %s AND status = 'accepted'
+            ORDER BY accepted_at DESC, id DESC
+            LIMIT 1
+        """
+        cursor.execute(select_sql, (mission_id, team_id))
+        row = cursor.fetchone()
+        if row is None:
+            return False, "\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u043e\u0442\u043a\u0430\u0437\u0430\u0442\u044c\u0441\u044f \u043e\u0442 \u0437\u0430\u0434\u0430\u043d\u0438\u044f"
+
+        update_sql = """
+            UPDATE Mission_team
+            SET status = 'rejected', rejected_at = NOW(), rejected_by = NULL
+            WHERE id = %s
+        """
+        cursor.execute(update_sql, (int(row["id"]),))
+
+    conn.commit()
+    return True, "\u041b\u0435\u0433\u0438\u043e\u043d \u043e\u0442\u043a\u0430\u0437\u0430\u043b\u0441\u044f \u043e\u0442 \u0437\u0430\u0434\u0430\u043d\u0438\u044f"
+
+
+def delete_mission(conn, mission_id):
+    with conn.cursor() as cursor:
+        select_sql = """
+            SELECT id
+            FROM Mission
+            WHERE id = %s
+            LIMIT 1
+        """
+        cursor.execute(select_sql, (mission_id,))
+        if cursor.fetchone() is None:
+            return False, "\u0417\u0430\u0434\u0430\u043d\u0438\u0435 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u043e"
+
+        delete_sql = "DELETE FROM Mission WHERE id = %s"
+        cursor.execute(delete_sql, (mission_id,))
+
+    conn.commit()
+    return True, "\u0417\u0430\u0434\u0430\u043d\u0438\u0435 \u0443\u0434\u0430\u043b\u0435\u043d\u043e"
+
+
 def get_approve_queue(conn):
     with conn.cursor() as cursor:
         sql = """

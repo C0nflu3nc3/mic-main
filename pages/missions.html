@@ -64,18 +64,33 @@
             </div>
             {% endif %}
 
-            {% if can_take_missions %}
+            {% if is_admin %}
+            <div class="mission-actions mission-admin-actions">
+                <form method="POST" action="/missions/delete" onsubmit="return confirm('Вы уверены?');">
+                    <input type="hidden" name="mission_id" value="{{ mission.id }}">
+                    <button type="submit" class="btn btn-outline-light">Удалить миссию</button>
+                </form>
+            </div>
+            {% elif can_take_missions %}
                 {% if mission.user_has_taken %}
-                <button type="button" class="btn btn-secondary" disabled>Задание уже выбрано вашим отрядом</button>
+                <div class="mission-actions">
+                    <div class="mission-status-note">Задание уже выбрано вашим легионом</div>
+                    <form method="POST" action="/missions/cancel">
+                        <input type="hidden" name="mission_id" value="{{ mission.id }}">
+                        <button type="submit" class="btn btn-outline-light">Отказаться от задания</button>
+                    </form>
+                </div>
                 {% elif mission.accepted_count >= 3 %}
                 <button type="button" class="btn btn-secondary" disabled>Лимит отрядов достигнут</button>
                 {% elif current_team_mission_count >= 3 %}
                 <button type="button" class="btn btn-secondary" disabled>Отряд уже взял 3 задания</button>
                 {% else %}
-                <form method="POST" action="/missions/accept">
-                    <input type="hidden" name="mission_id" value="{{ mission.id }}">
-                    <button type="submit" class="btn btn-primary">Принять задание</button>
-                </form>
+                <div class="mission-actions">
+                    <form method="POST" action="/missions/accept">
+                        <input type="hidden" name="mission_id" value="{{ mission.id }}">
+                        <button type="submit" class="btn btn-primary">Принять задание</button>
+                    </form>
+                </div>
                 {% endif %}
             {% elif not is_admin %}
                 <button type="button" class="btn btn-secondary" disabled>Журналист не может принимать задания</button>

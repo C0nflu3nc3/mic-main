@@ -12,7 +12,7 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Prata&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container-fluid text-center" id="header">
@@ -31,10 +31,8 @@
                 </div>
 
                 <ul class="nav justify-content-end" id="user-controls">
-                    <li class="nav-item">
-                        <a class="nav-link disabled" href="#">
-                            <span class="badge text-bg-info">{{ user.view }}</span>
-                        </a>
+                    <li class="nav-item user-status-item">
+                        <div class="user-status-panel">{{ user.view }}</div>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/logout">Выход</a>
@@ -61,7 +59,7 @@
                     </li>
                     {% if is_admin %}
                     <li class="nav-item">
-                        <a class="nav-link {% if active_section == 'approve' %}active{% endif %}" href="/approve">Approve</a>
+                        <a class="nav-link {% if active_section == 'approve' %}active{% endif %}" href="/approve">Подтверждение</a>
                     </li>
                     {% endif %}
                     <li class="nav-item menu-extra-item">

@@ -8,7 +8,9 @@ from api.functions import (
     add_news_comment,
     accept_mission,
     approve_mission,
+    cancel_mission,
     create_mission,
+    delete_mission,
     get_approve_queue,
     get_current_team_id_by_user_id,
     get_leaderboard_table,
@@ -247,6 +249,8 @@ def missions_page():
     try:
         if current_team_id is None:
             current_team_id = get_current_team_id_by_user_id(conn, int(user["id"]))
+            user["team_id"] = current_team_id
+            session["user"] = user
         missions, current_team_mission_count = get_missions(conn, current_team_id)
     finally:
         conn.close()
@@ -307,6 +311,59 @@ def accept_mission_page():
     conn = get_connection()
     try:
         ok, message = accept_mission(conn, int(mission_id), int(current_team_id))
+    finally:
+        conn.close()
+
+    flash(message)
+    return redirect(url_for("missions_page"))
+
+
+@app.route("/missions/cancel", methods=["POST"])
+def cancel_mission_page():
+    user, redirect_response = require_user()
+    if redirect_response:
+        return redirect_response
+    if not can_take_missions(user):
+        return redirect(url_for("missions_page"))
+
+    mission_id = request.form.get("mission_id", "").strip()
+    current_team_id = user.get("team_id")
+
+    conn = get_connection()
+    try:
+        if current_team_id is None:
+            current_team_id = get_current_team_id_by_user_id(conn, int(user["id"]))
+            user["team_id"] = current_team_id
+            session["user"] = user
+
+        if not mission_id.isdigit() or current_team_id is None:
+            flash("\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u043e\u0442\u043a\u0430\u0437\u0430\u0442\u044c\u0441\u044f \u043e\u0442 \u0437\u0430\u0434\u0430\u043d\u0438\u044f")
+            return redirect(url_for("missions_page"))
+
+        ok, message = cancel_mission(conn, int(mission_id), int(current_team_id))
+    finally:
+        conn.close()
+
+    flash(message)
+    return redirect(url_for("missions_page"))
+
+
+@app.route("/missions/delete", methods=["POST"])
+def delete_mission_page():
+    user, redirect_response = require_user()
+    if redirect_response:
+        return redirect_response
+    if not bool(user["isadmin"]):
+        return redirect(url_for("missions_page"))
+
+    mission_id = request.form.get("mission_id", "").strip()
+    if not mission_id.isdigit():
+        flash("\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u0443\u0434\u0430\u043b\u0438\u0442\u044c \u0437\u0430\u0434\u0430\u043d\u0438\u0435")
+        return redirect(url_for("missions_page"))
+
+    conn = get_connection()
+    try:
+        ok, message = delete_mission(conn, int(mission_id))
     finally:
         conn.close()
 

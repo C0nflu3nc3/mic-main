@@ -7,10 +7,15 @@ document.addEventListener("DOMContentLoaded", function () {
     const stateBlock = document.getElementById("transferState");
 
     if (menuCollapseElement && menuToggleButton) {
+        const desktopMenuQuery = window.matchMedia("(min-width: 993px)");
         const menuLinks = menuCollapseElement.querySelectorAll(".nav-link");
         const setMenuState = function (isOpen) {
             menuCollapseElement.classList.toggle("is-open", isOpen);
             menuToggleButton.setAttribute("aria-expanded", isOpen ? "true" : "false");
+        };
+
+        const syncMenuState = function () {
+            setMenuState(desktopMenuQuery.matches);
         };
 
         menuToggleButton.addEventListener("click", function () {
@@ -19,9 +24,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
         menuLinks.forEach(function (link) {
             link.addEventListener("click", function () {
-                setMenuState(false);
+                if (!desktopMenuQuery.matches) {
+                    setMenuState(false);
+                }
             });
         });
+
+        syncMenuState();
+
+        if (typeof desktopMenuQuery.addEventListener === "function") {
+            desktopMenuQuery.addEventListener("change", syncMenuState);
+        } else if (typeof desktopMenuQuery.addListener === "function") {
+            desktopMenuQuery.addListener(syncMenuState);
+        }
     }
 
     if (!amountInput || !submitButton) {
