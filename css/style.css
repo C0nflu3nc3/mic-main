@@ -1400,7 +1400,7 @@ img {
     display: block;
     font-size: 20px;
     padding: 7px 14px;
-    width: min(calc(100vw - 44px), 480px);
+    width: min(calc(100vw - 44px), 420px);
     margin-left: auto;
     margin-right: auto;
   }
@@ -1516,7 +1516,7 @@ img {
 
   .bank-scoreboard-table tbody td {
     grid-template-columns: minmax(132px, 150px) minmax(0, 1fr);
-    gap: 24px;
+    gap: 14px;
     font-size: 14px;
   }
 
