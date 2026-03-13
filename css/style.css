@@ -1124,6 +1124,11 @@ img {
     border-radius: 16px;
   }
 
+  .bank-page .bank-table-card {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
   .placeholder-card,
   .news-card,
   .mission-card {
@@ -1403,6 +1408,7 @@ img {
 
   .bank-page .bank-table {
     display: block;
+    width: 100%;
     border: 0;
     background: transparent;
     box-shadow: none;
@@ -1415,10 +1421,12 @@ img {
   .bank-page .bank-table tbody {
     display: grid;
     gap: 12px;
+    width: 100%;
   }
 
   .bank-page .bank-table tbody tr {
     display: grid;
+    width: 100%;
     gap: 8px;
     padding: 14px;
     border: 1px solid rgba(194, 149, 78, 0.26);
@@ -1515,6 +1523,10 @@ img {
   .placeholder-card,
   .login-layout form {
     padding: 14px;
+  }
+
+  .bank-page .bank-table-card {
+    padding: 0;
   }
 
   .placeholder-hero h1 {
