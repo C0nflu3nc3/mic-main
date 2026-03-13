@@ -1430,8 +1430,8 @@ img {
   }
 
   .bank-page .bank-operations-panel .bank-table-card {
-    width: 88%;
-    max-width: 300px;
+    width: 92% !important;
+    max-width: 332px !important;
     margin-left: auto;
     margin-right: auto;
   }
@@ -1641,8 +1641,8 @@ img {
   }
 
   .bank-page .bank-operations-panel .bank-table-card {
-    width: 84%;
-    max-width: 272px;
+    width: 90% !important;
+    max-width: 292px !important;
     margin-left: auto;
     margin-right: auto;
   }
