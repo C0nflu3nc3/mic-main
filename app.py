@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask, flash, redirect, render_template, request, send_from_directory, session, url_for
+from werkzeug.utils import secure_filename
 
 from api.add_operation import create_transfer
 from api.functions import (
@@ -63,10 +64,25 @@ def save_news_image(uploaded_file):
     if not is_allowed_image(uploaded_file.filename):
         return None
 
-    filename = uploaded_file.filename.rsplit("/", 1)[-1].rsplit("\\", 1)[-1].strip()
-    if not filename or not is_allowed_image(filename):
+    raw_filename = uploaded_file.filename.rsplit("/", 1)[-1].rsplit("\\", 1)[-1].strip()
+    if not raw_filename or not is_allowed_image(raw_filename):
         return None
 
+    base_name, extension = os.path.splitext(raw_filename)
+    safe_base_name = secure_filename(base_name).strip("._-")
+    if not safe_base_name:
+        safe_base_name = "news"
+
+    extension = extension.lower()
+    filename = f"{safe_base_name}{extension}"
+    file_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+    suffix = 2
+    while os.path.exists(file_path):
+        filename = f"{safe_base_name}-{suffix}{extension}"
+        file_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+        suffix += 1
+
+    os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
     file_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
     uploaded_file.save(file_path)
     return f"uploads/news/{filename}"
