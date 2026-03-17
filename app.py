@@ -434,7 +434,7 @@ def history_page():
         user=user,
         is_admin=bool(user["isadmin"]),
         active_section="history",
-        section_title="История",
+        section_title="История и кодекс",
         section_description="Здесь собраны энциклопедия программы, лор империи и информация о главных персонажах.",
     )
 

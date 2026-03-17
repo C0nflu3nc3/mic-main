@@ -732,6 +732,10 @@ a {
   display: none;
 }
 
+.leaderboard-panel .table-card::after {
+  display: none;
+}
+
 .badge {
   border-radius: 999px;
   padding: 10px 14px;
@@ -885,10 +889,15 @@ a {
   border-right: 0;
 }
 
-.leaderboard-panel .elegant-table tbody td:last-child,
-.leaderboard-panel .elegant-table thead th:last-child {
-  width: 140px;
+.leaderboard-panel .elegant-table tbody td:last-child {
+  width: 120px;
   text-align: center;
+}
+
+.leaderboard-panel .elegant-table thead th:last-child {
+  width: 120px;
+  text-align: left;
+  padding-left: 28px;
 }
 
 .elegant-table thead th:first-child {
