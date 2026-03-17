@@ -195,7 +195,7 @@ a {
 
 .menu-collapse {
   width: 100%;
-  padding-top: 12px;
+  padding-top: 6px;
   display: none;
 }
 
@@ -825,6 +825,11 @@ a {
   text-align: center;
 }
 
+.bank-scoreboard-table thead th:last-child {
+  text-align: left;
+  padding-left: 24px;
+}
+
 .bank-operations-table thead th:nth-child(1),
 .bank-operations-table tbody td:nth-child(1) {
   width: 160px;
@@ -1446,9 +1451,6 @@ img {
     max-width: 420px;
     margin-left: auto;
     margin-right: auto;
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%);
   }
 
   .bank-page .bank-scoreboard-hero {
@@ -1675,9 +1677,6 @@ img {
     max-width: 360px;
     margin-left: auto;
     margin-right: auto;
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%);
   }
 
   .bank-page .bank-scoreboard-hero {
