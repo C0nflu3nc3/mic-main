@@ -1137,6 +1137,10 @@ img {
     border-radius: 16px;
   }
 
+  .placeholder-hero::after {
+    display: none;
+  }
+
   .bank-page .bank-table-card {
     padding-left: 0;
     padding-right: 0;
