@@ -1,4 +1,5 @@
 import os
+import shutil
 
 from flask import Flask, flash, redirect, render_template, request, send_from_directory, session, url_for
 from werkzeug.utils import secure_filename
@@ -29,11 +30,44 @@ from helper.signin import sign_in_user
 
 app = Flask(__name__, template_folder="pages", static_folder="static")
 app.secret_key = "super_secret_key_change_me"
-app.config["UPLOAD_FOLDER"] = os.path.join(app.root_path, "uploads", "news")
+
+default_upload_root = os.path.join(app.root_path, "uploads")
+persistent_upload_root = (
+    os.getenv("UPLOAD_ROOT")
+    or os.getenv("RAILWAY_VOLUME_MOUNT_PATH")
+    or default_upload_root
+)
+legacy_upload_folder = os.path.join(default_upload_root, "news")
+
+app.config["UPLOAD_ROOT"] = persistent_upload_root
+app.config["UPLOAD_FOLDER"] = os.path.join(persistent_upload_root, "news")
+app.config["LEGACY_UPLOAD_FOLDER"] = legacy_upload_folder
 app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024
 
 ALLOWED_IMAGE_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
+os.makedirs(app.config["UPLOAD_ROOT"], exist_ok=True)
 os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
+
+
+def bootstrap_news_uploads():
+    source_dir = app.config["LEGACY_UPLOAD_FOLDER"]
+    target_dir = app.config["UPLOAD_FOLDER"]
+
+    if os.path.abspath(source_dir) == os.path.abspath(target_dir):
+        return
+    if not os.path.isdir(source_dir):
+        return
+
+    for entry in os.scandir(source_dir):
+        if not entry.is_file():
+            continue
+        target_path = os.path.join(target_dir, entry.name)
+        if os.path.exists(target_path):
+            continue
+        shutil.copy2(entry.path, target_path)
+
+
+bootstrap_news_uploads()
 
 
 def require_user():
@@ -100,7 +134,7 @@ def js_files(filename):
 
 @app.route("/uploads/<path:filename>")
 def uploaded_files(filename):
-    return send_from_directory(os.path.join(app.root_path, "uploads"), filename)
+    return send_from_directory(app.config["UPLOAD_ROOT"], filename)
 
 
 @app.route("/favicon.ico")
