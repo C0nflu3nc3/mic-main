@@ -1042,12 +1042,30 @@ img {
 }
 
 @media (min-width: 993px) {
+  .header {
+    min-height: auto !important;
+  }
+
+  .cartheader {
+    min-height: auto !important;
+    padding-bottom: 8px;
+  }
+
   .menu-toolbar {
     margin-right: 0;
   }
 
   .header-topbar {
     align-items: flex-start;
+    margin-bottom: 2px;
+  }
+
+  .menu-collapse {
+    padding-top: 0;
+  }
+
+  .section-nav {
+    padding-top: 0;
   }
 }
 
