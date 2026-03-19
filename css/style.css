@@ -826,9 +826,9 @@ a {
 }
 
 .bank-scoreboard-table thead th:last-child {
-  text-align: center;
-  padding-left: 20px;
-  padding-right: 20px;
+  text-align: left;
+  padding-left: 16px;
+  padding-right: 12px;
 }
 
 .bank-operations-table thead th:nth-child(1),
@@ -902,9 +902,9 @@ a {
 
 .leaderboard-panel .elegant-table thead th:last-child {
   width: 120px;
-  text-align: center;
-  padding-left: 20px;
-  padding-right: 20px;
+  text-align: left;
+  padding-left: 16px;
+  padding-right: 12px;
 }
 
 .elegant-table thead th:first-child {
