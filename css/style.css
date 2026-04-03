@@ -615,6 +615,25 @@ a {
   border: 1px solid rgba(194, 149, 78, 0.18);
 }
 
+.news-video {
+  display: block;
+  width: 100%;
+  max-height: 420px;
+  height: auto;
+  object-fit: contain;
+  border-radius: 16px;
+  background: rgba(6, 11, 11, 0.48);
+  border: 1px solid rgba(194, 149, 78, 0.18);
+}
+
+.news-video {
+  width: 100%;
+  max-height: 420px;
+  border-radius: 16px;
+  background: rgba(6, 11, 11, 0.48);
+  border: 1px solid rgba(194, 149, 78, 0.18);
+}
+
 .news-content {
   white-space: pre-line;
 }

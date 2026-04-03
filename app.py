@@ -22,6 +22,7 @@ from api.functions import (
     get_plt,
     get_scoreboard,
     get_teams_for_select,
+    ensure_news_media_columns,
     reject_mission,
 )
 from helper.connect import get_connection
@@ -42,9 +43,10 @@ legacy_upload_folder = os.path.join(default_upload_root, "news")
 app.config["UPLOAD_ROOT"] = persistent_upload_root
 app.config["UPLOAD_FOLDER"] = os.path.join(persistent_upload_root, "news")
 app.config["LEGACY_UPLOAD_FOLDER"] = legacy_upload_folder
-app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024
+app.config["MAX_CONTENT_LENGTH"] = 100 * 1024 * 1024
 
 ALLOWED_IMAGE_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
+ALLOWED_VIDEO_EXTENSIONS = {"mp4", "webm", "ogg", "mov", "m4v"}
 os.makedirs(app.config["UPLOAD_ROOT"], exist_ok=True)
 os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 
@@ -85,27 +87,35 @@ def can_take_missions(user):
     return not bool(user["isadmin"]) and not bool(user.get("isjournalist"))
 
 
-def is_allowed_image(filename):
+def is_allowed_extension(filename, allowed_extensions):
     if not filename or "." not in filename:
         return False
     extension = filename.rsplit(".", 1)[1].lower()
-    return extension in ALLOWED_IMAGE_EXTENSIONS
+    return extension in allowed_extensions
 
 
-def save_news_image(uploaded_file):
+def is_allowed_image(filename):
+    return is_allowed_extension(filename, ALLOWED_IMAGE_EXTENSIONS)
+
+
+def is_allowed_video(filename):
+    return is_allowed_extension(filename, ALLOWED_VIDEO_EXTENSIONS)
+
+
+def save_news_media(uploaded_file, allowed_extensions, fallback_base_name):
     if uploaded_file is None or uploaded_file.filename == "":
         return None
-    if not is_allowed_image(uploaded_file.filename):
+    if not is_allowed_extension(uploaded_file.filename, allowed_extensions):
         return None
 
     raw_filename = uploaded_file.filename.rsplit("/", 1)[-1].rsplit("\\", 1)[-1].strip()
-    if not raw_filename or not is_allowed_image(raw_filename):
+    if not raw_filename or not is_allowed_extension(raw_filename, allowed_extensions):
         return None
 
     base_name, extension = os.path.splitext(raw_filename)
     safe_base_name = secure_filename(base_name).strip("._-")
     if not safe_base_name:
-        safe_base_name = "news"
+        safe_base_name = fallback_base_name
 
     extension = extension.lower()
     filename = f"{safe_base_name}{extension}"
@@ -120,6 +130,14 @@ def save_news_image(uploaded_file):
     file_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
     uploaded_file.save(file_path)
     return f"uploads/news/{filename}"
+
+
+def save_news_image(uploaded_file):
+    return save_news_media(uploaded_file, ALLOWED_IMAGE_EXTENSIONS, "news-image")
+
+
+def save_news_video(uploaded_file):
+    return save_news_media(uploaded_file, ALLOWED_VIDEO_EXTENSIONS, "news-video")
 
 
 @app.route("/css/<path:filename>")
@@ -218,6 +236,7 @@ def news_page():
 
     conn = get_connection()
     try:
+        ensure_news_media_columns(conn)
         news_items = get_news(conn)
     finally:
         conn.close()
@@ -243,6 +262,7 @@ def add_news_page():
     title = request.form.get("title", "").strip()
     content = request.form.get("content", "").strip()
     image = request.files.get("image")
+    video = request.files.get("video")
 
     if not title or not content:
         flash("Заполните заголовок и текст новости")
@@ -253,9 +273,19 @@ def add_news_page():
         flash("Разрешены только изображения png, jpg, jpeg, gif, webp")
         return redirect(url_for("news_page"))
 
+    if video is not None and video.filename and not is_allowed_video(video.filename):
+        flash("Allowed video formats: mp4, webm, ogg, mov, m4v")
+        return redirect(url_for("news_page"))
+
+    video_path = save_news_video(video)
+    if False and video is not None and video.filename and video_path is None:
+        flash("Р Р°Р·СЂРµС€РµРЅС‹ С‚РѕР»СЊРєРѕ РІРёРґРµРѕ mp4, webm, ogg, mov, m4v")
+        return redirect(url_for("news_page"))
+
     conn = get_connection()
     try:
-        add_news(conn, int(user["id"]), title, content, image_path)
+        ensure_news_media_columns(conn)
+        add_news(conn, int(user["id"]), title, content, image_path, video_path)
     finally:
         conn.close()
 

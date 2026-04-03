@@ -51,6 +51,7 @@ def get_news(conn):
                 News.title,
                 News.content,
                 News.image_path,
+                News.video_path,
                 News.created_at,
                 users.login AS author_name
             FROM News
@@ -87,13 +88,28 @@ def get_news(conn):
     return result
 
 
-def add_news(conn, user_id, title, content, image_path):
+def ensure_news_media_columns(conn):
+    with conn.cursor() as cursor:
+        cursor.execute("SHOW COLUMNS FROM News LIKE 'video_path'")
+        if cursor.fetchone() is not None:
+            return
+
+        cursor.execute(
+            """
+            ALTER TABLE News
+            ADD COLUMN video_path varchar(255) DEFAULT NULL AFTER image_path
+            """
+        )
+    conn.commit()
+
+
+def add_news(conn, user_id, title, content, image_path, video_path):
     with conn.cursor() as cursor:
         sql = """
-            INSERT INTO News (title, content, image_path, user_id, created_at)
-            VALUES (%s, %s, %s, %s, NOW())
+            INSERT INTO News (title, content, image_path, video_path, user_id, created_at)
+            VALUES (%s, %s, %s, %s, %s, NOW())
         """
-        cursor.execute(sql, (title, content, image_path, user_id))
+        cursor.execute(sql, (title, content, image_path, video_path, user_id))
     conn.commit()
 
 

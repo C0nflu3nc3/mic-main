@@ -56,6 +56,7 @@ CREATE TABLE `News` (
   `title` varchar(255) NOT NULL,
   `content` text NOT NULL,
   `image_path` varchar(255) DEFAULT NULL,
+  `video_path` varchar(255) DEFAULT NULL,
   `user_id` int NOT NULL,
   `created_at` datetime NOT NULL,
   PRIMARY KEY (`id`),
