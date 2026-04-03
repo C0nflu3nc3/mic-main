@@ -61,6 +61,19 @@ def get_news(conn):
         cursor.execute(sql)
         news_rows = cursor.fetchall()
 
+        media_sql = """
+            SELECT
+                News_media.id,
+                News_media.news_id,
+                News_media.media_path,
+                News_media.media_type,
+                News_media.sort_order
+            FROM News_media
+            ORDER BY News_media.sort_order ASC, News_media.id ASC
+        """
+        cursor.execute(media_sql)
+        media_rows = cursor.fetchall()
+
         comment_sql = """
             SELECT
                 News_comment.id,
@@ -79,9 +92,39 @@ def get_news(conn):
     for comment in comments:
         comments_by_news.setdefault(int(comment["news_id"]), []).append(comment)
 
+    media_by_news = {}
+    for media in media_rows:
+        news_id = int(media["news_id"])
+        media_by_news.setdefault(news_id, []).append(media)
+
     result = []
     for row in news_rows:
         news_id = int(row["id"])
+        news_media = list(media_by_news.get(news_id, []))
+        existing_paths = {item["media_path"] for item in news_media}
+
+        if row.get("image_path") and row["image_path"] not in existing_paths:
+            news_media.append(
+                {
+                    "news_id": news_id,
+                    "media_path": row["image_path"],
+                    "media_type": "image",
+                    "sort_order": -2,
+                }
+            )
+
+        if row.get("video_path") and row["video_path"] not in existing_paths:
+            news_media.append(
+                {
+                    "news_id": news_id,
+                    "media_path": row["video_path"],
+                    "media_type": "video",
+                    "sort_order": -1,
+                }
+            )
+
+        news_media.sort(key=lambda item: (int(item.get("sort_order") or 0), int(item.get("id") or 0)))
+        row["media"] = news_media
         row["comments"] = comments_by_news.get(news_id, [])
         result.append(row)
 
@@ -89,28 +132,167 @@ def get_news(conn):
 
 
 def ensure_news_media_columns(conn):
+    schema_changed = False
     with conn.cursor() as cursor:
         cursor.execute("SHOW COLUMNS FROM News LIKE 'video_path'")
-        if cursor.fetchone() is not None:
-            return
+        if cursor.fetchone() is None:
+            cursor.execute(
+                """
+                ALTER TABLE News
+                ADD COLUMN video_path varchar(255) DEFAULT NULL AFTER image_path
+                """
+            )
+            schema_changed = True
+
+        cursor.execute("SHOW TABLES LIKE 'News_media'")
+        if cursor.fetchone() is None:
+            cursor.execute(
+                """
+                CREATE TABLE News_media (
+                    id int NOT NULL AUTO_INCREMENT,
+                    news_id int NOT NULL,
+                    media_path varchar(255) NOT NULL,
+                    media_type varchar(20) NOT NULL,
+                    sort_order int NOT NULL DEFAULT 0,
+                    created_at datetime NOT NULL,
+                    PRIMARY KEY (id),
+                    KEY idx_news_media_news_id (news_id),
+                    KEY idx_news_media_sort_order (news_id, sort_order, id),
+                    CONSTRAINT fk_news_media_news FOREIGN KEY (news_id) REFERENCES News (id) ON DELETE CASCADE
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+                """
+            )
+            schema_changed = True
 
         cursor.execute(
             """
-            ALTER TABLE News
-            ADD COLUMN video_path varchar(255) DEFAULT NULL AFTER image_path
+            INSERT INTO News_media (news_id, media_path, media_type, sort_order, created_at)
+            SELECT News.id, News.image_path, 'image', 0, News.created_at
+            FROM News
+            WHERE News.image_path IS NOT NULL
+              AND News.image_path <> ''
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM News_media
+                  WHERE News_media.news_id = News.id
+                    AND News_media.media_path = News.image_path
+              )
             """
         )
-    conn.commit()
+        if cursor.rowcount > 0:
+            schema_changed = True
+
+        cursor.execute(
+            """
+            INSERT INTO News_media (news_id, media_path, media_type, sort_order, created_at)
+            SELECT News.id, News.video_path, 'video', 1, News.created_at
+            FROM News
+            WHERE News.video_path IS NOT NULL
+              AND News.video_path <> ''
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM News_media
+                  WHERE News_media.news_id = News.id
+                    AND News_media.media_path = News.video_path
+              )
+            """
+        )
+        if cursor.rowcount > 0:
+            schema_changed = True
+    if schema_changed:
+        conn.commit()
 
 
-def add_news(conn, user_id, title, content, image_path, video_path):
+def add_news(conn, user_id, title, content, image_path, video_path, media_items=None):
     with conn.cursor() as cursor:
         sql = """
             INSERT INTO News (title, content, image_path, video_path, user_id, created_at)
             VALUES (%s, %s, %s, %s, %s, NOW())
         """
         cursor.execute(sql, (title, content, image_path, video_path, user_id))
+        news_id = int(cursor.lastrowid)
+
+        if media_items:
+            media_sql = """
+                INSERT INTO News_media (news_id, media_path, media_type, sort_order, created_at)
+                VALUES (%s, %s, %s, %s, NOW())
+            """
+            cursor.executemany(
+                media_sql,
+                [
+                    (
+                        news_id,
+                        item["media_path"],
+                        item["media_type"],
+                        int(item["sort_order"]),
+                    )
+                    for item in media_items
+                ],
+            )
     conn.commit()
+    return news_id
+
+
+def get_news_for_update(conn, news_id):
+    with conn.cursor() as cursor:
+        news_sql = """
+            SELECT id, title, content
+            FROM News
+            WHERE id = %s
+            LIMIT 1
+        """
+        cursor.execute(news_sql, (news_id,))
+        news_row = cursor.fetchone()
+        if news_row is None:
+            return None
+
+        media_sql = """
+            SELECT id, news_id, media_path, media_type, sort_order
+            FROM News_media
+            WHERE news_id = %s
+            ORDER BY sort_order ASC, id ASC
+        """
+        cursor.execute(media_sql, (news_id,))
+        news_row["media"] = cursor.fetchall()
+        return news_row
+
+
+def update_news(conn, news_id, title, content, media_items):
+    image_path = next((item["media_path"] for item in media_items if item["media_type"] == "image"), None)
+    video_path = next((item["media_path"] for item in media_items if item["media_type"] == "video"), None)
+
+    with conn.cursor() as cursor:
+        update_sql = """
+            UPDATE News
+            SET title = %s,
+                content = %s,
+                image_path = %s,
+                video_path = %s
+            WHERE id = %s
+        """
+        cursor.execute(update_sql, (title, content, image_path, video_path, news_id))
+
+        cursor.execute("DELETE FROM News_media WHERE news_id = %s", (news_id,))
+
+        if media_items:
+            insert_sql = """
+                INSERT INTO News_media (news_id, media_path, media_type, sort_order, created_at)
+                VALUES (%s, %s, %s, %s, NOW())
+            """
+            cursor.executemany(
+                insert_sql,
+                [
+                    (
+                        news_id,
+                        item["media_path"],
+                        item["media_type"],
+                        int(item["sort_order"]),
+                    )
+                    for item in media_items
+                ],
+            )
+    conn.commit()
+    return True
 
 
 def add_news_comment(conn, news_id, user_id, comment):

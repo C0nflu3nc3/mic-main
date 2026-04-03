@@ -7,6 +7,7 @@ USE `micbd`;
 
 DROP TABLE IF EXISTS `Mission_team`;
 DROP TABLE IF EXISTS `Mission`;
+DROP TABLE IF EXISTS `News_media`;
 DROP TABLE IF EXISTS `News_comment`;
 DROP TABLE IF EXISTS `News`;
 DROP TABLE IF EXISTS `Operation`;
@@ -76,6 +77,19 @@ CREATE TABLE `News` (
   PRIMARY KEY (`id`),
   KEY `idx_news_created_at` (`created_at`),
   CONSTRAINT `fk_news_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE `News_media` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `news_id` int NOT NULL,
+  `media_path` varchar(255) NOT NULL,
+  `media_type` varchar(20) NOT NULL,
+  `sort_order` int NOT NULL DEFAULT 0,
+  `created_at` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_news_media_news_id` (`news_id`),
+  KEY `idx_news_media_sort_order` (`news_id`, `sort_order`, `id`),
+  CONSTRAINT `fk_news_media_news` FOREIGN KEY (`news_id`) REFERENCES `News` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `News_comment` (

@@ -16,6 +16,7 @@ from api.functions import (
     get_approve_queue,
     get_current_team_id_by_user_id,
     get_leaderboard_table,
+    get_news_for_update,
     get_missions,
     get_news,
     get_operations,
@@ -24,6 +25,7 @@ from api.functions import (
     get_teams_for_select,
     ensure_news_media_columns,
     reject_mission,
+    update_news,
 )
 from helper.connect import get_connection
 from helper.logout import logout_user
@@ -102,6 +104,14 @@ def is_allowed_video(filename):
     return is_allowed_extension(filename, ALLOWED_VIDEO_EXTENSIONS)
 
 
+def get_news_media_type(filename):
+    if is_allowed_image(filename):
+        return "image"
+    if is_allowed_video(filename):
+        return "video"
+    return None
+
+
 def save_news_media(uploaded_file, allowed_extensions, fallback_base_name):
     if uploaded_file is None or uploaded_file.filename == "":
         return None
@@ -138,6 +148,69 @@ def save_news_image(uploaded_file):
 
 def save_news_video(uploaded_file):
     return save_news_media(uploaded_file, ALLOWED_VIDEO_EXTENSIONS, "news-video")
+
+
+def collect_news_media_files(uploaded_files):
+    prepared_files = []
+
+    for uploaded_file in uploaded_files:
+        if uploaded_file is None or uploaded_file.filename == "":
+            continue
+
+        media_type = get_news_media_type(uploaded_file.filename)
+        if media_type is None:
+            return None, "Разрешены только изображения png, jpg, jpeg, gif, webp и видео mp4, webm, ogg, mov, m4v"
+
+        prepared_files.append((uploaded_file, media_type))
+
+    if len(prepared_files) > 3:
+        return None, "Можно добавить не более 3 медиафайлов"
+
+    saved_media = []
+    for sort_order, (uploaded_file, media_type) in enumerate(prepared_files):
+        if media_type == "image":
+            media_path = save_news_image(uploaded_file)
+        else:
+            media_path = save_news_video(uploaded_file)
+
+        if media_path is None:
+            return None, "Не удалось сохранить один из медиафайлов"
+
+        saved_media.append(
+            {
+                "media_path": media_path,
+                "media_type": media_type,
+                "sort_order": sort_order,
+            }
+        )
+
+    return saved_media, None
+
+
+def build_updated_news_media(existing_media, removed_media_ids, new_media_items):
+    kept_media = [
+        {
+            "media_path": item["media_path"],
+            "media_type": item["media_type"],
+        }
+        for item in existing_media
+        if int(item["id"]) not in removed_media_ids
+    ]
+
+    if len(kept_media) + len(new_media_items) > 3:
+        return None, "Можно оставить не более 3 медиафайлов"
+
+    final_media = []
+    for item in kept_media + new_media_items:
+        final_media.append(
+            {
+                "media_path": item["media_path"],
+                "media_type": item["media_type"],
+                "sort_order": len(final_media),
+            }
+        )
+
+    return final_media, None
 
 
 @app.route("/css/<path:filename>")
@@ -261,6 +334,36 @@ def add_news_page():
 
     title = request.form.get("title", "").strip()
     content = request.form.get("content", "").strip()
+    media_files = request.files.getlist("media")
+
+    if not title or not content:
+        flash("Р—Р°РїРѕР»РЅРёС‚Рµ Р·Р°РіРѕР»РѕРІРѕРє Рё С‚РµРєСЃС‚ РЅРѕРІРѕСЃС‚Рё")
+        return redirect(url_for("news_page"))
+
+    if not media_files:
+        media_files = [
+            request.files.get("image"),
+            request.files.get("video"),
+        ]
+
+    media_items, media_error = collect_news_media_files(media_files)
+    if media_error:
+        flash(media_error)
+        return redirect(url_for("news_page"))
+
+    image_path = next((item["media_path"] for item in media_items if item["media_type"] == "image"), None)
+    video_path = next((item["media_path"] for item in media_items if item["media_type"] == "video"), None)
+
+    conn = get_connection()
+    try:
+        ensure_news_media_columns(conn)
+        add_news(conn, int(user["id"]), title, content, image_path, video_path, media_items)
+    finally:
+        conn.close()
+
+    flash("РќРѕРІРѕСЃС‚СЊ РґРѕР±Р°РІР»РµРЅР°")
+    return redirect(url_for("news_page"))
+
     image = request.files.get("image")
     video = request.files.get("video")
 
@@ -290,6 +393,60 @@ def add_news_page():
         conn.close()
 
     flash("Новость добавлена")
+    return redirect(url_for("news_page"))
+
+
+@app.route("/news/update", methods=["POST"])
+def update_news_page():
+    user, redirect_response = require_user()
+    if redirect_response:
+        return redirect_response
+    if not can_manage_news(user):
+        return redirect(url_for("news_page"))
+
+    news_id = request.form.get("news_id", "").strip()
+    title = request.form.get("title", "").strip()
+    content = request.form.get("content", "").strip()
+    remove_media_ids_raw = request.form.getlist("remove_media_ids")
+    media_files = request.files.getlist("media")
+
+    if not news_id.isdigit() or not title or not content:
+        flash("Не удалось обновить новость")
+        return redirect(url_for("news_page"))
+
+    removed_media_ids = {
+        int(media_id)
+        for media_id in remove_media_ids_raw
+        if media_id.isdigit()
+    }
+
+    new_media_items, media_error = collect_news_media_files(media_files)
+    if media_error:
+        flash(media_error)
+        return redirect(url_for("news_page"))
+
+    conn = get_connection()
+    try:
+        ensure_news_media_columns(conn)
+        news_item = get_news_for_update(conn, int(news_id))
+        if news_item is None:
+            flash("Новость не найдена")
+            return redirect(url_for("news_page"))
+
+        final_media, final_media_error = build_updated_news_media(
+            news_item["media"],
+            removed_media_ids,
+            new_media_items,
+        )
+        if final_media_error:
+            flash(final_media_error)
+            return redirect(url_for("news_page"))
+
+        update_news(conn, int(news_id), title, content, final_media)
+    finally:
+        conn.close()
+
+    flash("Новость обновлена")
     return redirect(url_for("news_page"))
 
 
