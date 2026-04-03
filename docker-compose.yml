@@ -4,7 +4,7 @@ services:
   web:
     build:
       context: .
-    container_name: mic_flask
+    container_name: mic-main-volume
     ports:
       - "8000:8000"
     volumes:
@@ -12,10 +12,10 @@ services:
     depends_on:
       - mysql
     environment:
-      MYSQL_HOST: mysql
-      MYSQL_DATABASE: micbd
-      MYSQL_USER: mic
-      MYSQL_PASSWORD: 180780Kaf!
+      MYSQL_HOST: mysql.railway.internal
+      MYSQL_DATABASE: railway
+      MYSQL_USER: root
+      MYSQL_PASSWORD: KuIDwvaatQAmdCDRlZoXXdjyeMQdjuxv
     restart: unless-stopped
 
   mysql:
@@ -23,10 +23,10 @@ services:
     container_name: mic_mysql
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: micbd
-      MYSQL_USER: mic
-      MYSQL_PASSWORD: 180780Kaf!
+      MYSQL_ROOT_PASSWORD: KuIDwvaatQAmdCDRlZoXXdjyeMQdjuxv
+      MYSQL_DATABASE: railway
+      MYSQL_USER: root
+      MYSQL_PASSWORD: KuIDwvaatQAmdCDRlZoXXdjyeMQdjuxv
     volumes:
       - ./docker/mysql-dump:/docker-entrypoint-initdb.d
       - mysql_data:/var/lib/mysql
@@ -39,11 +39,11 @@ services:
     depends_on:
       - mysql
     environment:
-      PMA_HOST: mysql
+      PMA_HOST: mysql.railway.internal
       PMA_PORT: 3306
       PMA_USER: root
-      PMA_PASSWORD: root
-      MYSQL_ROOT_PASSWORD: root
+      PMA_PASSWORD: KuIDwvaatQAmdCDRlZoXXdjyeMQdjuxv
+      MYSQL_ROOT_PASSWORD: KuIDwvaatQAmdCDRlZoXXdjyeMQdjuxv
       UPLOAD_LIMIT: 256M
     ports:
       - "8080:80"

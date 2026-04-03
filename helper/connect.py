@@ -5,10 +5,10 @@ import pymysql
 
 
 DB_CONFIG = {
-    "host": os.getenv("MYSQL_HOST", 'mysql.railway.internal'),
-    "user": os.getenv("MYSQL_USER", 'root'),
-    "password": os.getenv("MYSQL_PASSWORD", 'KuIDwvaatQAmdCDRlZoXXdjyeMQdjuxv'),
-    "database": os.getenv("MYSQL_DATABASE",'railway'),
+    "host": os.getenv("MYSQL_HOST"),
+    "user": os.getenv("MYSQL_USER"),
+    "password": os.getenv("MYSQL_PASSWORD"),
+    "database": os.getenv("MYSQL_DATABASE"),
     "charset": "utf8mb4",
     "cursorclass": pymysql.cursors.DictCursor,
     "autocommit": False,
