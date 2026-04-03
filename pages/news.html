@@ -62,59 +62,6 @@
             {% endif %}
             <p class="news-content">{{ item.content }}</p>
 
-            {% if can_manage_news %}
-            <details class="news-edit-block">
-                <summary class="news-edit-summary">Редактировать новость</summary>
-                <form method="POST" action="/news/update" enctype="multipart/form-data" class="news-edit-form">
-                    <input type="hidden" name="news_id" value="{{ item.id }}">
-
-                    <div class="mb-3">
-                        <label class="form-label" for="edit-title-{{ item.id }}">Заголовок</label>
-                        <input class="form-control" id="edit-title-{{ item.id }}" name="title" type="text" value="{{ item.title }}" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label" for="edit-content-{{ item.id }}">Текст новости</label>
-                        <textarea class="form-control" id="edit-content-{{ item.id }}" name="content" rows="5" required>{{ item.content }}</textarea>
-                    </div>
-
-                    {% if item.media %}
-                    <div class="mb-3">
-                        <div class="form-label">Текущие медиа</div>
-                        <div class="news-edit-existing-media">
-                            {% for media in item.media %}
-                            <label class="news-edit-media-item">
-                                {% if media.media_type == 'video' %}
-                                <video class="news-edit-media-preview" controls preload="metadata">
-                                    <source src="{{ url_for('uploaded_files', filename=media.media_path|replace('uploads/', '', 1)) }}">
-                                </video>
-                                {% else %}
-                                <img class="news-edit-media-preview" src="{{ url_for('uploaded_files', filename=media.media_path|replace('uploads/', '', 1)) }}" alt="{{ item.title }}">
-                                {% endif %}
-                                <span class="news-edit-media-meta">
-                                    {{ 'Видео' if media.media_type == 'video' else 'Изображение' }}
-                                </span>
-                                <span class="news-edit-remove">
-                                    <input type="checkbox" name="remove_media_ids" value="{{ media.id }}">
-                                    <span>Убрать из новости</span>
-                                </span>
-                            </label>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    {% endif %}
-
-                    <div class="mb-3">
-                        <label class="form-label" for="edit-media-{{ item.id }}">Добавить медиа</label>
-                        <input class="form-control" id="edit-media-{{ item.id }}" name="media" type="file" accept=".png,.jpg,.jpeg,.gif,.webp,.mp4,.webm,.ogg,.mov,.m4v" multiple>
-                        <div class="form-text text-light">Всего в новости можно оставить до 3 файлов.</div>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">Сохранить изменения</button>
-                </form>
-            </details>
-            {% endif %}
-
             <div class="news-comments">
                 <h4>Комментарии</h4>
                 {% for comment in item.comments %}
@@ -131,11 +78,67 @@
                 <p class="news-empty">Комментариев пока нет.</p>
                 {% endif %}
 
-                <form method="POST" action="/news/comment" class="news-comment-form">
+                <form method="POST" action="/news/comment" class="news-comment-form" id="news-comment-form-{{ item.id }}">
                     <input type="hidden" name="news_id" value="{{ item.id }}">
                     <textarea class="form-control mb-2" name="comment" rows="3" placeholder="Напишите комментарий" required></textarea>
-                    <button type="submit" class="btn btn-outline-light">Отправить комментарий</button>
                 </form>
+
+                <div class="news-card-actions">
+                    <button type="submit" form="news-comment-form-{{ item.id }}" class="btn btn-outline-light">Отправить комментарий</button>
+
+                    {% if can_manage_news %}
+                    <details class="news-edit-block news-edit-action">
+                        <summary class="news-edit-summary">Редактировать новость</summary>
+                        <form method="POST" action="/news/update" enctype="multipart/form-data" class="news-edit-form">
+                            <input type="hidden" name="news_id" value="{{ item.id }}">
+
+                            <div class="mb-3">
+                                <label class="form-label" for="edit-title-{{ item.id }}">Заголовок</label>
+                                <input class="form-control" id="edit-title-{{ item.id }}" name="title" type="text" value="{{ item.title }}" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label" for="edit-content-{{ item.id }}">Текст новости</label>
+                                <textarea class="form-control" id="edit-content-{{ item.id }}" name="content" rows="5" required>{{ item.content }}</textarea>
+                            </div>
+
+                            {% if item.media %}
+                            <div class="mb-3">
+                                <div class="form-label">Текущие медиа</div>
+                                <div class="news-edit-existing-media">
+                                    {% for media in item.media %}
+                                    <label class="news-edit-media-item">
+                                        {% if media.media_type == 'video' %}
+                                        <video class="news-edit-media-preview" controls preload="metadata">
+                                            <source src="{{ url_for('uploaded_files', filename=media.media_path|replace('uploads/', '', 1)) }}">
+                                        </video>
+                                        {% else %}
+                                        <img class="news-edit-media-preview" src="{{ url_for('uploaded_files', filename=media.media_path|replace('uploads/', '', 1)) }}" alt="{{ item.title }}">
+                                        {% endif %}
+                                        <span class="news-edit-media-meta">
+                                            {{ 'Видео' if media.media_type == 'video' else 'Изображение' }}
+                                        </span>
+                                        <span class="news-edit-remove">
+                                            <input type="checkbox" name="remove_media_ids" value="{{ media.id }}">
+                                            <span>Убрать из новости</span>
+                                        </span>
+                                    </label>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <div class="mb-3">
+                                <label class="form-label" for="edit-media-{{ item.id }}">Добавить медиа</label>
+                                <input class="form-control" id="edit-media-{{ item.id }}" name="media" type="file" accept=".png,.jpg,.jpeg,.gif,.webp,.mp4,.webm,.ogg,.mov,.m4v" multiple>
+                                <div class="form-text text-light">Всего в новости можно оставить до 3 файлов.</div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                        </form>
+                    </details>
+                    {% endif %}
+                </div>
             </div>
         </article>
         {% endfor %}
