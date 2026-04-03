@@ -12,7 +12,7 @@ services:
     depends_on:
       - mysql
     environment:
-      MYSQL_HOST: mysql.railway.internal
+      MYSQL_HOST: mysql
       MYSQL_DATABASE: railway
       MYSQL_USER: root
       MYSQL_PASSWORD: KuIDwvaatQAmdCDRlZoXXdjyeMQdjuxv
@@ -25,8 +25,6 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: KuIDwvaatQAmdCDRlZoXXdjyeMQdjuxv
       MYSQL_DATABASE: railway
-      MYSQL_USER: root
-      MYSQL_PASSWORD: KuIDwvaatQAmdCDRlZoXXdjyeMQdjuxv
     volumes:
       - ./docker/mysql-dump:/docker-entrypoint-initdb.d
       - mysql_data:/var/lib/mysql
@@ -39,7 +37,7 @@ services:
     depends_on:
       - mysql
     environment:
-      PMA_HOST: mysql.railway.internal
+      PMA_HOST: mysql
       PMA_PORT: 3306
       PMA_USER: root
       PMA_PASSWORD: KuIDwvaatQAmdCDRlZoXXdjyeMQdjuxv
