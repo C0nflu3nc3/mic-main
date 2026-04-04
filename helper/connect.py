@@ -1,15 +1,47 @@
 import os
 import time
+from urllib.parse import urlparse
 
 import pymysql
 
 
 def get_db_config():
+    database_url = os.getenv("DATABASE_URL") or os.getenv("MYSQL_URL")
+    parsed_url = urlparse(database_url) if database_url else None
+
     return {
-        "host": os.getenv("MYSQL_HOST", "mysql.railway.internal"),
-        "user": os.getenv("MYSQL_USER", "root"),
-        "password": os.getenv("MYSQL_PASSWORD", "KuIDwvaatQAmdCDRlZoXXdjyeMQdjuxv"),
-        "database": os.getenv("MYSQL_DATABASE", "railway"),
+        "host": (
+            os.getenv("MYSQL_HOST")
+            or os.getenv("MYSQLHOST")
+            or os.getenv("DB_HOST")
+            or (parsed_url.hostname if parsed_url else None)
+        ),
+        "port": int(
+            os.getenv("MYSQL_PORT")
+            or os.getenv("MYSQLPORT")
+            or os.getenv("DB_PORT")
+            or (parsed_url.port if parsed_url and parsed_url.port else 3306)
+        ),
+        "user": (
+            os.getenv("MYSQL_USER")
+            or os.getenv("MYSQLUSER")
+            or os.getenv("DB_USER")
+            or (parsed_url.username if parsed_url else None)
+            or "root"
+        ),
+        "password": (
+            os.getenv("MYSQL_PASSWORD")
+            or os.getenv("MYSQLPASSWORD")
+            or os.getenv("MYSQL_ROOT_PASSWORD")
+            or os.getenv("DB_PASSWORD")
+            or (parsed_url.password if parsed_url else None)
+        ),
+        "database": (
+            os.getenv("MYSQL_DATABASE")
+            or os.getenv("MYSQLDATABASE")
+            or os.getenv("DB_NAME")
+            or (parsed_url.path.lstrip("/") if parsed_url and parsed_url.path else None)
+        ),
         "charset": "utf8mb4",
         "cursorclass": pymysql.cursors.DictCursor,
         "autocommit": False,
