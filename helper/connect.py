@@ -1,11 +1,32 @@
 import os
 import time
+from pathlib import Path
 from urllib.parse import urlparse
 
 import pymysql
 
 
+BASE_DIR = Path(__file__).resolve().parent.parent
+ENV_FILE = BASE_DIR / ".env"
+
+
+def load_env_file(env_file=ENV_FILE):
+    if not env_file.exists():
+        return
+
+    for raw_line in env_file.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+
+        key, value = line.split("=", 1)
+        key = key.strip()
+        value = value.strip().strip('"').strip("'")
+        os.environ.setdefault(key, value)
+
+
 def get_db_config():
+    load_env_file()
     database_url = os.getenv("DATABASE_URL") or os.getenv("MYSQL_URL")
     parsed_url = urlparse(database_url) if database_url else None
 
