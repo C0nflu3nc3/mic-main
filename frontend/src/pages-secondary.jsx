@@ -26,7 +26,7 @@ export function MissionsPage({ is_admin = false, can_take_missions = false, curr
             <div className="mission-info"><span>Награда: {mission.reward} GRZ</span><span>Откликнулось легионов: {mission.accepted_count} / 3</span></div>
             {mission.accepted_teams && mission.accepted_teams.length ? <div className="mission-teams">Приняли задание: {mission.accepted_teams.join(", ")}</div> : null}
             {is_admin ? (
-              <div className="mission-actions mission-admin-actions"><form method="POST" action="/missions/delete" onSubmit={() => window.confirm("Вы уверены?")}><input type="hidden" name="mission_id" value={mission.id} /><button type="submit" className="btn btn-outline-light">Удалить миссию</button></form></div>
+              <div className="mission-actions mission-admin-actions"><form method="POST" action="/missions/delete" onSubmit={(event) => { if (!window.confirm("Вы уверены?")) { event.preventDefault(); } }}><input type="hidden" name="mission_id" value={mission.id} /><button type="submit" className="btn btn-outline-light">Удалить миссию</button></form></div>
             ) : can_take_missions ? (
               mission.user_has_taken ? (
                 <div className="mission-actions"><div className="mission-status-note">Задание уже выбрано вашим Легионом</div><form method="POST" action="/missions/cancel"><input type="hidden" name="mission_id" value={mission.id} /><button type="submit" className="btn btn-outline-light">Отказаться от задания</button></form></div>

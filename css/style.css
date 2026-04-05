@@ -1648,15 +1648,15 @@ img {
   }
 
   .bank-page .bank-scoreboard-panel {
-    width: min(calc(100vw - 112px), 320px);
-    max-width: 320px;
+    width: min(calc(100vw - 28px), 430px);
+    max-width: none;
     margin-left: auto;
     margin-right: auto;
   }
 
   .bank-page .bank-scoreboard-hero {
-    width: min(calc(100vw - 44px), 420px);
-    max-width: 420px;
+    width: 100%;
+    max-width: none;
     margin-left: auto;
     margin-right: auto;
   }
@@ -1874,15 +1874,15 @@ img {
   }
 
   .bank-page .bank-scoreboard-panel {
-    width: min(calc(100vw - 70px), 290px);
-    max-width: 290px;
+    width: min(calc(100vw - 22px), 380px);
+    max-width: none;
     margin-left: auto;
     margin-right: auto;
   }
 
   .bank-page .bank-scoreboard-hero {
-    width: min(calc(100vw - 30px), 360px);
-    max-width: 360px;
+    width: 100%;
+    max-width: none;
     margin-left: auto;
     margin-right: auto;
   }

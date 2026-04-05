@@ -1,4 +1,4 @@
-const bootstrap = window.__BOOTSTRAP__ || {};
+﻿const bootstrap = window.__BOOTSTRAP__ || {};
 
 function formatDateTime(value) {
     if (!value) {
@@ -544,7 +544,7 @@ function MissionsPage({ is_admin = false, can_take_missions = false, current_tea
 
                         {is_admin ? (
                             <div className="mission-actions mission-admin-actions">
-                                <form method="POST" action="/missions/delete" onSubmit={() => window.confirm("Вы уверены?")}>
+                                <form method="POST" action="/missions/delete" onSubmit={(event) => { if (!window.confirm("\u0412\u044b \u0443\u0432\u0435\u0440\u0435\u043d\u044b?")) { event.preventDefault(); } }}>
                                     <input type="hidden" name="mission_id" value={mission.id} />
                                     <button type="submit" className="btn btn-outline-light">Удалить миссию</button>
                                 </form>
