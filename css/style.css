@@ -821,6 +821,14 @@ a {
   color: var(--main-text-soft);
 }
 
+.mission-card .news-content {
+  font-family: var(--main-font-display);
+  font-size: clamp(24px, 2.1vw, 30px);
+  line-height: 1.22;
+  letter-spacing: 0.012em;
+  color: #e7c783;
+}
+
 .mission-actions {
   display: flex;
   align-items: center;
@@ -1474,6 +1482,13 @@ img {
     line-height: 1.45;
   }
 
+  .mission-card .news-content {
+    font-family: var(--main-font-display);
+    font-size: clamp(19px, 5.8vw, 24px);
+    line-height: 1.24;
+    letter-spacing: 0.01em;
+  }
+
   .mission-info {
     flex-direction: column;
     align-items: flex-start;
@@ -1893,6 +1908,11 @@ img {
   .mission-card h3 {
     font-size: clamp(24px, 8.5vw, 38px);
     line-height: 1;
+  }
+
+  .mission-card .news-content {
+    font-size: clamp(18px, 5.4vw, 22px);
+    line-height: 1.22;
   }
 
   .bank-page .bank-table tbody tr {
