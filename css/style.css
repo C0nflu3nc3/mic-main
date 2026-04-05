@@ -15,6 +15,7 @@
   --main-brass-bright: #d2a463;
   --main-ink: #0a0f0f;
   --main-font-display: "Prata", Georgia, serif;
+  --main-font-story: "IBM Plex Serif", Georgia, serif;
 }
 
 * {
@@ -822,10 +823,11 @@ a {
 }
 
 .mission-card .news-content {
-  font-family: var(--main-font-display);
+  font-family: var(--main-font-story);
+  font-weight: 500;
   font-size: clamp(24px, 2.1vw, 30px);
   line-height: 1.22;
-  letter-spacing: 0.012em;
+  letter-spacing: 0.006em;
   color: #e7c783;
 }
 
@@ -1483,10 +1485,11 @@ img {
   }
 
   .mission-card .news-content {
-    font-family: var(--main-font-display);
+    font-family: var(--main-font-story);
+    font-weight: 500;
     font-size: clamp(19px, 5.8vw, 24px);
     line-height: 1.24;
-    letter-spacing: 0.01em;
+    letter-spacing: 0.004em;
   }
 
   .mission-info {
@@ -1911,6 +1914,8 @@ img {
   }
 
   .mission-card .news-content {
+    font-family: var(--main-font-story);
+    font-weight: 500;
     font-size: clamp(18px, 5.4vw, 22px);
     line-height: 1.22;
   }
