@@ -10,3 +10,9 @@ createRoot(document.getElementById("app")).render(
     <App bootstrapData={bootstrapData} />
   </React.StrictMode>
 );
+
+window.requestAnimationFrame(() => {
+  if (typeof window.initMainUi === "function") {
+    window.initMainUi();
+  }
+});

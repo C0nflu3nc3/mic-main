@@ -820,3 +820,9 @@ function AppLayout({ bootstrapData }) {
 
 const root = ReactDOM.createRoot(document.getElementById("app"));
 root.render(<AppLayout bootstrapData={bootstrap} />);
+
+window.requestAnimationFrame(function () {
+    if (typeof window.initMainUi === "function") {
+        window.initMainUi();
+    }
+});

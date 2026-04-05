@@ -386,7 +386,7 @@ def add_news_page():
     media_files = request.files.getlist("media")
 
     if not title or not content:
-        flash("Р вЂ”Р В°Р С—Р С•Р В»Р Р…Р С‘РЎвЂљР Вµ Р В·Р В°Р С–Р С•Р В»Р С•Р Р†Р С•Р С” Р С‘ РЎвЂљР ВµР С”РЎРѓРЎвЂљ Р Р…Р С•Р Р†Р С•РЎРѓРЎвЂљР С‘")
+        flash("\u0417\u0430\u043f\u043e\u043b\u043d\u0438\u0442\u0435 \u0437\u0430\u0433\u043e\u043b\u043e\u0432\u043e\u043a \u0438 \u0442\u0435\u043a\u0441\u0442 \u043d\u043e\u0432\u043e\u0441\u0442\u0438")
         return redirect(url_for("news_page"))
 
     if not media_files:
@@ -410,28 +410,28 @@ def add_news_page():
     finally:
         conn.close()
 
-    flash("Р СњР С•Р Р†Р С•РЎРѓРЎвЂљРЎРЉ Р Т‘Р С•Р В±Р В°Р Р†Р В»Р ВµР Р…Р В°")
+    flash("\u041d\u043e\u0432\u043e\u0441\u0442\u044c \u0434\u043e\u0431\u0430\u0432\u043b\u0435\u043d\u0430")
     return redirect(url_for("news_page"))
 
     image = request.files.get("image")
     video = request.files.get("video")
 
     if not title or not content:
-        flash("Р—Р°РїРѕР»РЅРёС‚Рµ Р·Р°РіРѕР»РѕРІРѕРє Рё С‚РµРєСЃС‚ РЅРѕРІРѕСЃС‚Рё")
+        flash("\u0417\u0430\u043f\u043e\u043b\u043d\u0438\u0442\u0435 \u0437\u0430\u0433\u043e\u043b\u043e\u0432\u043e\u043a \u0438 \u0442\u0435\u043a\u0441\u0442 \u043d\u043e\u0432\u043e\u0441\u0442\u0438")
         return redirect(url_for("news_page"))
 
     image_path = save_news_image(image)
     if image is not None and image.filename and image_path is None:
-        flash("Р Р°Р·СЂРµС€РµРЅС‹ С‚РѕР»СЊРєРѕ РёР·РѕР±СЂР°Р¶РµРЅРёСЏ png, jpg, jpeg, gif, webp")
+        flash("\u0420\u0430\u0437\u0440\u0435\u0448\u0435\u043d\u044b \u0442\u043e\u043b\u044c\u043a\u043e \u0438\u0437\u043e\u0431\u0440\u0430\u0436\u0435\u043d\u0438\u044f png, jpg, jpeg, gif, webp")
         return redirect(url_for("news_page"))
 
     if video is not None and video.filename and not is_allowed_video(video.filename):
-        flash("Allowed video formats: mp4, webm, ogg, mov, m4v")
+        flash("\u0420\u0430\u0437\u0440\u0435\u0448\u0435\u043d\u044b \u0442\u043e\u043b\u044c\u043a\u043e \u0432\u0438\u0434\u0435\u043e mp4, webm, ogg, mov, m4v")
         return redirect(url_for("news_page"))
 
     video_path = save_news_video(video)
     if False and video is not None and video.filename and video_path is None:
-        flash("Р В Р В°Р В·РЎР‚Р ВµРЎв‚¬Р ВµР Р…РЎвЂ№ РЎвЂљР С•Р В»РЎРЉР С”Р С• Р Р†Р С‘Р Т‘Р ВµР С• mp4, webm, ogg, mov, m4v")
+        flash("\u0420\u0430\u0437\u0440\u0435\u0448\u0435\u043d\u044b \u0442\u043e\u043b\u044c\u043a\u043e \u0432\u0438\u0434\u0435\u043e mp4, webm, ogg, mov, m4v")
         return redirect(url_for("news_page"))
 
     conn = get_connection()
@@ -441,7 +441,7 @@ def add_news_page():
     finally:
         conn.close()
 
-    flash("РќРѕРІРѕСЃС‚СЊ РґРѕР±Р°РІР»РµРЅР°")
+    flash("\u041d\u043e\u0432\u043e\u0441\u0442\u044c \u0434\u043e\u0431\u0430\u0432\u043b\u0435\u043d\u0430")
     return redirect(url_for("news_page"))
 
 
@@ -460,7 +460,7 @@ def update_news_page():
     media_files = request.files.getlist("media")
 
     if not news_id.isdigit() or not title or not content:
-        flash("РќРµ СѓРґР°Р»РѕСЃСЊ РѕР±РЅРѕРІРёС‚СЊ РЅРѕРІРѕСЃС‚СЊ")
+        flash("\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u043e\u0431\u043d\u043e\u0432\u0438\u0442\u044c \u043d\u043e\u0432\u043e\u0441\u0442\u044c")
         return redirect(url_for("news_page"))
 
     removed_media_ids = {
@@ -479,7 +479,7 @@ def update_news_page():
         ensure_news_media_columns(conn)
         news_item = get_news_for_update(conn, int(news_id))
         if news_item is None:
-            flash("РќРѕРІРѕСЃС‚СЊ РЅРµ РЅР°Р№РґРµРЅР°")
+            flash("\u041d\u043e\u0432\u043e\u0441\u0442\u044c \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u0430")
             return redirect(url_for("news_page"))
 
         final_media, final_media_error = build_updated_news_media(
@@ -495,7 +495,7 @@ def update_news_page():
     finally:
         conn.close()
 
-    flash("РќРѕРІРѕСЃС‚СЊ РѕР±РЅРѕРІР»РµРЅР°")
+    flash("\u041d\u043e\u0432\u043e\u0441\u0442\u044c \u043e\u0431\u043d\u043e\u0432\u043b\u0435\u043d\u0430")
     return redirect(url_for("news_page"))
 
 
@@ -509,7 +509,7 @@ def add_news_comment_page():
     comment = request.form.get("comment", "").strip()
 
     if not news_id.isdigit() or not comment:
-        flash("РљРѕРјРјРµРЅС‚Р°СЂРёР№ РЅРµ РґРѕР±Р°РІР»РµРЅ")
+        flash("\u041a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u0439 \u043d\u0435 \u0434\u043e\u0431\u0430\u0432\u043b\u0435\u043d")
         return redirect(url_for("news_page"))
 
     conn = get_connection()
@@ -518,7 +518,7 @@ def add_news_comment_page():
     finally:
         conn.close()
 
-    flash("РљРѕРјРјРµРЅС‚Р°СЂРёР№ РґРѕР±Р°РІР»РµРЅ" if ok else "РќРѕРІРѕСЃС‚СЊ РЅРµ РЅР°Р№РґРµРЅР°")
+    flash("\u041a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u0439 \u0434\u043e\u0431\u0430\u0432\u043b\u0435\u043d" if ok else "\u041d\u043e\u0432\u043e\u0441\u0442\u044c \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u0430")
     return redirect(url_for("news_page"))
 
 
@@ -567,7 +567,7 @@ def add_mission_page():
     reward = request.form.get("reward", "").strip()
 
     if not title or not description or not reward.isdigit() or int(reward) <= 0:
-        flash("Р’РІРµРґРёС‚Рµ РєРѕСЂСЂРµРєС‚РЅС‹Рµ РґР°РЅРЅС‹Рµ Р·Р°РґР°РЅРёСЏ Рё РЅР°РіСЂР°РґС‹")
+        flash("\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u043a\u043e\u0440\u0440\u0435\u043a\u0442\u043d\u044b\u0435 \u0434\u0430\u043d\u043d\u044b\u0435 \u0437\u0430\u0434\u0430\u043d\u0438\u044f \u0438 \u043d\u0430\u0433\u0440\u0430\u0434\u044b")
         return redirect(url_for("missions_page"))
 
     conn = get_connection()
@@ -576,7 +576,7 @@ def add_mission_page():
     finally:
         conn.close()
 
-    flash("Р—Р°РґР°РЅРёРµ РѕРїСѓР±Р»РёРєРѕРІР°РЅРѕ")
+    flash("\u0417\u0430\u0434\u0430\u043d\u0438\u0435 \u043e\u043f\u0443\u0431\u043b\u0438\u043a\u043e\u0432\u0430\u043d\u043e")
     return redirect(url_for("missions_page"))
 
 
@@ -592,7 +592,7 @@ def accept_mission_page():
     current_team_id = user.get("team_id")
 
     if not mission_id.isdigit() or current_team_id is None:
-        flash("РќРµ СѓРґР°Р»РѕСЃСЊ РїСЂРёРЅСЏС‚СЊ Р·Р°РґР°РЅРёРµ")
+        flash("\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u043f\u0440\u0438\u043d\u044f\u0442\u044c \u0437\u0430\u0434\u0430\u043d\u0438\u0435")
         return redirect(url_for("missions_page"))
 
     conn = get_connection()
@@ -777,7 +777,7 @@ def approve_confirm_page():
 
     assignment_id = request.form.get("assignment_id", "").strip()
     if not assignment_id.isdigit():
-        flash("РќРµ СѓРґР°Р»РѕСЃСЊ РїРѕРґС‚РІРµСЂРґРёС‚СЊ РІС‹РїРѕР»РЅРµРЅРёРµ")
+        flash("\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u043f\u043e\u0434\u0442\u0432\u0435\u0440\u0434\u0438\u0442\u044c \u0432\u044b\u043f\u043e\u043b\u043d\u0435\u043d\u0438\u0435")
         return redirect(url_for("approve_page"))
 
     conn = get_connection()
@@ -800,7 +800,7 @@ def approve_reject_page():
 
     assignment_id = request.form.get("assignment_id", "").strip()
     if not assignment_id.isdigit():
-        flash("РќРµ СѓРґР°Р»РѕСЃСЊ РѕС‚РєР»РѕРЅРёС‚СЊ РІС‹РїРѕР»РЅРµРЅРёРµ")
+        flash("\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u043e\u0442\u043a\u043b\u043e\u043d\u0438\u0442\u044c \u0432\u044b\u043f\u043e\u043b\u043d\u0435\u043d\u0438\u0435")
         return redirect(url_for("approve_page"))
 
     conn = get_connection()

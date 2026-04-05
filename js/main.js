@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {
+function initMainUi() {
     const menuCollapseElement = document.getElementById("mainMenuCollapse");
     const menuToggleButton = document.getElementById("menuToggleButton");
     const sourceSelect = document.getElementById("userSRC");
@@ -6,7 +6,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const submitButton = document.getElementById("transferSubmit");
     const stateBlock = document.getElementById("transferState");
 
-    if (menuCollapseElement && menuToggleButton) {
+    if (menuCollapseElement && menuToggleButton && !menuCollapseElement.dataset.uiBound) {
+        menuCollapseElement.dataset.uiBound = "true";
         const desktopMenuQuery = window.matchMedia("(min-width: 993px)");
         const menuLinks = menuCollapseElement.querySelectorAll(".nav-link");
         const setMenuState = function (isOpen) {
@@ -73,6 +74,11 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     if (sourceSelect) {
+        if (sourceSelect.dataset.uiBound === "true") {
+            return;
+        }
+        sourceSelect.dataset.uiBound = "true";
+
         const syncAdminBalance = function () {
             const selectedOption = sourceSelect.options[sourceSelect.selectedIndex];
             const balance = parseInt(selectedOption?.dataset.balance || "0", 10);
@@ -85,4 +91,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     applyBalance(parseInt(amountInput.max || "0", 10));
-});
+}
+
+window.initMainUi = initMainUi;
+document.addEventListener("DOMContentLoaded", initMainUi);
