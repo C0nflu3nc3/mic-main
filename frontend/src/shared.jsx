@@ -1,4 +1,4 @@
-export function formatDateTime(value) {
+п»їexport function formatDateTime(value) {
   if (!value) return "";
 
   const date = new Date(value);
@@ -73,15 +73,15 @@ export function Header({ user, activeSection }) {
 
   const isAdmin = Boolean(user.isadmin);
   const menuItems = [
-    { key: "home", href: "/home", label: "Главная" },
-    { key: "studios", href: "/studios", label: "Студии" },
-    { key: "history", href: "/history", label: "История и кодекс" },
-    { key: "bonus", href: "/bonus", label: "Бонусная система" },
-    { key: "bank", href: "/teams", label: "Банк" }
+    { key: "home", href: "/home", label: "\u0413\u043b\u0430\u0432\u043d\u0430\u044f" },
+    { key: "studios", href: "/studios", label: "\u0421\u0442\u0443\u0434\u0438\u0438" },
+    { key: "history", href: "/history", label: "\u0418\u0441\u0442\u043e\u0440\u0438\u044f \u0438 \u043a\u043e\u0434\u0435\u043a\u0441" },
+    { key: "bonus", href: "/bonus", label: "\u0411\u043e\u043d\u0443\u0441\u043d\u0430\u044f \u0441\u0438\u0441\u0442\u0435\u043c\u0430" },
+    { key: "bank", href: "/teams", label: "\u0411\u0430\u043d\u043a" }
   ];
 
   if (isAdmin) {
-    menuItems.push({ key: "approve", href: "/approve", label: "Подтверждение" });
+    menuItems.push({ key: "approve", href: "/approve", label: "\u041f\u043e\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043d\u0438\u0435" });
   }
 
   return (
@@ -96,7 +96,7 @@ export function Header({ user, activeSection }) {
               aria-expanded="false"
               aria-controls="mainMenuCollapse"
             >
-              Меню
+              {"\u041c\u0435\u043d\u044e"}
             </button>
           </div>
 
@@ -105,7 +105,7 @@ export function Header({ user, activeSection }) {
               <div className="user-status-panel">{user.view}</div>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="/logout">Выход</a>
+              <a className="nav-link" href="/logout">{"\u0412\u044b\u0445\u043e\u0434"}</a>
             </li>
           </ul>
         </div>
@@ -123,7 +123,7 @@ export function Header({ user, activeSection }) {
               </li>
             ))}
             <li className="nav-item menu-extra-item">
-              <a className="nav-link" href="/logout">Выход</a>
+              <a className="nav-link" href="/logout">{"\u0412\u044b\u0445\u043e\u0434"}</a>
             </li>
           </ul>
         </div>
