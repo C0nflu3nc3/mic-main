@@ -296,7 +296,7 @@ def favicon_old():
 def index():
     if session.get("user"):
         return redirect(url_for("home_page"))
-    return render_react_page("login", "РђРІС‚РѕСЂРёР·Р°С†РёСЏ")
+    return render_react_page("login", "Авторизация")
 
 
 @app.route("/signin", methods=["POST"])
@@ -324,7 +324,7 @@ def home_page():
     if redirect_response:
         return redirect_response
 
-    return render_react_page("home", "Р“Р»Р°РІРЅР°СЏ СЃС‚СЂР°РЅРёС†Р°", user=user, active_section="home")
+    return render_react_page("home", "Главная страница", user=user, active_section="home")
 
 
 @app.route("/leaderboard", methods=["GET"])
@@ -342,7 +342,7 @@ def leaderboard_page():
 
     return render_react_page(
         "leaderboard",
-        "РўР°Р±Р»РёС†Р° Р»РёРґРµСЂРѕРІ",
+        "Таблица лидеров",
         user=user,
         active_section="home",
         overall_leaderboard=overall_leaderboard,
@@ -365,7 +365,7 @@ def news_page():
 
     return render_react_page(
         "news",
-        "РќРѕРІРѕСЃС‚Рё",
+        "Новости",
         user=user,
         can_manage_news=can_manage_news(user),
         active_section="home",
@@ -543,7 +543,7 @@ def missions_page():
 
     return render_react_page(
         "missions",
-        "РњРёСЃСЃРёРё Р·Р° РІР°Р»СЋС‚Сѓ",
+        "Миссии за валюту",
         user=user,
         is_admin=is_admin,
         can_take_missions=can_take_missions(user),
@@ -683,7 +683,7 @@ def teams_page():
 
     return render_react_page(
         "teams",
-        "Р‘Р°РЅРє",
+        "Банк",
         user=user,
         is_admin=is_admin,
         active_section="bank",
@@ -703,11 +703,11 @@ def studios_page():
 
     return render_react_page(
         "placeholder",
-        "РЎС‚СѓРґРёРё",
+        "Студии",
         user=user,
         active_section="studios",
-        section_title="РЎС‚СѓРґРёРё",
-        section_description="Р—РґРµСЃСЊ СЂР°Р·РјРµС‰Р°РµС‚СЃСЏ РїРѕР»РЅРѕРµ РѕРїРёСЃР°РЅРёРµ СЃС‚СѓРґРёР№ СЃ РєР°СЂС‚РёРЅРєР°РјРё Рё СЂР°Р·Р±РёРІРєРѕР№ РїРѕ С‚РµРјР°С‚РёС‡РµСЃРєРёРј Р±Р»РѕРєР°Рј.",
+        section_title="Студии",
+        section_description="Здесь размещается полное описание студий с картинками и разбивкой по тематическим блокам.",
     )
 
 
@@ -719,11 +719,11 @@ def history_page():
 
     return render_react_page(
         "placeholder",
-        "РСЃС‚РѕСЂРёСЏ Рё РєРѕРґРµРєСЃ",
+        "История и кодекс",
         user=user,
         active_section="history",
-        section_title="РСЃС‚РѕСЂРёСЏ Рё РєРѕРґРµРєСЃ",
-        section_description="Р—РґРµСЃСЊ СЃРѕР±СЂР°РЅС‹ СЌРЅС†РёРєР»РѕРїРµРґРёСЏ РїСЂРѕРіСЂР°РјРјС‹, Р»РѕСЂ РёРјРїРµСЂРёРё Рё РёРЅС„РѕСЂРјР°С†РёСЏ Рѕ РіР»Р°РІРЅС‹С… РїРµСЂСЃРѕРЅР°Р¶Р°С….",
+        section_title="История и кодекс",
+        section_description="Здесь собраны энциклопедия программы, лор и информация о главных персонажах.",
     )
 
 
@@ -735,11 +735,11 @@ def bonus_page():
 
     return render_react_page(
         "placeholder",
-        "Р‘РѕРЅСѓСЃРЅР°СЏ СЃРёСЃС‚РµРјР°",
+        "Бонусная система",
         user=user,
         active_section="bonus",
-        section_title="Р‘РѕРЅСѓСЃРЅР°СЏ СЃРёСЃС‚РµРјР°",
-        section_description="Р—РґРµСЃСЊ СЃРѕР±СЂР°РЅС‹ РїСЂР°РІРёР»Р°, РёРіСЂС‹ Рё РІРѕР·РјРѕР¶РЅРѕСЃС‚Рё Р·Р°СЂР°Р±РѕС‚РєР° РІРЅСѓС‚СЂРё Р±РѕРЅСѓСЃРЅРѕР№ СЃРёСЃС‚РµРјС‹.",
+        section_title="Бонусная система",
+        section_description="Здесь собраны правила, игры и возможности заработка внутри бонусной системы.",
     )
 
 
@@ -759,7 +759,7 @@ def approve_page():
 
     return render_react_page(
         "approve",
-        "РџРѕРґС‚РІРµСЂР¶РґРµРЅРёРµ",
+        "Подтверждение",
         user=user,
         is_admin=True,
         active_section="approve",
