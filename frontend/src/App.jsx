@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 function formatDateTime(value) {
     if (!value) {
         return "";
@@ -771,6 +773,12 @@ function PlaceholderPage({ section_title, section_description }) {
 
 function AppLayout({ bootstrapData }) {
     const page = bootstrapData.page;
+
+    useEffect(() => {
+        if (typeof window.initMainUi === "function") {
+            window.initMainUi();
+        }
+    }, [page, bootstrapData?.user?.id]);
 
     const renderPage = () => {
         switch (page) {

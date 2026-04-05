@@ -774,6 +774,12 @@ function PlaceholderPage({ section_title, section_description }) {
 function AppLayout({ bootstrapData }) {
     const page = bootstrapData.page;
 
+    React.useEffect(() => {
+        if (typeof window.initMainUi === "function") {
+            window.initMainUi();
+        }
+    }, [page, bootstrapData?.user?.id]);
+
     const renderPage = () => {
         switch (page) {
             case "login":

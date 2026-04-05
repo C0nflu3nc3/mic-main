@@ -24,6 +24,7 @@
         window.__BOOTSTRAP__ = {{ bootstrap|tojson }};
     </script>
     <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/main.js"></script>
     {% if frontend_assets %}
     <script type="module" src="{{ url_for('static', filename=frontend_assets.js) }}"></script>
     {% else %}
@@ -32,6 +33,5 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script type="text/babel" src="/js/react-app.jsx"></script>
     {% endif %}
-    <script src="/js/main.js"></script>
 </body>
 </html>
