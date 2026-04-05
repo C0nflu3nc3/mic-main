@@ -123,7 +123,7 @@ def render_react_page(page, page_title, user=None, active_section=None, **page_d
     }
     bootstrap.update(serialize_for_react(page_data))
     return render_template(
-        "react-shell.html",
+        "react-shell.j2",
         bootstrap=bootstrap,
         page_title=page_title,
         frontend_assets=get_frontend_assets(),
