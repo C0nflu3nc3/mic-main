@@ -1,7 +1,9 @@
+import json
 import os
 import shutil
+from datetime import date, datetime
 
-from flask import Flask, flash, redirect, render_template, request, send_from_directory, session, url_for
+from flask import Flask, flash, get_flashed_messages, redirect, render_template, request, send_from_directory, session, url_for
 from werkzeug.utils import secure_filename
 
 from api.add_operation import create_transfer
@@ -72,6 +74,58 @@ def bootstrap_news_uploads():
 
 
 bootstrap_news_uploads()
+
+
+def serialize_for_react(value):
+    if isinstance(value, (datetime, date)):
+        return value.isoformat()
+    if isinstance(value, dict):
+        return {key: serialize_for_react(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [serialize_for_react(item) for item in value]
+    return value
+
+
+FRONTEND_MANIFEST_PATH = os.path.join(app.static_folder, "frontend", ".vite", "manifest.json")
+
+
+def get_frontend_assets():
+    if not os.path.exists(FRONTEND_MANIFEST_PATH):
+        return None
+
+    try:
+        with open(FRONTEND_MANIFEST_PATH, "r", encoding="utf-8") as manifest_file:
+            manifest = json.load(manifest_file)
+    except (OSError, json.JSONDecodeError):
+        return None
+
+    entry = manifest.get("index.html")
+    if entry is None:
+        entry = next((item for item in manifest.values() if item.get("isEntry")), None)
+    if entry is None:
+        return None
+
+    return {
+        "js": f"frontend/{entry['file']}",
+        "css": [f"frontend/{css_file}" for css_file in entry.get("css", [])],
+    }
+
+
+def render_react_page(page, page_title, user=None, active_section=None, **page_data):
+    bootstrap = {
+        "page": page,
+        "pageTitle": page_title,
+        "activeSection": active_section,
+        "user": serialize_for_react(user) if user else None,
+        "messages": get_flashed_messages(),
+    }
+    bootstrap.update(serialize_for_react(page_data))
+    return render_template(
+        "react-shell.html",
+        bootstrap=bootstrap,
+        page_title=page_title,
+        frontend_assets=get_frontend_assets(),
+    )
 
 
 def require_user():
@@ -159,12 +213,12 @@ def collect_news_media_files(uploaded_files):
 
         media_type = get_news_media_type(uploaded_file.filename)
         if media_type is None:
-            return None, "Разрешены только изображения png, jpg, jpeg, gif, webp и видео mp4, webm, ogg, mov, m4v"
+            return None, "Р Р°Р·СЂРµС€РµРЅС‹ С‚РѕР»СЊРєРѕ РёР·РѕР±СЂР°Р¶РµРЅРёСЏ png, jpg, jpeg, gif, webp Рё РІРёРґРµРѕ mp4, webm, ogg, mov, m4v"
 
         prepared_files.append((uploaded_file, media_type))
 
     if len(prepared_files) > 3:
-        return None, "Можно добавить не более 3 медиафайлов"
+        return None, "РњРѕР¶РЅРѕ РґРѕР±Р°РІРёС‚СЊ РЅРµ Р±РѕР»РµРµ 3 РјРµРґРёР°С„Р°Р№Р»РѕРІ"
 
     saved_media = []
     for sort_order, (uploaded_file, media_type) in enumerate(prepared_files):
@@ -174,7 +228,7 @@ def collect_news_media_files(uploaded_files):
             media_path = save_news_video(uploaded_file)
 
         if media_path is None:
-            return None, "Не удалось сохранить один из медиафайлов"
+            return None, "РќРµ СѓРґР°Р»РѕСЃСЊ СЃРѕС…СЂР°РЅРёС‚СЊ РѕРґРёРЅ РёР· РјРµРґРёР°С„Р°Р№Р»РѕРІ"
 
         saved_media.append(
             {
@@ -198,7 +252,7 @@ def build_updated_news_media(existing_media, removed_media_ids, new_media_items)
     ]
 
     if len(kept_media) + len(new_media_items) > 3:
-        return None, "Можно оставить не более 3 медиафайлов"
+        return None, "РњРѕР¶РЅРѕ РѕСЃС‚Р°РІРёС‚СЊ РЅРµ Р±РѕР»РµРµ 3 РјРµРґРёР°С„Р°Р№Р»РѕРІ"
 
     final_media = []
     for item in kept_media + new_media_items:
@@ -242,7 +296,7 @@ def favicon_old():
 def index():
     if session.get("user"):
         return redirect(url_for("home_page"))
-    return render_template("login.html")
+    return render_react_page("login", "РђРІС‚РѕСЂРёР·Р°С†РёСЏ")
 
 
 @app.route("/signin", methods=["POST"])
@@ -270,12 +324,7 @@ def home_page():
     if redirect_response:
         return redirect_response
 
-    return render_template(
-        "home.html",
-        user=user,
-        is_admin=bool(user["isadmin"]),
-        active_section="home",
-    )
+    return render_react_page("home", "Р“Р»Р°РІРЅР°СЏ СЃС‚СЂР°РЅРёС†Р°", user=user, active_section="home")
 
 
 @app.route("/leaderboard", methods=["GET"])
@@ -291,10 +340,10 @@ def leaderboard_page():
     finally:
         conn.close()
 
-    return render_template(
-        "leaderboard.html",
+    return render_react_page(
+        "leaderboard",
+        "РўР°Р±Р»РёС†Р° Р»РёРґРµСЂРѕРІ",
         user=user,
-        is_admin=bool(user["isadmin"]),
         active_section="home",
         overall_leaderboard=overall_leaderboard,
         duel_leaderboard=duel_leaderboard,
@@ -314,10 +363,10 @@ def news_page():
     finally:
         conn.close()
 
-    return render_template(
-        "news.html",
+    return render_react_page(
+        "news",
+        "РќРѕРІРѕСЃС‚Рё",
         user=user,
-        is_admin=bool(user["isadmin"]),
         can_manage_news=can_manage_news(user),
         active_section="home",
         news_items=news_items,
@@ -337,7 +386,7 @@ def add_news_page():
     media_files = request.files.getlist("media")
 
     if not title or not content:
-        flash("Р—Р°РїРѕР»РЅРёС‚Рµ Р·Р°РіРѕР»РѕРІРѕРє Рё С‚РµРєСЃС‚ РЅРѕРІРѕСЃС‚Рё")
+        flash("Р вЂ”Р В°Р С—Р С•Р В»Р Р…Р С‘РЎвЂљР Вµ Р В·Р В°Р С–Р С•Р В»Р С•Р Р†Р С•Р С” Р С‘ РЎвЂљР ВµР С”РЎРѓРЎвЂљ Р Р…Р С•Р Р†Р С•РЎРѓРЎвЂљР С‘")
         return redirect(url_for("news_page"))
 
     if not media_files:
@@ -361,19 +410,19 @@ def add_news_page():
     finally:
         conn.close()
 
-    flash("РќРѕРІРѕСЃС‚СЊ РґРѕР±Р°РІР»РµРЅР°")
+    flash("Р СњР С•Р Р†Р С•РЎРѓРЎвЂљРЎРЉ Р Т‘Р С•Р В±Р В°Р Р†Р В»Р ВµР Р…Р В°")
     return redirect(url_for("news_page"))
 
     image = request.files.get("image")
     video = request.files.get("video")
 
     if not title or not content:
-        flash("Заполните заголовок и текст новости")
+        flash("Р—Р°РїРѕР»РЅРёС‚Рµ Р·Р°РіРѕР»РѕРІРѕРє Рё С‚РµРєСЃС‚ РЅРѕРІРѕСЃС‚Рё")
         return redirect(url_for("news_page"))
 
     image_path = save_news_image(image)
     if image is not None and image.filename and image_path is None:
-        flash("Разрешены только изображения png, jpg, jpeg, gif, webp")
+        flash("Р Р°Р·СЂРµС€РµРЅС‹ С‚РѕР»СЊРєРѕ РёР·РѕР±СЂР°Р¶РµРЅРёСЏ png, jpg, jpeg, gif, webp")
         return redirect(url_for("news_page"))
 
     if video is not None and video.filename and not is_allowed_video(video.filename):
@@ -382,7 +431,7 @@ def add_news_page():
 
     video_path = save_news_video(video)
     if False and video is not None and video.filename and video_path is None:
-        flash("Р Р°Р·СЂРµС€РµРЅС‹ С‚РѕР»СЊРєРѕ РІРёРґРµРѕ mp4, webm, ogg, mov, m4v")
+        flash("Р В Р В°Р В·РЎР‚Р ВµРЎв‚¬Р ВµР Р…РЎвЂ№ РЎвЂљР С•Р В»РЎРЉР С”Р С• Р Р†Р С‘Р Т‘Р ВµР С• mp4, webm, ogg, mov, m4v")
         return redirect(url_for("news_page"))
 
     conn = get_connection()
@@ -392,7 +441,7 @@ def add_news_page():
     finally:
         conn.close()
 
-    flash("Новость добавлена")
+    flash("РќРѕРІРѕСЃС‚СЊ РґРѕР±Р°РІР»РµРЅР°")
     return redirect(url_for("news_page"))
 
 
@@ -411,7 +460,7 @@ def update_news_page():
     media_files = request.files.getlist("media")
 
     if not news_id.isdigit() or not title or not content:
-        flash("Не удалось обновить новость")
+        flash("РќРµ СѓРґР°Р»РѕСЃСЊ РѕР±РЅРѕРІРёС‚СЊ РЅРѕРІРѕСЃС‚СЊ")
         return redirect(url_for("news_page"))
 
     removed_media_ids = {
@@ -430,7 +479,7 @@ def update_news_page():
         ensure_news_media_columns(conn)
         news_item = get_news_for_update(conn, int(news_id))
         if news_item is None:
-            flash("Новость не найдена")
+            flash("РќРѕРІРѕСЃС‚СЊ РЅРµ РЅР°Р№РґРµРЅР°")
             return redirect(url_for("news_page"))
 
         final_media, final_media_error = build_updated_news_media(
@@ -446,7 +495,7 @@ def update_news_page():
     finally:
         conn.close()
 
-    flash("Новость обновлена")
+    flash("РќРѕРІРѕСЃС‚СЊ РѕР±РЅРѕРІР»РµРЅР°")
     return redirect(url_for("news_page"))
 
 
@@ -460,7 +509,7 @@ def add_news_comment_page():
     comment = request.form.get("comment", "").strip()
 
     if not news_id.isdigit() or not comment:
-        flash("Комментарий не добавлен")
+        flash("РљРѕРјРјРµРЅС‚Р°СЂРёР№ РЅРµ РґРѕР±Р°РІР»РµРЅ")
         return redirect(url_for("news_page"))
 
     conn = get_connection()
@@ -469,7 +518,7 @@ def add_news_comment_page():
     finally:
         conn.close()
 
-    flash("Комментарий добавлен" if ok else "Новость не найдена")
+    flash("РљРѕРјРјРµРЅС‚Р°СЂРёР№ РґРѕР±Р°РІР»РµРЅ" if ok else "РќРѕРІРѕСЃС‚СЊ РЅРµ РЅР°Р№РґРµРЅР°")
     return redirect(url_for("news_page"))
 
 
@@ -492,8 +541,9 @@ def missions_page():
     finally:
         conn.close()
 
-    return render_template(
-        "missions.html",
+    return render_react_page(
+        "missions",
+        "РњРёСЃСЃРёРё Р·Р° РІР°Р»СЋС‚Сѓ",
         user=user,
         is_admin=is_admin,
         can_take_missions=can_take_missions(user),
@@ -517,7 +567,7 @@ def add_mission_page():
     reward = request.form.get("reward", "").strip()
 
     if not title or not description or not reward.isdigit() or int(reward) <= 0:
-        flash("Введите корректные данные задания и награды")
+        flash("Р’РІРµРґРёС‚Рµ РєРѕСЂСЂРµРєС‚РЅС‹Рµ РґР°РЅРЅС‹Рµ Р·Р°РґР°РЅРёСЏ Рё РЅР°РіСЂР°РґС‹")
         return redirect(url_for("missions_page"))
 
     conn = get_connection()
@@ -526,7 +576,7 @@ def add_mission_page():
     finally:
         conn.close()
 
-    flash("Задание опубликовано")
+    flash("Р—Р°РґР°РЅРёРµ РѕРїСѓР±Р»РёРєРѕРІР°РЅРѕ")
     return redirect(url_for("missions_page"))
 
 
@@ -542,7 +592,7 @@ def accept_mission_page():
     current_team_id = user.get("team_id")
 
     if not mission_id.isdigit() or current_team_id is None:
-        flash("Не удалось принять задание")
+        flash("РќРµ СѓРґР°Р»РѕСЃСЊ РїСЂРёРЅСЏС‚СЊ Р·Р°РґР°РЅРёРµ")
         return redirect(url_for("missions_page"))
 
     conn = get_connection()
@@ -631,8 +681,9 @@ def teams_page():
     finally:
         conn.close()
 
-    return render_template(
-        "teams.html",
+    return render_react_page(
+        "teams",
+        "Р‘Р°РЅРє",
         user=user,
         is_admin=is_admin,
         active_section="bank",
@@ -650,13 +701,13 @@ def studios_page():
     if redirect_response:
         return redirect_response
 
-    return render_template(
-        "section-placeholder.html",
+    return render_react_page(
+        "placeholder",
+        "РЎС‚СѓРґРёРё",
         user=user,
-        is_admin=bool(user["isadmin"]),
         active_section="studios",
-        section_title="Студии",
-        section_description="Здесь размещается полное описание студий с картинками и разбивкой по тематическим блокам.",
+        section_title="РЎС‚СѓРґРёРё",
+        section_description="Р—РґРµСЃСЊ СЂР°Р·РјРµС‰Р°РµС‚СЃСЏ РїРѕР»РЅРѕРµ РѕРїРёСЃР°РЅРёРµ СЃС‚СѓРґРёР№ СЃ РєР°СЂС‚РёРЅРєР°РјРё Рё СЂР°Р·Р±РёРІРєРѕР№ РїРѕ С‚РµРјР°С‚РёС‡РµСЃРєРёРј Р±Р»РѕРєР°Рј.",
     )
 
 
@@ -666,13 +717,13 @@ def history_page():
     if redirect_response:
         return redirect_response
 
-    return render_template(
-        "section-placeholder.html",
+    return render_react_page(
+        "placeholder",
+        "РСЃС‚РѕСЂРёСЏ Рё РєРѕРґРµРєСЃ",
         user=user,
-        is_admin=bool(user["isadmin"]),
         active_section="history",
-        section_title="История и кодекс",
-        section_description="Здесь собраны энциклопедия программы, лор империи и информация о главных персонажах.",
+        section_title="РСЃС‚РѕСЂРёСЏ Рё РєРѕРґРµРєСЃ",
+        section_description="Р—РґРµСЃСЊ СЃРѕР±СЂР°РЅС‹ СЌРЅС†РёРєР»РѕРїРµРґРёСЏ РїСЂРѕРіСЂР°РјРјС‹, Р»РѕСЂ РёРјРїРµСЂРёРё Рё РёРЅС„РѕСЂРјР°С†РёСЏ Рѕ РіР»Р°РІРЅС‹С… РїРµСЂСЃРѕРЅР°Р¶Р°С….",
     )
 
 
@@ -682,13 +733,13 @@ def bonus_page():
     if redirect_response:
         return redirect_response
 
-    return render_template(
-        "section-placeholder.html",
+    return render_react_page(
+        "placeholder",
+        "Р‘РѕРЅСѓСЃРЅР°СЏ СЃРёСЃС‚РµРјР°",
         user=user,
-        is_admin=bool(user["isadmin"]),
         active_section="bonus",
-        section_title="Бонусная система",
-        section_description="Здесь собраны правила, игры и возможности заработка внутри бонусной системы.",
+        section_title="Р‘РѕРЅСѓСЃРЅР°СЏ СЃРёСЃС‚РµРјР°",
+        section_description="Р—РґРµСЃСЊ СЃРѕР±СЂР°РЅС‹ РїСЂР°РІРёР»Р°, РёРіСЂС‹ Рё РІРѕР·РјРѕР¶РЅРѕСЃС‚Рё Р·Р°СЂР°Р±РѕС‚РєР° РІРЅСѓС‚СЂРё Р±РѕРЅСѓСЃРЅРѕР№ СЃРёСЃС‚РµРјС‹.",
     )
 
 
@@ -706,8 +757,9 @@ def approve_page():
     finally:
         conn.close()
 
-    return render_template(
-        "approve.html",
+    return render_react_page(
+        "approve",
+        "РџРѕРґС‚РІРµСЂР¶РґРµРЅРёРµ",
         user=user,
         is_admin=True,
         active_section="approve",
@@ -725,7 +777,7 @@ def approve_confirm_page():
 
     assignment_id = request.form.get("assignment_id", "").strip()
     if not assignment_id.isdigit():
-        flash("Не удалось подтвердить выполнение")
+        flash("РќРµ СѓРґР°Р»РѕСЃСЊ РїРѕРґС‚РІРµСЂРґРёС‚СЊ РІС‹РїРѕР»РЅРµРЅРёРµ")
         return redirect(url_for("approve_page"))
 
     conn = get_connection()
@@ -748,7 +800,7 @@ def approve_reject_page():
 
     assignment_id = request.form.get("assignment_id", "").strip()
     if not assignment_id.isdigit():
-        flash("Не удалось отклонить выполнение")
+        flash("РќРµ СѓРґР°Р»РѕСЃСЊ РѕС‚РєР»РѕРЅРёС‚СЊ РІС‹РїРѕР»РЅРµРЅРёРµ")
         return redirect(url_for("approve_page"))
 
     conn = get_connection()

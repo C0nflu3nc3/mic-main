@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title }}</title>
+
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prata&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    {% if frontend_assets %}
+        {% for css_file in frontend_assets.css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename=css_file) }}">
+        {% endfor %}
+    {% endif %}
+</head>
+<body>
+    <div id="app"></div>
+
+    <script>
+        window.__BOOTSTRAP__ = {{ bootstrap|tojson }};
+    </script>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    {% if frontend_assets %}
+    <script type="module" src="{{ url_for('static', filename=frontend_assets.js) }}"></script>
+    {% else %}
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script type="text/babel" src="/js/react-app.jsx"></script>
+    {% endif %}
+    <script src="/js/main.js"></script>
+</body>
+</html>

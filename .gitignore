@@ -4,3 +4,6 @@
 !.env.example
 seed.private.sql
 docker/mysql-dump/seed.private.sql
+frontend/node_modules
+frontend/dist
+static/frontend

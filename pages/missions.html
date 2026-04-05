@@ -13,7 +13,7 @@
 
     <div class="placeholder-hero">
         <h1>Миссии за валюту</h1>
-        <p>Отряд может взять до 3 заданий одновременно. На одно задание могут откликнуться не более 3 отрядов.</p>
+        <p>Легион может взять до 3 заданий одновременно. На одно задание могут откликнуться не более 3 Легионов.</p>
     </div>
 
     {% if is_admin %}
@@ -38,7 +38,7 @@
     {% else %}
     <div class="mission-limit-note">
         {% if can_take_missions %}
-        Активных заданий у отряда: {{ current_team_mission_count }} / 3
+        Активных заданий у Легиона: {{ current_team_mission_count }} / 3
         {% else %}
         Журналисты могут только просматривать задания и не могут их принимать.
         {% endif %}
@@ -56,7 +56,7 @@
             <p class="news-content">{{ mission.description }}</p>
             <div class="mission-info">
                 <span>Награда: {{ mission.reward }} GRZ</span>
-                <span>Откликнулось отрядов: {{ mission.accepted_count }} / 3</span>
+                <span>Откликнулось Легионов: {{ mission.accepted_count }} / 3</span>
             </div>
             {% if mission.accepted_teams %}
             <div class="mission-teams">
@@ -74,16 +74,16 @@
             {% elif can_take_missions %}
                 {% if mission.user_has_taken %}
                 <div class="mission-actions">
-                    <div class="mission-status-note">Задание уже выбрано вашим легионом</div>
+                    <div class="mission-status-note">Задание уже выбрано вашим Легионом</div>
                     <form method="POST" action="/missions/cancel">
                         <input type="hidden" name="mission_id" value="{{ mission.id }}">
                         <button type="submit" class="btn btn-outline-light">Отказаться от задания</button>
                     </form>
                 </div>
                 {% elif mission.accepted_count >= 3 %}
-                <button type="button" class="btn btn-secondary" disabled>Лимит отрядов достигнут</button>
+                <button type="button" class="btn btn-secondary" disabled>Лимит Легионов достигнут</button>
                 {% elif current_team_mission_count >= 3 %}
-                <button type="button" class="btn btn-secondary" disabled>Отряд уже взял 3 задания</button>
+                <button type="button" class="btn btn-secondary" disabled>Легион уже взял 3 задания</button>
                 {% else %}
                 <div class="mission-actions">
                     <form method="POST" action="/missions/accept">
