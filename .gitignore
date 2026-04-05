@@ -2,3 +2,5 @@
 .env
 .env.*
 !.env.example
+seed.private.sql
+docker/mysql-dump/seed.private.sql
