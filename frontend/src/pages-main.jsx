@@ -1,4 +1,4 @@
-import { Hero, LoginMessages, formatDateTime, uploadedPath } from "./shared";
+п»їimport { Hero, LoginMessages, formatDateTime, uploadedPath } from "./shared";
 
 export function LoginPage({ messages }) {
   return (
@@ -12,21 +12,21 @@ export function LoginPage({ messages }) {
 
         <div className="col-11 col-sm-10 col-md-7 col-lg-4">
           <form action="/signin" method="post">
-            <h1 className="text-center">Авторизация</h1>
+            <h1 className="text-center">РђРІС‚РѕСЂРёР·Р°С†РёСЏ</h1>
 
             <div className="form-outline mb-4 text-start">
-              <label className="form-label" htmlFor="login">Логин</label>
-              <input type="text" name="login" id="login" className="form-control" placeholder="Введите свой логин" />
+              <label className="form-label" htmlFor="login">Р›РѕРіРёРЅ</label>
+              <input type="text" name="login" id="login" className="form-control" placeholder="Р’РІРµРґРёС‚Рµ СЃРІРѕР№ Р»РѕРіРёРЅ" />
             </div>
 
             <div className="form-outline mb-4 text-start">
-              <label className="form-label" htmlFor="password">Пароль</label>
-              <input type="password" name="password" id="password" className="form-control" placeholder="Введите пароль" />
+              <label className="form-label" htmlFor="password">РџР°СЂРѕР»СЊ</label>
+              <input type="password" name="password" id="password" className="form-control" placeholder="Р’РІРµРґРёС‚Рµ РїР°СЂРѕР»СЊ" />
             </div>
 
             <LoginMessages messages={messages} />
 
-            <button type="submit" className="btn btn-primary w-100 mb-4">Войти</button>
+            <button type="submit" className="btn btn-primary w-100 mb-4">Р’РѕР№С‚Рё</button>
           </form>
         </div>
       </div>
@@ -36,14 +36,14 @@ export function LoginPage({ messages }) {
 
 export function HomePage() {
   const cards = [
-    { href: "/leaderboard", title: "Таблица лидеров", text: "Здесь отображаются две таблицы: дуэльный зачет и общий рейтинг легионов." },
-    { href: "/news", title: "Новости", text: "Здесь публикуются новости с изображениями и видео, а пользователи добавляют комментарии." },
-    { href: "/missions", title: "Миссии за валюту", text: "Здесь легионы выбирают задания, видят лимиты по контрактам и отправляют выполнение на подтверждение." }
+    { href: "/leaderboard", title: "РўР°Р±Р»РёС†Р° Р»РёРґРµСЂРѕРІ", text: "Р—РґРµСЃСЊ РѕС‚РѕР±СЂР°Р¶Р°СЋС‚СЃСЏ РґРІРµ С‚Р°Р±Р»РёС†С‹: РґСѓСЌР»СЊРЅС‹Р№ Р·Р°С‡РµС‚ Рё РѕР±С‰РёР№ СЂРµР№С‚РёРЅРі Р»РµРіРёРѕРЅРѕРІ." },
+    { href: "/news", title: "РќРѕРІРѕСЃС‚Рё", text: "Р—РґРµСЃСЊ РїСѓР±Р»РёРєСѓСЋС‚СЃСЏ РЅРѕРІРѕСЃС‚Рё СЃ РёР·РѕР±СЂР°Р¶РµРЅРёСЏРјРё Рё РІРёРґРµРѕ, Р° РїРѕР»СЊР·РѕРІР°С‚РµР»Рё РґРѕР±Р°РІР»СЏСЋС‚ РєРѕРјРјРµРЅС‚Р°СЂРёРё." },
+    { href: "/missions", title: "РњРёСЃСЃРёРё Р·Р° РІР°Р»СЋС‚Сѓ", text: "Р—РґРµСЃСЊ Р»РµРіРёРѕРЅС‹ РІС‹Р±РёСЂР°СЋС‚ Р·Р°РґР°РЅРёСЏ, РІРёРґСЏС‚ Р»РёРјРёС‚С‹ РїРѕ РєРѕРЅС‚СЂР°РєС‚Р°Рј Рё РѕС‚РїСЂР°РІР»СЏСЋС‚ РІС‹РїРѕР»РЅРµРЅРёРµ РЅР° РїРѕРґС‚РІРµСЂР¶РґРµРЅРёРµ." }
   ];
 
   return (
     <div className="section-page">
-      <Hero title="Главная страница" description="Здесь отображаются основные разделы системы: таблица лидеров, новости и миссии за валюту." />
+      <Hero title="Р“Р»Р°РІРЅР°СЏ СЃС‚СЂР°РЅРёС†Р°" description="Р—РґРµСЃСЊ РѕС‚РѕР±СЂР°Р¶Р°СЋС‚СЃСЏ РѕСЃРЅРѕРІРЅС‹Рµ СЂР°Р·РґРµР»С‹ СЃРёСЃС‚РµРјС‹: С‚Р°Р±Р»РёС†Р° Р»РёРґРµСЂРѕРІ, РЅРѕРІРѕСЃС‚Рё Рё РјРёСЃСЃРёРё Р·Р° РІР°Р»СЋС‚Сѓ." />
       <div className="placeholder-grid">
         {cards.map((card) => (
           <section className="placeholder-card" key={card.href}>
@@ -64,7 +64,7 @@ function LeaderboardTable({ title, rows }) {
         <div className="table-responsive">
           <table className="table elegant-table">
             <thead>
-              <tr><th>ЛЕГИОН</th><th>Очки</th></tr>
+              <tr><th>Р›Р•Р“РРћРќ</th><th>РћС‡РєРё</th></tr>
             </thead>
             <tbody>
               {rows.map((row, index) => (
@@ -81,10 +81,10 @@ function LeaderboardTable({ title, rows }) {
 export function LeaderboardPage({ overall_leaderboard = [], duel_leaderboard = [] }) {
   return (
     <div className="section-page leaderboard-page">
-      <Hero title="Таблица лидеров" description="Здесь отображаются отдельные таблицы общего рейтинга и дуэльных очков." extraClass="leaderboard-hero" />
+      <Hero title="РўР°Р±Р»РёС†Р° Р»РёРґРµСЂРѕРІ" description="Р—РґРµСЃСЊ РѕС‚РѕР±СЂР°Р¶Р°СЋС‚СЃСЏ РѕС‚РґРµР»СЊРЅС‹Рµ С‚Р°Р±Р»РёС†С‹ РѕР±С‰РµРіРѕ СЂРµР№С‚РёРЅРіР° Рё РґСѓСЌР»СЊРЅС‹С… РѕС‡РєРѕРІ." extraClass="leaderboard-hero" />
       <div className="leaderboard-grid">
-        <LeaderboardTable title="Очки влияния" rows={overall_leaderboard} />
-        <LeaderboardTable title="Турнирные очки" rows={duel_leaderboard} />
+        <LeaderboardTable title="РћС‡РєРё РІР»РёСЏРЅРёСЏ" rows={overall_leaderboard} />
+        <LeaderboardTable title="РўСѓСЂРЅРёСЂРЅС‹Рµ РѕС‡РєРё" rows={duel_leaderboard} />
       </div>
     </div>
   );
@@ -98,7 +98,7 @@ function NewsMedia({ media, title }) {
       {media.map((item, index) => item.media_type === "video" ? (
         <video className="news-video" controls preload="metadata" key={`${item.media_path}-${index}`}>
           <source src={uploadedPath(item.media_path)} />
-          Ваш браузер не поддерживает встроенное видео.
+          Р’Р°С€ Р±СЂР°СѓР·РµСЂ РЅРµ РїРѕРґРґРµСЂР¶РёРІР°РµС‚ РІСЃС‚СЂРѕРµРЅРЅРѕРµ РІРёРґРµРѕ.
         </video>
       ) : (
         <img className="news-image" src={uploadedPath(item.media_path)} alt={title} key={`${item.media_path}-${index}`} />
@@ -110,20 +110,20 @@ function NewsMedia({ media, title }) {
 function NewsEditBlock({ item }) {
   return (
     <details className="news-edit-block news-edit-action">
-      <summary className="news-edit-summary">Редактировать новость</summary>
+      <summary className="news-edit-summary">Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ РЅРѕРІРѕСЃС‚СЊ</summary>
       <form method="POST" action="/news/update" encType="multipart/form-data" className="news-edit-form">
         <input type="hidden" name="news_id" value={item.id} />
         <div className="mb-3">
-          <label className="form-label" htmlFor={`edit-title-${item.id}`}>Заголовок</label>
+          <label className="form-label" htmlFor={`edit-title-${item.id}`}>Р—Р°РіРѕР»РѕРІРѕРє</label>
           <input className="form-control" id={`edit-title-${item.id}`} name="title" type="text" defaultValue={item.title} required />
         </div>
         <div className="mb-3">
-          <label className="form-label" htmlFor={`edit-content-${item.id}`}>Текст новости</label>
+          <label className="form-label" htmlFor={`edit-content-${item.id}`}>РўРµРєСЃС‚ РЅРѕРІРѕСЃС‚Рё</label>
           <textarea className="form-control" id={`edit-content-${item.id}`} name="content" rows="5" defaultValue={item.content} required />
         </div>
         {item.media && item.media.length ? (
           <div className="mb-3">
-            <div className="form-label">Текущие медиа</div>
+            <div className="form-label">РўРµРєСѓС‰РёРµ РјРµРґРёР°</div>
             <div className="news-edit-existing-media">
               {item.media.map((media, index) => (
                 <label className="news-edit-media-item" key={`${media.media_path}-${index}`}>
@@ -132,36 +132,80 @@ function NewsEditBlock({ item }) {
                   ) : (
                     <img className="news-edit-media-preview" src={uploadedPath(media.media_path)} alt={item.title} />
                   )}
-                  <span className="news-edit-media-meta">{media.media_type === "video" ? "Видео" : "Изображение"}</span>
-                  <span className="news-edit-remove"><input type="checkbox" name="remove_media_ids" value={media.id} /><span>Убрать из новости</span></span>
+                  <span className="news-edit-media-meta">{media.media_type === "video" ? "Р’РёРґРµРѕ" : "РР·РѕР±СЂР°Р¶РµРЅРёРµ"}</span>
+                  <span className="news-edit-remove"><input type="checkbox" name="remove_media_ids" value={media.id} /><span>РЈР±СЂР°С‚СЊ РёР· РЅРѕРІРѕСЃС‚Рё</span></span>
                 </label>
               ))}
             </div>
           </div>
         ) : null}
         <div className="mb-3">
-          <label className="form-label" htmlFor={`edit-media-${item.id}`}>Добавить медиа</label>
+          <label className="form-label" htmlFor={`edit-media-${item.id}`}>Р”РѕР±Р°РІРёС‚СЊ РјРµРґРёР°</label>
           <input className="form-control" id={`edit-media-${item.id}`} name="media" type="file" accept=".png,.jpg,.jpeg,.gif,.webp,.mp4,.webm,.ogg,.mov,.m4v" multiple />
-          <div className="form-text text-light">Всего в новости можно оставить до 3 файлов.</div>
+          <div className="form-text text-light">Р’СЃРµРіРѕ РІ РЅРѕРІРѕСЃС‚Рё РјРѕР¶РЅРѕ РѕСЃС‚Р°РІРёС‚СЊ РґРѕ 3 С„Р°Р№Р»РѕРІ.</div>
         </div>
-        <button type="submit" className="btn btn-primary">Сохранить изменения</button>
+        <button type="submit" className="btn btn-primary">РЎРѕС…СЂР°РЅРёС‚СЊ РёР·РјРµРЅРµРЅРёСЏ</button>
       </form>
     </details>
   );
 }
 
-export function NewsPage({ news_items = [], can_manage_news = false }) {
+function NewsCommentItem({ comment, newsId, currentUserId, canManageNews }) {
+  const canDelete = canManageNews || Number(comment.user_id) === Number(currentUserId);
+
+  return (
+    <div className="news-comment">
+      <div className="news-comment-meta">
+        <strong>{comment.author_name}</strong>
+        <span>{formatDateTime(comment.created_at)}</span>
+      </div>
+      <p>{comment.comment}</p>
+      <div className="news-comment-actions">
+        <details className="news-reply-block">
+          <summary className="news-reply-summary">РћС‚РІРµС‚РёС‚СЊ</summary>
+          <form method="POST" action="/news/comment" className="news-reply-form">
+            <input type="hidden" name="news_id" value={newsId} />
+            <input type="hidden" name="parent_comment_id" value={comment.id} />
+            <textarea className="form-control mb-2" name="comment" rows="3" placeholder="РќР°РїРёС€РёС‚Рµ РѕС‚РІРµС‚" required />
+            <button type="submit" className="btn btn-outline-light">РћС‚РїСЂР°РІРёС‚СЊ РѕС‚РІРµС‚</button>
+          </form>
+        </details>
+        {canDelete ? (
+          <form method="POST" action="/news/comment/delete" className="news-delete-comment-form">
+            <input type="hidden" name="comment_id" value={comment.id} />
+            <button type="submit" className="btn btn-outline-light">РЈРґР°Р»РёС‚СЊ</button>
+          </form>
+        ) : null}
+      </div>
+      {comment.replies && comment.replies.length ? (
+        <div className="news-comment-replies">
+          {comment.replies.map((reply) => (
+            <NewsCommentItem
+              key={reply.id}
+              comment={reply}
+              newsId={newsId}
+              currentUserId={currentUserId}
+              canManageNews={canManageNews}
+            />
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+export function NewsPage({ news_items = [], can_manage_news = false, user = null }) {
   return (
     <div className="section-page">
-      <Hero title="Новости" description="Здесь публикуются новости проекта, изображения, видео и комментарии пользователей." />
+      <Hero title="РќРѕРІРѕСЃС‚Рё" description="Р—РґРµСЃСЊ РїСѓР±Р»РёРєСѓСЋС‚СЃСЏ РЅРѕРІРѕСЃС‚Рё РїСЂРѕРµРєС‚Р°, РёР·РѕР±СЂР°Р¶РµРЅРёСЏ, РІРёРґРµРѕ Рё РєРѕРјРјРµРЅС‚Р°СЂРёРё РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№." />
       {can_manage_news ? (
         <section className="placeholder-card news-form-card">
-          <h3>Добавить новость</h3>
+          <h3>Р”РѕР±Р°РІРёС‚СЊ РЅРѕРІРѕСЃС‚СЊ</h3>
           <form method="POST" action="/news/add" encType="multipart/form-data">
-            <div className="mb-3"><label className="form-label" htmlFor="title">Заголовок</label><input className="form-control" id="title" name="title" type="text" required /></div>
-            <div className="mb-3"><label className="form-label" htmlFor="content">Текст новости</label><textarea className="form-control" id="content" name="content" rows="5" required /></div>
-            <div className="mb-3"><label className="form-label" htmlFor="media">Медиафайлы</label><input className="form-control" id="media" name="media" type="file" accept=".png,.jpg,.jpeg,.gif,.webp,.mp4,.webm,.ogg,.mov,.m4v" multiple /><div className="form-text text-light">До 3 файлов: изображения или видео.</div></div>
-            <button type="submit" className="btn btn-primary">Опубликовать</button>
+            <div className="mb-3"><label className="form-label" htmlFor="title">Р—Р°РіРѕР»РѕРІРѕРє</label><input className="form-control" id="title" name="title" type="text" required /></div>
+            <div className="mb-3"><label className="form-label" htmlFor="content">РўРµРєСЃС‚ РЅРѕРІРѕСЃС‚Рё</label><textarea className="form-control" id="content" name="content" rows="5" required /></div>
+            <div className="mb-3"><label className="form-label" htmlFor="media">РњРµРґРёР°С„Р°Р№Р»С‹</label><input className="form-control" id="media" name="media" type="file" accept=".png,.jpg,.jpeg,.gif,.webp,.mp4,.webm,.ogg,.mov,.m4v" multiple /><div className="form-text text-light">Р”Рѕ 3 С„Р°Р№Р»РѕРІ: РёР·РѕР±СЂР°Р¶РµРЅРёСЏ РёР»Рё РІРёРґРµРѕ.</div></div>
+            <button type="submit" className="btn btn-primary">РћРїСѓР±Р»РёРєРѕРІР°С‚СЊ</button>
           </form>
         </section>
       ) : null}
@@ -173,22 +217,22 @@ export function NewsPage({ news_items = [], can_manage_news = false }) {
             <NewsMedia media={item.media} title={item.title} />
             <p className="news-content">{item.content}</p>
             <div className="news-comments">
-              <h4>Комментарии</h4>
+              <h4>РљРѕРјРјРµРЅС‚Р°СЂРёРё</h4>
               {item.comments && item.comments.length ? item.comments.map((comment) => (
-                <div className="news-comment" key={comment.id}><div className="news-comment-meta"><strong>{comment.author_name}</strong><span>{formatDateTime(comment.created_at)}</span></div><p>{comment.comment}</p></div>
-              )) : <p className="news-empty">Комментариев пока нет.</p>}
+                <NewsCommentItem key={comment.id} comment={comment} newsId={item.id} currentUserId={user?.id} canManageNews={can_manage_news} />
+              )) : <p className="news-empty">РљРѕРјРјРµРЅС‚Р°СЂРёРµРІ РїРѕРєР° РЅРµС‚.</p>}
               <form method="POST" action="/news/comment" className="news-comment-form" id={`news-comment-form-${item.id}`}>
                 <input type="hidden" name="news_id" value={item.id} />
-                <textarea className="form-control mb-2" name="comment" rows="3" placeholder="Напишите комментарий" required />
+                <textarea className="form-control mb-2" name="comment" rows="3" placeholder="РќР°РїРёС€РёС‚Рµ РєРѕРјРјРµРЅС‚Р°СЂРёР№" required />
               </form>
               <div className="news-card-actions">
-                <button type="submit" form={`news-comment-form-${item.id}`} className="btn btn-outline-light">Отправить комментарий</button>
+                <button type="submit" form={`news-comment-form-${item.id}`} className="btn btn-outline-light">РћС‚РїСЂР°РІРёС‚СЊ РєРѕРјРјРµРЅС‚Р°СЂРёР№</button>
                 {can_manage_news ? <NewsEditBlock item={item} /> : null}
               </div>
             </div>
           </article>
         ))}
-        {!news_items.length ? <section className="placeholder-card"><h3>Новостей пока нет</h3><p>Опубликованные новости отображаются здесь.</p></section> : null}
+        {!news_items.length ? <section className="placeholder-card"><h3>РќРѕРІРѕСЃС‚РµР№ РїРѕРєР° РЅРµС‚</h3><p>РћРїСѓР±Р»РёРєРѕРІР°РЅРЅС‹Рµ РЅРѕРІРѕСЃС‚Рё РѕС‚РѕР±СЂР°Р¶Р°СЋС‚СЃСЏ Р·РґРµСЃСЊ.</p></section> : null}
       </div>
     </div>
   );
