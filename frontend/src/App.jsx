@@ -363,7 +363,51 @@ function NewsEditBlock({ item }) {
     );
 }
 
-function NewsPage({ news_items = [], can_manage_news = false }) {
+function NewsCommentItem({ comment, newsId, currentUserId, canManageNews }) {
+    const canDelete = canManageNews || Number(comment.user_id) === Number(currentUserId);
+
+    return (
+        <div className="news-comment">
+            <div className="news-comment-meta">
+                <strong>{comment.author_name}</strong>
+                <span>{formatDateTime(comment.created_at)}</span>
+            </div>
+            <p>{comment.comment}</p>
+            <div className="news-comment-actions">
+                <details className="news-reply-block">
+                    <summary className="news-reply-summary">{"\u041e\u0442\u0432\u0435\u0442\u0438\u0442\u044c"}</summary>
+                    <form method="POST" action="/news/comment" className="news-reply-form">
+                        <input type="hidden" name="news_id" value={newsId} />
+                        <input type="hidden" name="parent_comment_id" value={comment.id} />
+                        <textarea className="form-control mb-2" name="comment" rows="3" placeholder={"\u041d\u0430\u043f\u0438\u0448\u0438\u0442\u0435 \u043e\u0442\u0432\u0435\u0442"} required />
+                        <button type="submit" className="btn btn-outline-light">{"\u041e\u0442\u043f\u0440\u0430\u0432\u0438\u0442\u044c \u043e\u0442\u0432\u0435\u0442"}</button>
+                    </form>
+                </details>
+                {canDelete ? (
+                    <form method="POST" action="/news/comment/delete" className="news-delete-comment-form">
+                        <input type="hidden" name="comment_id" value={comment.id} />
+                        <button type="submit" className="btn btn-outline-light">{"\u0423\u0434\u0430\u043b\u0438\u0442\u044c"}</button>
+                    </form>
+                ) : null}
+            </div>
+            {comment.replies && comment.replies.length ? (
+                <div className="news-comment-replies">
+                    {comment.replies.map((reply) => (
+                        <NewsCommentItem
+                            key={reply.id}
+                            comment={reply}
+                            newsId={newsId}
+                            currentUserId={currentUserId}
+                            canManageNews={canManageNews}
+                        />
+                    ))}
+                </div>
+            ) : null}
+        </div>
+    );
+}
+
+function NewsPage({ news_items = [], can_manage_news = false, user = null }) {
     return (
         <div className="section-page">
             <Hero
@@ -407,14 +451,14 @@ function NewsPage({ news_items = [], can_manage_news = false }) {
                         <div className="news-comments">
                             <h4>Комментарии</h4>
                             {item.comments && item.comments.length ? item.comments.map((comment) => (
-                                <div className="news-comment" key={comment.id}>
-                                    <div className="news-comment-meta">
-                                        <strong>{comment.author_name}</strong>
-                                        <span>{formatDateTime(comment.created_at)}</span>
-                                    </div>
-                                    <p>{comment.comment}</p>
-                                </div>
-                            )) : <p className="news-empty">Комментариев пока нет.</p>}
+                                <NewsCommentItem
+                                    key={comment.id}
+                                    comment={comment}
+                                    newsId={item.id}
+                                    currentUserId={user?.id}
+                                    canManageNews={can_manage_news}
+                                />
+                            )) : <p className="news-empty">{"\u041a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u0435\u0432 \u043f\u043e\u043a\u0430 \u043d\u0435\u0442."}</p>}
 
                             <form method="POST" action="/news/comment" className="news-comment-form" id={`news-comment-form-${item.id}`}>
                                 <input type="hidden" name="news_id" value={item.id} />

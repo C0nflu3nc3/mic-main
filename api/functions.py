@@ -78,6 +78,8 @@ def get_news(conn):
             SELECT
                 News_comment.id,
                 News_comment.news_id,
+                News_comment.user_id,
+                News_comment.parent_comment_id,
                 News_comment.comment,
                 News_comment.created_at,
                 users.login AS author_name
@@ -89,8 +91,22 @@ def get_news(conn):
         comments = cursor.fetchall()
 
     comments_by_news = {}
+    comments_by_id = {}
     for comment in comments:
-        comments_by_news.setdefault(int(comment["news_id"]), []).append(comment)
+        comment["replies"] = []
+        comment["user_id"] = int(comment["user_id"])
+        comment["parent_comment_id"] = (
+            int(comment["parent_comment_id"]) if comment.get("parent_comment_id") is not None else None
+        )
+        comments_by_id[int(comment["id"])] = comment
+
+    for comment in comments:
+        news_id = int(comment["news_id"])
+        parent_comment_id = comment.get("parent_comment_id")
+        if parent_comment_id and parent_comment_id in comments_by_id:
+            comments_by_id[parent_comment_id]["replies"].append(comment)
+        else:
+            comments_by_news.setdefault(news_id, []).append(comment)
 
     media_by_news = {}
     for media in media_rows:
@@ -203,6 +219,32 @@ def ensure_news_media_columns(conn):
         conn.commit()
 
 
+def ensure_news_comment_columns(conn):
+    schema_changed = False
+    with conn.cursor() as cursor:
+        cursor.execute("SHOW COLUMNS FROM News_comment LIKE 'parent_comment_id'")
+        if cursor.fetchone() is None:
+            cursor.execute(
+                """
+                ALTER TABLE News_comment
+                ADD COLUMN parent_comment_id int DEFAULT NULL AFTER user_id
+                """
+            )
+            schema_changed = True
+
+        cursor.execute("SHOW INDEX FROM News_comment WHERE Key_name = 'idx_news_comment_parent'")
+        if cursor.fetchone() is None:
+            cursor.execute(
+                """
+                ALTER TABLE News_comment
+                ADD INDEX idx_news_comment_parent (parent_comment_id)
+                """
+            )
+            schema_changed = True
+    if schema_changed:
+        conn.commit()
+
+
 def add_news(conn, user_id, title, content, image_path, video_path, media_items=None):
     with conn.cursor() as cursor:
         sql = """
@@ -295,20 +337,56 @@ def update_news(conn, news_id, title, content, media_items):
     return True
 
 
-def add_news_comment(conn, news_id, user_id, comment):
+def add_news_comment(conn, news_id, user_id, comment, parent_comment_id=None):
     with conn.cursor() as cursor:
         check_sql = "SELECT id FROM News WHERE id = %s LIMIT 1"
         cursor.execute(check_sql, (news_id,))
         if cursor.fetchone() is None:
             return False
 
+        if parent_comment_id is not None:
+            parent_sql = """
+                SELECT id
+                FROM News_comment
+                WHERE id = %s AND news_id = %s
+                LIMIT 1
+            """
+            cursor.execute(parent_sql, (parent_comment_id, news_id))
+            if cursor.fetchone() is None:
+                return False
+
         sql = """
-            INSERT INTO News_comment (news_id, user_id, comment, created_at)
-            VALUES (%s, %s, %s, NOW())
+            INSERT INTO News_comment (news_id, user_id, parent_comment_id, comment, created_at)
+            VALUES (%s, %s, %s, %s, NOW())
         """
-        cursor.execute(sql, (news_id, user_id, comment))
+        cursor.execute(sql, (news_id, user_id, parent_comment_id, comment))
     conn.commit()
     return True
+
+
+def delete_news_comment(conn, comment_id, current_user_id, can_manage_all=False):
+    with conn.cursor() as cursor:
+        select_sql = """
+            SELECT id, user_id
+            FROM News_comment
+            WHERE id = %s
+            LIMIT 1
+        """
+        cursor.execute(select_sql, (comment_id,))
+        comment_row = cursor.fetchone()
+        if comment_row is None:
+            return False, "Комментарий не найден"
+
+        if not can_manage_all and int(comment_row["user_id"]) != int(current_user_id):
+            return False, "Недостаточно прав для удаления комментария"
+
+        delete_sql = """
+            DELETE FROM News_comment
+            WHERE id = %s OR parent_comment_id = %s
+        """
+        cursor.execute(delete_sql, (comment_id, comment_id))
+    conn.commit()
+    return True, "Комментарий удалён"
 
 
 def create_mission(conn, title, description, reward, user_id):

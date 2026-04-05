@@ -12,6 +12,7 @@ from api.functions import (
     add_news_comment,
     accept_mission,
     approve_mission,
+    delete_news_comment,
     cancel_mission,
     create_mission,
     delete_mission,
@@ -25,6 +26,7 @@ from api.functions import (
     get_plt,
     get_scoreboard,
     get_teams_for_select,
+    ensure_news_comment_columns,
     ensure_news_media_columns,
     reject_mission,
     update_news,
@@ -358,6 +360,7 @@ def news_page():
 
     conn = get_connection()
     try:
+        ensure_news_comment_columns(conn)
         ensure_news_media_columns(conn)
         news_items = get_news(conn)
     finally:
@@ -507,18 +510,59 @@ def add_news_comment_page():
 
     news_id = request.form.get("news_id", "").strip()
     comment = request.form.get("comment", "").strip()
+    parent_comment_id = request.form.get("parent_comment_id", "").strip()
 
     if not news_id.isdigit() or not comment:
         flash("\u041a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u0439 \u043d\u0435 \u0434\u043e\u0431\u0430\u0432\u043b\u0435\u043d")
         return redirect(url_for("news_page"))
 
+    parent_comment_id_value = int(parent_comment_id) if parent_comment_id.isdigit() else None
+
     conn = get_connection()
     try:
-        ok = add_news_comment(conn, int(news_id), int(user["id"]), comment)
+        ensure_news_comment_columns(conn)
+        ok = add_news_comment(
+            conn,
+            int(news_id),
+            int(user["id"]),
+            comment,
+            parent_comment_id_value,
+        )
     finally:
         conn.close()
 
-    flash("\u041a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u0439 \u0434\u043e\u0431\u0430\u0432\u043b\u0435\u043d" if ok else "\u041d\u043e\u0432\u043e\u0441\u0442\u044c \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u0430")
+    flash(
+        "\u041a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u0439 \u0434\u043e\u0431\u0430\u0432\u043b\u0435\u043d"
+        if ok
+        else "\u041a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u0439 \u043d\u0435 \u0434\u043e\u0431\u0430\u0432\u043b\u0435\u043d"
+    )
+    return redirect(url_for("news_page"))
+
+
+@app.route("/news/comment/delete", methods=["POST"])
+def delete_news_comment_page():
+    user, redirect_response = require_user()
+    if redirect_response:
+        return redirect_response
+
+    comment_id = request.form.get("comment_id", "").strip()
+    if not comment_id.isdigit():
+        flash("\u041a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u0439 \u043d\u0435 \u0443\u0434\u0430\u043b\u0451\u043d")
+        return redirect(url_for("news_page"))
+
+    conn = get_connection()
+    try:
+        ensure_news_comment_columns(conn)
+        ok, message = delete_news_comment(
+            conn,
+            int(comment_id),
+            int(user["id"]),
+            can_manage_news(user),
+        )
+    finally:
+        conn.close()
+
+    flash(message)
     return redirect(url_for("news_page"))
 
 
