@@ -1436,6 +1436,44 @@ img {
     align-items: flex-start;
   }
 
+  .mission-card .news-meta {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .mission-card .news-meta span:first-child {
+    font-size: 14px;
+    line-height: 1.2;
+  }
+
+  .mission-card .news-meta span:last-child {
+    margin-left: auto;
+    text-align: right;
+    font-size: 13px;
+    line-height: 1.2;
+    color: rgba(231, 219, 196, 0.78);
+  }
+
+  .mission-card h3 {
+    font-size: clamp(28px, 9vw, 46px);
+    line-height: 0.98;
+    letter-spacing: 0.015em;
+    word-break: break-word;
+    text-align: center;
+    margin-top: 6px;
+  }
+
+  .mission-card .news-content,
+  .mission-card .mission-info,
+  .mission-card .mission-teams,
+  .mission-card .mission-limit-note {
+    font-size: 14px;
+    line-height: 1.45;
+  }
+
   .mission-info {
     flex-direction: column;
     align-items: flex-start;
@@ -1838,6 +1876,23 @@ img {
 
   .leaderboard-grid {
     grid-template-columns: 1fr;
+  }
+
+  .mission-card .news-meta {
+    gap: 8px;
+  }
+
+  .mission-card .news-meta span:first-child {
+    font-size: 13px;
+  }
+
+  .mission-card .news-meta span:last-child {
+    font-size: 12px;
+  }
+
+  .mission-card h3 {
+    font-size: clamp(24px, 8.5vw, 38px);
+    line-height: 1;
   }
 
   .bank-page .bank-table tbody tr {
