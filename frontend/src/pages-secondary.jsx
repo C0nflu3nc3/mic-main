@@ -1,21 +1,21 @@
-import { Hero, formatDate, formatDateTime } from "./shared";
+п»їimport { Hero, formatDate, formatDateTime } from "./shared";
 
 export function MissionsPage({ is_admin = false, can_take_missions = false, current_team_mission_count = 0, missions = [] }) {
   return (
     <div className="section-page">
-      <Hero title="Миссии за валюту" description="Легион может взять до 3 заданий одновременно. На одно задание могут откликнуться не более 3 легионов." />
+      <Hero title="РњРёСЃСЃРёРё Р·Р° РІР°Р»СЋС‚Сѓ" description="Р›РµРіРёРѕРЅ РјРѕР¶РµС‚ РІР·СЏС‚СЊ РґРѕ 3 Р·Р°РґР°РЅРёР№ РѕРґРЅРѕРІСЂРµРјРµРЅРЅРѕ. РќР° РѕРґРЅРѕ Р·Р°РґР°РЅРёРµ РјРѕРіСѓС‚ РѕС‚РєР»РёРєРЅСѓС‚СЊСЃСЏ РЅРµ Р±РѕР»РµРµ 3 Р»РµРіРёРѕРЅРѕРІ." />
       {is_admin ? (
         <section className="placeholder-card mission-form-card">
-          <h3>Добавить задание</h3>
+          <h3>Р”РѕР±Р°РІРёС‚СЊ Р·Р°РґР°РЅРёРµ</h3>
           <form method="POST" action="/missions/add">
-            <div className="mb-3"><label className="form-label" htmlFor="mission-title">Название задания</label><input className="form-control" id="mission-title" name="title" type="text" required /></div>
-            <div className="mb-3"><label className="form-label" htmlFor="mission-description">Текст задания</label><textarea className="form-control" id="mission-description" name="description" rows="5" required /></div>
-            <div className="mb-3"><label className="form-label" htmlFor="mission-reward">Награда</label><input className="form-control" id="mission-reward" name="reward" type="number" min="1" step="1" required /></div>
-            <button type="submit" className="btn btn-primary">Опубликовать задание</button>
+            <div className="mb-3"><label className="form-label" htmlFor="mission-title">РќР°Р·РІР°РЅРёРµ Р·Р°РґР°РЅРёСЏ</label><input className="form-control" id="mission-title" name="title" type="text" required /></div>
+            <div className="mb-3"><label className="form-label" htmlFor="mission-description">РўРµРєСЃС‚ Р·Р°РґР°РЅРёСЏ</label><textarea className="form-control" id="mission-description" name="description" rows="5" required /></div>
+            <div className="mb-3"><label className="form-label" htmlFor="mission-reward">РќР°РіСЂР°РґР°</label><input className="form-control" id="mission-reward" name="reward" type="number" min="1" step="1" required /></div>
+            <button type="submit" className="btn btn-primary">РћРїСѓР±Р»РёРєРѕРІР°С‚СЊ Р·Р°РґР°РЅРёРµ</button>
           </form>
         </section>
       ) : (
-        <div className="mission-limit-note">{can_take_missions ? <>Активных заданий у Легиона: {current_team_mission_count} / 3</> : <>Журналисты могут только просматривать задания и не могут их принимать.</>}</div>
+        <div className="mission-limit-note">{can_take_missions ? <>РђРєС‚РёРІРЅС‹С… Р·Р°РґР°РЅРёР№ Сѓ Р›РµРіРёРѕРЅР°: {current_team_mission_count} / 3</> : <>Р–СѓСЂРЅР°Р»РёСЃС‚С‹ РјРѕРіСѓС‚ С‚РѕР»СЊРєРѕ РїСЂРѕСЃРјР°С‚СЂРёРІР°С‚СЊ Р·Р°РґР°РЅРёСЏ Рё РЅРµ РјРѕРіСѓС‚ РёС… РїСЂРёРЅРёРјР°С‚СЊ.</>}</div>
       )}
       <div className="news-list">
         {missions.map((mission) => (
@@ -23,26 +23,26 @@ export function MissionsPage({ is_admin = false, can_take_missions = false, curr
             <div className="news-meta"><span>{mission.author_name}</span><span>{formatDateTime(mission.created_at)}</span></div>
             <h3>{mission.title}</h3>
             <p className="news-content">{mission.description}</p>
-            <div className="mission-info"><span>Награда: {mission.reward} GRZ</span><span>Откликнулось легионов: {mission.accepted_count} / 3</span></div>
-            {mission.accepted_teams && mission.accepted_teams.length ? <div className="mission-teams">Приняли задание: {mission.accepted_teams.join(", ")}</div> : null}
+            <div className="mission-info"><span>РќР°РіСЂР°РґР°: {mission.reward} GRZ</span><span>РћС‚РєР»РёРєРЅСѓР»РѕСЃСЊ Р»РµРіРёРѕРЅРѕРІ: {mission.accepted_count} / 3</span></div>
+            {mission.accepted_teams && mission.accepted_teams.length ? <div className="mission-teams">РџСЂРёРЅСЏР»Рё Р·Р°РґР°РЅРёРµ: {mission.accepted_teams.join(", ")}</div> : null}
             {is_admin ? (
-              <div className="mission-actions mission-admin-actions"><form method="POST" action="/missions/delete" onSubmit={() => window.confirm("Вы уверены?")}><input type="hidden" name="mission_id" value={mission.id} /><button type="submit" className="btn btn-outline-light">Удалить миссию</button></form></div>
+              <div className="mission-actions mission-admin-actions"><form method="POST" action="/missions/delete" onSubmit={() => window.confirm("Р’С‹ СѓРІРµСЂРµРЅС‹?")}><input type="hidden" name="mission_id" value={mission.id} /><button type="submit" className="btn btn-outline-light">РЈРґР°Р»РёС‚СЊ РјРёСЃСЃРёСЋ</button></form></div>
             ) : can_take_missions ? (
               mission.user_has_taken ? (
-                <div className="mission-actions"><div className="mission-status-note">Задание уже выбрано вашим Легионом</div><form method="POST" action="/missions/cancel"><input type="hidden" name="mission_id" value={mission.id} /><button type="submit" className="btn btn-outline-light">Отказаться от задания</button></form></div>
+                <div className="mission-actions"><div className="mission-status-note">Р—Р°РґР°РЅРёРµ СѓР¶Рµ РІС‹Р±СЂР°РЅРѕ РІР°С€РёРј Р›РµРіРёРѕРЅРѕРј</div><form method="POST" action="/missions/cancel"><input type="hidden" name="mission_id" value={mission.id} /><button type="submit" className="btn btn-outline-light">РћС‚РєР°Р·Р°С‚СЊСЃСЏ РѕС‚ Р·Р°РґР°РЅРёСЏ</button></form></div>
               ) : mission.accepted_count >= 3 ? (
-                <button type="button" className="btn btn-secondary" disabled>Лимит легионов достигнут</button>
+                <button type="button" className="btn btn-secondary" disabled>Р›РёРјРёС‚ Р»РµРіРёРѕРЅРѕРІ РґРѕСЃС‚РёРіРЅСѓС‚</button>
               ) : current_team_mission_count >= 3 ? (
-                <button type="button" className="btn btn-secondary" disabled>Легион уже взял 3 задания</button>
+                <button type="button" className="btn btn-secondary" disabled>Р›РµРіРёРѕРЅ СѓР¶Рµ РІР·СЏР» 3 Р·Р°РґР°РЅРёСЏ</button>
               ) : (
-                <div className="mission-actions"><form method="POST" action="/missions/accept"><input type="hidden" name="mission_id" value={mission.id} /><button type="submit" className="btn btn-primary">Принять задание</button></form></div>
+                <div className="mission-actions"><form method="POST" action="/missions/accept"><input type="hidden" name="mission_id" value={mission.id} /><button type="submit" className="btn btn-primary">РџСЂРёРЅСЏС‚СЊ Р·Р°РґР°РЅРёРµ</button></form></div>
               )
             ) : (
-              <button type="button" className="btn btn-secondary" disabled>Журналист не может принимать задания</button>
+              <button type="button" className="btn btn-secondary" disabled>Р–СѓСЂРЅР°Р»РёСЃС‚ РЅРµ РјРѕР¶РµС‚ РїСЂРёРЅРёРјР°С‚СЊ Р·Р°РґР°РЅРёСЏ</button>
             )}
           </article>
         ))}
-        {!missions.length ? <section className="placeholder-card"><h3>Заданий пока нет</h3><p>Добавленные администратором задания отображаются здесь.</p></section> : null}
+        {!missions.length ? <section className="placeholder-card"><h3>Р—Р°РґР°РЅРёР№ РїРѕРєР° РЅРµС‚</h3><p>Р”РѕР±Р°РІР»РµРЅРЅС‹Рµ Р°РґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂРѕРј Р·Р°РґР°РЅРёСЏ РѕС‚РѕР±СЂР°Р¶Р°СЋС‚СЃСЏ Р·РґРµСЃСЊ.</p></section> : null}
       </div>
     </div>
   );
@@ -52,12 +52,12 @@ function AdminBankView({ scoreboard = [] }) {
   return (
     <div className="row content">
       <div className="scoreboard-panel bank-scoreboard-panel">
-        <div className="placeholder-hero section-title-panel bank-scoreboard-hero"><h1>ГЕРЦЫ ЛЕГИОНОВ</h1></div>
+        <div className="placeholder-hero section-title-panel bank-scoreboard-hero"><h1>Р“Р•Р Р¦Р« Р›Р•Р“РРћРќРћР’</h1></div>
         <section className="placeholder-card table-card bank-table-card">
           <div className="table-responsive bank-table-responsive">
             <table className="table elegant-table bank-table bank-scoreboard-table">
-              <thead><tr><th>ЛЕГИОН</th><th>Итого:</th></tr></thead>
-              <tbody>{scoreboard.map((row, index) => <tr key={`${row.Name}-${index}`}><td data-label="Легион">{row.Name}</td><td data-label="Итого">{row.Scores}</td></tr>)}</tbody>
+              <thead><tr><th>Р›Р•Р“РРћРќ</th><th>РС‚РѕРіРѕ:</th></tr></thead>
+              <tbody>{scoreboard.map((row, index) => <tr key={`${row.Name}-${index}`}><td data-label="Р›РµРіРёРѕРЅ">{row.Name}</td><td data-label="РС‚РѕРіРѕ">{row.Scores}</td></tr>)}</tbody>
             </table>
           </div>
         </section>
@@ -67,7 +67,7 @@ function AdminBankView({ scoreboard = [] }) {
 }
 
 function UserBankView({ current_plt }) {
-  return <h3>ГЕРЦЫ ТВОЕГО ЛЕГИОНА: <span className="badge text-bg-success">{current_plt}</span></h3>;
+  return <h3>Р“Р•Р Р¦Р« РўР’РћР•Р“Рћ Р›Р•Р“РРћРќРђ: <span className="badge text-bg-success">{current_plt}</span></h3>;
 }
 
 function BankOperations({ is_admin = false, current_team_id = null, current_plt = 0, operations = [], teams_for_select = [] }) {
@@ -80,26 +80,26 @@ function BankOperations({ is_admin = false, current_team_id = null, current_plt 
 
   return (
     <>
-      <div className="bank-action-bar"><button type="button" className="btn btn-primary bank-action-button" data-bs-toggle="modal" data-bs-target="#exampleModal">Отправить герцы легиону</button></div>
+      <div className="bank-action-bar"><button type="button" className="btn btn-primary bank-action-button" data-bs-toggle="modal" data-bs-target="#exampleModal">РћС‚РїСЂР°РІРёС‚СЊ РіРµСЂС†С‹ Р»РµРіРёРѕРЅСѓ</button></div>
       <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <form method="POST" action="/api/add_operation">
-          <div className="modal-dialog"><div className="modal-content"><div className="modal-header"><h1 className="modal-title fs-5" id="exampleModalLabel">Форма отправки герцев</h1><button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button></div>
+          <div className="modal-dialog"><div className="modal-content"><div className="modal-header"><h1 className="modal-title fs-5" id="exampleModalLabel">Р¤РѕСЂРјР° РѕС‚РїСЂР°РІРєРё РіРµСЂС†РµРІ</h1><button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Р—Р°РєСЂС‹С‚СЊ"></button></div>
           <div className="modal-body">
-            {!is_admin ? <input name="parent" type="hidden" id="parent" value={current_team_id || ""} /> : <><label htmlFor="userSRC">Выберите легион отправителя:</label><select className="form-control" id="userSRC" name="parent" defaultValue={defaultSourceId}>{teams_for_select.map((team) => <option key={`src-${team.id}`} value={team.id} data-balance={team.balance}>{team.name}</option>)}</select></>}
-            <label htmlFor="usersDST">Выберите легион получателя:</label>
+            {!is_admin ? <input name="parent" type="hidden" id="parent" value={current_team_id || ""} /> : <><label htmlFor="userSRC">Р’С‹Р±РµСЂРёС‚Рµ Р»РµРіРёРѕРЅ РѕС‚РїСЂР°РІРёС‚РµР»СЏ:</label><select className="form-control" id="userSRC" name="parent" defaultValue={defaultSourceId}>{teams_for_select.map((team) => <option key={`src-${team.id}`} value={team.id} data-balance={team.balance}>{team.name}</option>)}</select></>}
+            <label htmlFor="usersDST">Р’С‹Р±РµСЂРёС‚Рµ Р»РµРіРёРѕРЅ РїРѕР»СѓС‡Р°С‚РµР»СЏ:</label>
             <select className="form-control" id="usersDST" name="user" defaultValue={defaultTargetId}>{teams_for_select.map((team) => <option key={`dst-${team.id}`} value={team.id}>{team.name}</option>)}</select>
-            <label htmlFor="PLT">Количество GRZ:</label>
-            <input name="score" type="number" min="0" max={defaultMax} step="1" defaultValue={defaultScore} id="PLT" className="form-control" placeholder="цена" disabled={!transferPossible && !is_admin} />
-            <label htmlFor="comment">Комментарий:</label>
-            <input name="comment" type="text" className="form-control" id="comment" placeholder="Введите сообщение команде" />
-            <div className="form-text" id="transferState">{!is_admin && current_plt <= 0 ? "Перевод недоступен: у текущего легиона нулевой баланс." : ""}</div>
+            <label htmlFor="PLT">РљРѕР»РёС‡РµСЃС‚РІРѕ GRZ:</label>
+            <input name="score" type="number" min="0" max={defaultMax} step="1" defaultValue={defaultScore} id="PLT" className="form-control" placeholder="С†РµРЅР°" disabled={!transferPossible && !is_admin} />
+            <label htmlFor="comment">РљРѕРјРјРµРЅС‚Р°СЂРёР№:</label>
+            <input name="comment" type="text" className="form-control" id="comment" placeholder="Р’РІРµРґРёС‚Рµ СЃРѕРѕР±С‰РµРЅРёРµ РєРѕРјР°РЅРґРµ" />
+            <div className="form-text" id="transferState">{!is_admin && current_plt <= 0 ? "РџРµСЂРµРІРѕРґ РЅРµРґРѕСЃС‚СѓРїРµРЅ: Сѓ С‚РµРєСѓС‰РµРіРѕ Р»РµРіРёРѕРЅР° РЅСѓР»РµРІРѕР№ Р±Р°Р»Р°РЅСЃ." : ""}</div>
           </div>
-          <div className="modal-footer"><button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button><button type="submit" className="btn btn-primary" id="transferSubmit" disabled={!transferPossible && !is_admin}>Отправить</button></div></div></div>
+          <div className="modal-footer"><button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Р—Р°РєСЂС‹С‚СЊ</button><button type="submit" className="btn btn-primary" id="transferSubmit" disabled={!transferPossible && !is_admin}>РћС‚РїСЂР°РІРёС‚СЊ</button></div></div></div>
         </form>
       </div>
       <div className="events-panel bank-operations-panel">
-        <h3 className="events-title">Все события:</h3>
-        <section className="placeholder-card table-card bank-table-card"><div className="table-responsive bank-table-responsive"><table className="table elegant-table bank-table bank-operations-table"><thead><tr><th>Период:</th><th>Название легиона:</th><th>Герцы:</th><th>Коммент:</th></tr></thead><tbody>{operations.map((row, index) => <tr key={`${row.Name}-${row.Period}-${index}`}><td data-label="Период">{formatDate(row.Period)}</td><td data-label="Легион">{row.Name}</td><td data-label="Герцы">{row.Score}</td><td data-label="Коммент">{row.Comment}</td></tr>)}</tbody></table></div></section>
+        <h3 className="events-title">Р’СЃРµ СЃРѕР±С‹С‚РёСЏ:</h3>
+        <section className="placeholder-card table-card bank-table-card"><div className="table-responsive bank-table-responsive"><table className="table elegant-table bank-table bank-operations-table"><thead><tr><th>РџРµСЂРёРѕРґ:</th><th>РќР°Р·РІР°РЅРёРµ Р»РµРіРёРѕРЅР°:</th><th>Р“РµСЂС†С‹:</th><th>РљРѕРјРјРµРЅС‚:</th></tr></thead><tbody>{operations.map((row, index) => <tr key={`${row.Name}-${row.Period}-${index}`}><td data-label="РџРµСЂРёРѕРґ">{formatDate(row.Period)}</td><td data-label="Р›РµРіРёРѕРЅ">{row.Name}</td><td data-label="Р“РµСЂС†С‹">{row.Score}</td><td data-label="РљРѕРјРјРµРЅС‚">{row.Comment}</td></tr>)}</tbody></table></div></section>
       </div>
     </>
   );
@@ -112,12 +112,12 @@ export function TeamsPage(props) {
 export function ApprovePage({ approve_items = [] }) {
   return (
     <div className="section-page">
-      <Hero title="Подтверждение" description="Здесь администратор подтверждает или отклоняет выполнение принятых заданий. После подтверждения награда автоматически начисляется отряду." />
+      <Hero title="РџРѕРґС‚РІРµСЂР¶РґРµРЅРёРµ" description="Р—РґРµСЃСЊ Р°РґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂ РїРѕРґС‚РІРµСЂР¶РґР°РµС‚ РёР»Рё РѕС‚РєР»РѕРЅСЏРµС‚ РІС‹РїРѕР»РЅРµРЅРёРµ РїСЂРёРЅСЏС‚С‹С… Р·Р°РґР°РЅРёР№. РџРѕСЃР»Рµ РїРѕРґС‚РІРµСЂР¶РґРµРЅРёСЏ РЅР°РіСЂР°РґР° Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё РЅР°С‡РёСЃР»СЏРµС‚СЃСЏ РѕС‚СЂСЏРґСѓ." />
       <div className="news-list">
         {approve_items.map((item) => (
-          <article className="placeholder-card mission-card" key={item.id}><div className="news-meta"><span>{item.team_name}</span><span>{formatDateTime(item.accepted_at)}</span></div><h3>{item.title}</h3><p className="news-content">{item.description}</p><div className="mission-info"><span>Отряд: {item.team_name}</span><span>Награда: {item.reward} GRZ</span></div><div className="approve-actions"><form method="POST" action="/approve/confirm"><input type="hidden" name="assignment_id" value={item.id} /><button type="submit" className="btn btn-primary">Подтвердить выполнение</button></form><form method="POST" action="/approve/reject"><input type="hidden" name="assignment_id" value={item.id} /><button type="submit" className="btn btn-outline-light">Отклонить выполнение</button></form></div></article>
+          <article className="placeholder-card mission-card" key={item.id}><div className="news-meta"><span>{item.team_name}</span><span>{formatDateTime(item.accepted_at)}</span></div><h3>{item.title}</h3><p className="news-content">{item.description}</p><div className="mission-info"><span>РћС‚СЂСЏРґ: {item.team_name}</span><span>РќР°РіСЂР°РґР°: {item.reward} GRZ</span></div><div className="approve-actions"><form method="POST" action="/approve/confirm"><input type="hidden" name="assignment_id" value={item.id} /><button type="submit" className="btn btn-primary">РџРѕРґС‚РІРµСЂРґРёС‚СЊ РІС‹РїРѕР»РЅРµРЅРёРµ</button></form><form method="POST" action="/approve/reject"><input type="hidden" name="assignment_id" value={item.id} /><button type="submit" className="btn btn-outline-light">РћС‚РєР»РѕРЅРёС‚СЊ РІС‹РїРѕР»РЅРµРЅРёРµ</button></form></div></article>
         ))}
-        {!approve_items.length ? <section className="placeholder-card"><h3>Нет заданий на подтверждение</h3><p>Принятые задания отображаются в этом списке.</p></section> : null}
+        {!approve_items.length ? <section className="placeholder-card"><h3>РќРµС‚ Р·Р°РґР°РЅРёР№ РЅР° РїРѕРґС‚РІРµСЂР¶РґРµРЅРёРµ</h3><p>РџСЂРёРЅСЏС‚С‹Рµ Р·Р°РґР°РЅРёСЏ РѕС‚РѕР±СЂР°Р¶Р°СЋС‚СЃСЏ РІ СЌС‚РѕРј СЃРїРёСЃРєРµ.</p></section> : null}
       </div>
     </div>
   );

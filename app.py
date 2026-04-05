@@ -587,7 +587,7 @@ def missions_page():
 
     return render_react_page(
         "missions",
-        "Миссии за валюту",
+        "\u041c\u0438\u0441\u0441\u0438\u0438 \u0437\u0430 \u0432\u0430\u043b\u044e\u0442\u0443",
         user=user,
         is_admin=is_admin,
         can_take_missions=can_take_missions(user),
@@ -727,7 +727,7 @@ def teams_page():
 
     return render_react_page(
         "teams",
-        "Банк",
+        "\u0411\u0430\u043d\u043a",
         user=user,
         is_admin=is_admin,
         active_section="bank",
