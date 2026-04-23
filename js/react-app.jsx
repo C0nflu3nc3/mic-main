@@ -92,12 +92,6 @@ function Header({ user, activeSection, pendingNewsCount = 0 }) {
 
     if (isAdmin) {
         menuItems.push({ key: "approve", href: "/approve", label: "Подтверждение" });
-        menuItems.push({
-            key: "news_suggestions",
-            href: "/news/suggestions",
-            label: "Предложенные новости",
-            badgeCount: Number(pendingNewsCount) || 0,
-        });
     }
 
     return (
@@ -420,7 +414,7 @@ function NewsCommentItem({ comment, newsId, currentUserId, canManageNews }) {
                 {canDelete ? (
                     <form method="POST" action="/news/comment/delete" className="news-delete-comment-form">
                         <input type="hidden" name="comment_id" value={comment.id} />
-                        <button type="submit" className="btn btn-outline-light">{"\u0423\u0434\u0430\u043b\u0438\u0442\u044c"}</button>
+                        <button type="submit" className="news-comment-action-link">{"\u0423\u0434\u0430\u043b\u0438\u0442\u044c"}</button>
                     </form>
                 ) : null}
             </div>
@@ -441,13 +435,24 @@ function NewsCommentItem({ comment, newsId, currentUserId, canManageNews }) {
     );
 }
 
-function NewsPage({ news_items = [], can_manage_news = false, can_suggest_news = false, user = null }) {
+function NewsPage({ news_items = [], can_manage_news = false, can_suggest_news = false, pending_news_count = 0, user = null }) {
+    const pendingCount = Number(pending_news_count) || 0;
+
     return (
         <div className="section-page">
             <Hero
                 title="Новости"
                 description="Здесь публикуются новости проекта, изображения, видео и комментарии пользователей."
             />
+
+            {can_manage_news ? (
+                <div className="news-page-actions">
+                    <a className="btn btn-outline-light news-suggestions-link" href="/news/suggestions">
+                        Предложенные новости
+                        {pendingCount ? <span className="news-page-badge">{pendingCount}</span> : null}
+                    </a>
+                </div>
+            ) : null}
 
             {can_manage_news ? (
                 <section className="placeholder-card news-form-card">

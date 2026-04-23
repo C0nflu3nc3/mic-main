@@ -82,12 +82,6 @@ export function Header({ user, activeSection, pendingNewsCount = 0 }) {
 
   if (isAdmin) {
     menuItems.push({ key: "approve", href: "/approve", label: "\u041f\u043e\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043d\u0438\u0435" });
-    menuItems.push({
-      key: "news_suggestions",
-      href: "/news/suggestions",
-      label: "\u041f\u0440\u0435\u0434\u043b\u043e\u0436\u0435\u043d\u043d\u044b\u0435 \u043d\u043e\u0432\u043e\u0441\u0442\u0438",
-      badgeCount: Number(pendingNewsCount) || 0
-    });
   }
 
   return (
