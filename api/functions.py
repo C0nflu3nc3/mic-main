@@ -43,8 +43,14 @@ def get_leaderboard_table(conn, table_name):
         return cursor.fetchall()
 
 
-def get_news(conn):
+def get_news(conn, publication_status=1):
     with conn.cursor() as cursor:
+        where_clause = ""
+        params = ()
+        if publication_status is not None:
+            where_clause = "WHERE COALESCE(News.is_published, 1) = %s"
+            params = (int(publication_status),)
+
         sql = """
             SELECT
                 News.id,
@@ -52,13 +58,15 @@ def get_news(conn):
                 News.content,
                 News.image_path,
                 News.video_path,
+                COALESCE(News.is_published, 1) AS is_published,
                 News.created_at,
                 users.login AS author_name
             FROM News
             JOIN users ON users.id = News.user_id
+            {where_clause}
             ORDER BY News.created_at DESC, News.id DESC
         """
-        cursor.execute(sql)
+        cursor.execute(sql.format(where_clause=where_clause), params)
         news_rows = cursor.fetchall()
 
         media_sql = """
@@ -150,6 +158,16 @@ def get_news(conn):
 def ensure_news_media_columns(conn):
     schema_changed = False
     with conn.cursor() as cursor:
+        cursor.execute("SHOW COLUMNS FROM News LIKE 'is_published'")
+        if cursor.fetchone() is None:
+            cursor.execute(
+                """
+                ALTER TABLE News
+                ADD COLUMN is_published tinyint(1) NOT NULL DEFAULT 1 AFTER user_id
+                """
+            )
+            schema_changed = True
+
         cursor.execute("SHOW COLUMNS FROM News LIKE 'video_path'")
         if cursor.fetchone() is None:
             cursor.execute(
@@ -245,13 +263,13 @@ def ensure_news_comment_columns(conn):
         conn.commit()
 
 
-def add_news(conn, user_id, title, content, image_path, video_path, media_items=None):
+def add_news(conn, user_id, title, content, image_path, video_path, media_items=None, is_published=1):
     with conn.cursor() as cursor:
         sql = """
-            INSERT INTO News (title, content, image_path, video_path, user_id, created_at)
-            VALUES (%s, %s, %s, %s, %s, NOW())
+            INSERT INTO News (title, content, image_path, video_path, user_id, is_published, created_at)
+            VALUES (%s, %s, %s, %s, %s, %s, NOW())
         """
-        cursor.execute(sql, (title, content, image_path, video_path, user_id))
+        cursor.execute(sql, (title, content, image_path, video_path, user_id, int(is_published)))
         news_id = int(cursor.lastrowid)
 
         if media_items:
@@ -278,7 +296,7 @@ def add_news(conn, user_id, title, content, image_path, video_path, media_items=
 def get_news_for_update(conn, news_id):
     with conn.cursor() as cursor:
         news_sql = """
-            SELECT id, title, content
+            SELECT id, title, content, COALESCE(is_published, 1) AS is_published
             FROM News
             WHERE id = %s
             LIMIT 1
@@ -337,9 +355,65 @@ def update_news(conn, news_id, title, content, media_items):
     return True
 
 
+def count_pending_news(conn):
+    with conn.cursor() as cursor:
+        cursor.execute(
+            """
+            SELECT COUNT(*) AS total
+            FROM News
+            WHERE COALESCE(is_published, 1) = 0
+            """
+        )
+        row = cursor.fetchone()
+        return int(row["total"] or 0)
+
+
+def publish_news(conn, news_id):
+    with conn.cursor() as cursor:
+        cursor.execute(
+            """
+            UPDATE News
+            SET is_published = 1
+            WHERE id = %s AND COALESCE(is_published, 1) = 0
+            """,
+            (news_id,),
+        )
+        updated = cursor.rowcount > 0
+    conn.commit()
+    return updated
+
+
+def reject_news(conn, news_id):
+    with conn.cursor() as cursor:
+        cursor.execute(
+            """
+            DELETE FROM News_comment
+            WHERE news_id = %s
+            """,
+            (news_id,),
+        )
+        cursor.execute(
+            """
+            DELETE FROM News_media
+            WHERE news_id = %s
+            """,
+            (news_id,),
+        )
+        cursor.execute(
+            """
+            DELETE FROM News
+            WHERE id = %s AND COALESCE(is_published, 1) = 0
+            """,
+            (news_id,),
+        )
+        deleted = cursor.rowcount > 0
+    conn.commit()
+    return deleted
+
+
 def add_news_comment(conn, news_id, user_id, comment, parent_comment_id=None):
     with conn.cursor() as cursor:
-        check_sql = "SELECT id FROM News WHERE id = %s LIMIT 1"
+        check_sql = "SELECT id FROM News WHERE id = %s AND COALESCE(is_published, 1) = 1 LIMIT 1"
         cursor.execute(check_sql, (news_id,))
         if cursor.fetchone() is None:
             return False

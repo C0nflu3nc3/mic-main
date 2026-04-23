@@ -268,6 +268,31 @@ a {
     0 10px 22px rgba(0, 0, 0, 0.22);
 }
 
+.section-nav .nav-link.has-badge {
+  position: relative;
+  padding-right: clamp(30px, 2vw, 38px);
+}
+
+.nav-link-badge {
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(223, 185, 118, 0.98) 0%, rgba(165, 57, 42, 0.98) 100%);
+  color: #140d08;
+  font-family: "Manrope", Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
 .header #user-controls {
   width: auto;
   align-self: center;
@@ -671,6 +696,10 @@ a {
   flex-wrap: wrap;
 }
 
+.news-card-actions form {
+  margin: 0;
+}
+
 .news-card-actions > .btn,
 .news-edit-action {
   flex: 0 0 auto;
@@ -723,6 +752,37 @@ a {
 
 .news-edit-form {
   margin-top: 14px;
+}
+
+.news-suggest-block {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.news-suggestion-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  margin-bottom: 6px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(194, 149, 78, 0.28);
+  background: rgba(26, 39, 36, 0.72);
+  color: #e4d7bc;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.news-suggestion-actions {
+  align-items: flex-start;
+}
+
+.news-suggestion-actions form {
+  flex: 0 0 auto;
 }
 
 .news-edit-existing-media {
@@ -1276,6 +1336,7 @@ img {
 
   .header #user-controls {
     flex: 0 0 auto;
+    order: 3;
   }
 }
 
@@ -1551,6 +1612,7 @@ img {
 
   .approve-actions form,
   .mission-actions form,
+  .news-suggestion-actions form,
   .mission-card form button,
   .news-comment-form button,
   .news-delete-comment-form,

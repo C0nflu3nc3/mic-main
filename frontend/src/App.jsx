@@ -1,7 +1,7 @@
 ﻿import { useEffect } from "react";
 
 import { FlashMessages, Header } from "./shared";
-import { HomePage, LeaderboardPage, LoginPage, NewsPage } from "./pages-main";
+import { HomePage, LeaderboardPage, LoginPage, NewsPage, SuggestedNewsPage } from "./pages-main";
 import { ApprovePage, MissionsPage, PlaceholderPage, TeamsPage } from "./pages-secondary";
 
 function App({ bootstrapData }) {
@@ -23,6 +23,8 @@ function App({ bootstrapData }) {
         return <LeaderboardPage {...bootstrapData} />;
       case "news":
         return <NewsPage {...bootstrapData} />;
+      case "news_suggestions":
+        return <SuggestedNewsPage {...bootstrapData} />;
       case "missions":
         return <MissionsPage {...bootstrapData} />;
       case "teams":
@@ -48,7 +50,7 @@ function App({ bootstrapData }) {
 
   return (
     <>
-      <Header user={bootstrapData.user} activeSection={bootstrapData.activeSection} />
+      <Header user={bootstrapData.user} activeSection={bootstrapData.activeSection} pendingNewsCount={bootstrapData.pending_news_count} />
       <div className="container">
         <FlashMessages messages={bootstrapData.messages} />
         {renderPage()}

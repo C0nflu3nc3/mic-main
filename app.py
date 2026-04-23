@@ -12,6 +12,7 @@ from api.functions import (
     add_news_comment,
     accept_mission,
     approve_mission,
+    count_pending_news,
     delete_news_comment,
     cancel_mission,
     create_mission,
@@ -24,6 +25,8 @@ from api.functions import (
     get_news,
     get_operations,
     get_plt,
+    publish_news,
+    reject_news,
     get_scoreboard,
     get_teams_for_select,
     ensure_news_comment_columns,
@@ -121,6 +124,13 @@ def render_react_page(page, page_title, user=None, active_section=None, **page_d
         "user": serialize_for_react(user) if user else None,
         "messages": get_flashed_messages(),
     }
+    if user and can_review_suggested_news(user) and "pending_news_count" not in page_data:
+        conn = get_connection()
+        try:
+            ensure_news_media_columns(conn)
+            page_data["pending_news_count"] = count_pending_news(conn)
+        finally:
+            conn.close()
     bootstrap.update(serialize_for_react(page_data))
     return render_template(
         "react-shell.j2",
@@ -139,6 +149,14 @@ def require_user():
 
 def can_manage_news(user):
     return bool(user["isadmin"]) or bool(user.get("isjournalist"))
+
+
+def can_review_suggested_news(user):
+    return bool(user["isadmin"])
+
+
+def can_suggest_news(user):
+    return not bool(user["isadmin"]) and not bool(user.get("isjournalist"))
 
 
 def can_take_missions(user):
@@ -363,16 +381,47 @@ def news_page():
         ensure_news_comment_columns(conn)
         ensure_news_media_columns(conn)
         news_items = get_news(conn)
+        pending_news_count = count_pending_news(conn) if can_review_suggested_news(user) else 0
     finally:
         conn.close()
 
     return render_react_page(
         "news",
-        "Новости",
+        "\u041d\u043e\u0432\u043e\u0441\u0442\u0438",
         user=user,
         can_manage_news=can_manage_news(user),
+        can_suggest_news=can_suggest_news(user),
+        pending_news_count=pending_news_count,
         active_section="home",
         news_items=news_items,
+    )
+
+
+@app.route("/news/suggestions", methods=["GET"])
+def suggested_news_page():
+    user, redirect_response = require_user()
+    if redirect_response:
+        return redirect_response
+    if not can_review_suggested_news(user):
+        return redirect(url_for("news_page"))
+
+    conn = get_connection()
+    try:
+        ensure_news_comment_columns(conn)
+        ensure_news_media_columns(conn)
+        suggested_news_items = get_news(conn, publication_status=0)
+        pending_news_count = count_pending_news(conn)
+    finally:
+        conn.close()
+
+    return render_react_page(
+        "news_suggestions",
+        "\u041f\u0440\u0435\u0434\u043b\u043e\u0436\u0435\u043d\u043d\u044b\u0435 \u043d\u043e\u0432\u043e\u0441\u0442\u0438",
+        user=user,
+        can_manage_news=can_manage_news(user),
+        pending_news_count=pending_news_count,
+        active_section="news_suggestions",
+        suggested_news_items=suggested_news_items,
     )
 
 
@@ -409,43 +458,56 @@ def add_news_page():
     conn = get_connection()
     try:
         ensure_news_media_columns(conn)
-        add_news(conn, int(user["id"]), title, content, image_path, video_path, media_items)
+        add_news(conn, int(user["id"]), title, content, image_path, video_path, media_items, is_published=1)
     finally:
         conn.close()
 
     flash("\u041d\u043e\u0432\u043e\u0441\u0442\u044c \u0434\u043e\u0431\u0430\u0432\u043b\u0435\u043d\u0430")
     return redirect(url_for("news_page"))
 
-    image = request.files.get("image")
-    video = request.files.get("video")
+
+@app.route("/news/suggest", methods=["POST"])
+def suggest_news_page():
+    user, redirect_response = require_user()
+    if redirect_response:
+        return redirect_response
+    if not can_suggest_news(user):
+        return redirect(url_for("news_page"))
+
+    title = request.form.get("title", "").strip()
+    content = request.form.get("content", "").strip()
+    media_files = request.files.getlist("media")
 
     if not title or not content:
         flash("\u0417\u0430\u043f\u043e\u043b\u043d\u0438\u0442\u0435 \u0437\u0430\u0433\u043e\u043b\u043e\u0432\u043e\u043a \u0438 \u0442\u0435\u043a\u0441\u0442 \u043d\u043e\u0432\u043e\u0441\u0442\u0438")
         return redirect(url_for("news_page"))
 
-    image_path = save_news_image(image)
-    if image is not None and image.filename and image_path is None:
-        flash("\u0420\u0430\u0437\u0440\u0435\u0448\u0435\u043d\u044b \u0442\u043e\u043b\u044c\u043a\u043e \u0438\u0437\u043e\u0431\u0440\u0430\u0436\u0435\u043d\u0438\u044f png, jpg, jpeg, gif, webp")
+    media_items, media_error = collect_news_media_files(media_files)
+    if media_error:
+        flash(media_error)
         return redirect(url_for("news_page"))
 
-    if video is not None and video.filename and not is_allowed_video(video.filename):
-        flash("\u0420\u0430\u0437\u0440\u0435\u0448\u0435\u043d\u044b \u0442\u043e\u043b\u044c\u043a\u043e \u0432\u0438\u0434\u0435\u043e mp4, webm, ogg, mov, m4v")
-        return redirect(url_for("news_page"))
-
-    video_path = save_news_video(video)
-    if False and video is not None and video.filename and video_path is None:
-        flash("\u0420\u0430\u0437\u0440\u0435\u0448\u0435\u043d\u044b \u0442\u043e\u043b\u044c\u043a\u043e \u0432\u0438\u0434\u0435\u043e mp4, webm, ogg, mov, m4v")
-        return redirect(url_for("news_page"))
+    image_path = next((item["media_path"] for item in media_items if item["media_type"] == "image"), None)
+    video_path = next((item["media_path"] for item in media_items if item["media_type"] == "video"), None)
 
     conn = get_connection()
     try:
         ensure_news_media_columns(conn)
-        add_news(conn, int(user["id"]), title, content, image_path, video_path)
+        add_news(conn, int(user["id"]), title, content, image_path, video_path, media_items, is_published=0)
     finally:
         conn.close()
 
-    flash("\u041d\u043e\u0432\u043e\u0441\u0442\u044c \u0434\u043e\u0431\u0430\u0432\u043b\u0435\u043d\u0430")
+    flash("\u041d\u043e\u0432\u043e\u0441\u0442\u044c \u043e\u0442\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u0430 \u043d\u0430 \u0440\u0430\u0441\u0441\u043c\u043e\u0442\u0440\u0435\u043d\u0438\u0435")
     return redirect(url_for("news_page"))
+
+
+def get_news_redirect_url(news_item=None):
+    redirect_to = request.form.get("redirect_to", "").strip()
+    if redirect_to == "/news/suggestions":
+        return redirect_to
+    if news_item is not None and int(news_item.get("is_published") or 0) == 0:
+        return url_for("suggested_news_page")
+    return url_for("news_page")
 
 
 @app.route("/news/update", methods=["POST"])
@@ -464,7 +526,7 @@ def update_news_page():
 
     if not news_id.isdigit() or not title or not content:
         flash("\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u043e\u0431\u043d\u043e\u0432\u0438\u0442\u044c \u043d\u043e\u0432\u043e\u0441\u0442\u044c")
-        return redirect(url_for("news_page"))
+        return redirect(get_news_redirect_url())
 
     removed_media_ids = {
         int(media_id)
@@ -475,16 +537,20 @@ def update_news_page():
     new_media_items, media_error = collect_news_media_files(media_files)
     if media_error:
         flash(media_error)
-        return redirect(url_for("news_page"))
+        return redirect(get_news_redirect_url())
 
     conn = get_connection()
+    redirect_url = url_for("news_page")
     try:
         ensure_news_media_columns(conn)
         news_item = get_news_for_update(conn, int(news_id))
         if news_item is None:
             flash("\u041d\u043e\u0432\u043e\u0441\u0442\u044c \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u0430")
-            return redirect(url_for("news_page"))
+            return redirect(redirect_url)
+        if int(news_item.get("is_published") or 0) == 0 and not can_review_suggested_news(user):
+            return redirect(redirect_url)
 
+        redirect_url = get_news_redirect_url(news_item)
         final_media, final_media_error = build_updated_news_media(
             news_item["media"],
             removed_media_ids,
@@ -492,14 +558,62 @@ def update_news_page():
         )
         if final_media_error:
             flash(final_media_error)
-            return redirect(url_for("news_page"))
+            return redirect(redirect_url)
 
         update_news(conn, int(news_id), title, content, final_media)
     finally:
         conn.close()
 
     flash("\u041d\u043e\u0432\u043e\u0441\u0442\u044c \u043e\u0431\u043d\u043e\u0432\u043b\u0435\u043d\u0430")
-    return redirect(url_for("news_page"))
+    return redirect(redirect_url)
+
+
+@app.route("/news/publish", methods=["POST"])
+def publish_news_page():
+    user, redirect_response = require_user()
+    if redirect_response:
+        return redirect_response
+    if not can_review_suggested_news(user):
+        return redirect(url_for("news_page"))
+
+    news_id = request.form.get("news_id", "").strip()
+    if not news_id.isdigit():
+        flash("\u041d\u043e\u0432\u043e\u0441\u0442\u044c \u043d\u0435 \u043e\u043f\u0443\u0431\u043b\u0438\u043a\u043e\u0432\u0430\u043d\u0430")
+        return redirect(url_for("suggested_news_page"))
+
+    conn = get_connection()
+    try:
+        ensure_news_media_columns(conn)
+        ok = publish_news(conn, int(news_id))
+    finally:
+        conn.close()
+
+    flash("\u041d\u043e\u0432\u043e\u0441\u0442\u044c \u043e\u043f\u0443\u0431\u043b\u0438\u043a\u043e\u0432\u0430\u043d\u0430" if ok else "\u041d\u043e\u0432\u043e\u0441\u0442\u044c \u043d\u0435 \u043e\u043f\u0443\u0431\u043b\u0438\u043a\u043e\u0432\u0430\u043d\u0430")
+    return redirect(url_for("suggested_news_page"))
+
+
+@app.route("/news/reject", methods=["POST"])
+def reject_news_page():
+    user, redirect_response = require_user()
+    if redirect_response:
+        return redirect_response
+    if not can_review_suggested_news(user):
+        return redirect(url_for("news_page"))
+
+    news_id = request.form.get("news_id", "").strip()
+    if not news_id.isdigit():
+        flash("\u041d\u043e\u0432\u043e\u0441\u0442\u044c \u043d\u0435 \u043e\u0442\u043a\u043b\u043e\u043d\u0435\u043d\u0430")
+        return redirect(url_for("suggested_news_page"))
+
+    conn = get_connection()
+    try:
+        ensure_news_media_columns(conn)
+        ok = reject_news(conn, int(news_id))
+    finally:
+        conn.close()
+
+    flash("\u041d\u043e\u0432\u043e\u0441\u0442\u044c \u043e\u0442\u043a\u043b\u043e\u043d\u0435\u043d\u0430" if ok else "\u041d\u043e\u0432\u043e\u0441\u0442\u044c \u043d\u0435 \u043e\u0442\u043a\u043b\u043e\u043d\u0435\u043d\u0430")
+    return redirect(url_for("suggested_news_page"))
 
 
 @app.route("/news/comment", methods=["POST"])

@@ -76,7 +76,7 @@ function LoginMessages({ messages }) {
     );
 }
 
-function Header({ user, activeSection }) {
+function Header({ user, activeSection, pendingNewsCount = 0 }) {
     if (!user) {
         return null;
     }
@@ -92,6 +92,12 @@ function Header({ user, activeSection }) {
 
     if (isAdmin) {
         menuItems.push({ key: "approve", href: "/approve", label: "Подтверждение" });
+        menuItems.push({
+            key: "news_suggestions",
+            href: "/news/suggestions",
+            label: "Предложенные новости",
+            badgeCount: Number(pendingNewsCount) || 0,
+        });
     }
 
     return (
@@ -115,10 +121,11 @@ function Header({ user, activeSection }) {
                             {menuItems.map((item) => (
                                 <li className="nav-item main-nav-item" key={item.key}>
                                     <a
-                                        className={`nav-link ${activeSection === item.key ? "active" : ""}`.trim()}
+                                        className={`nav-link ${activeSection === item.key ? "active" : ""} ${item.badgeCount ? "has-badge" : ""}`.trim()}
                                         href={item.href}
                                     >
                                         {item.label}
+                                        {item.badgeCount ? <span className="nav-link-badge">{item.badgeCount}</span> : null}
                                     </a>
                                 </li>
                             ))}
@@ -301,12 +308,13 @@ function NewsMedia({ media, title }) {
     );
 }
 
-function NewsEditBlock({ item }) {
+function NewsEditBlock({ item, summaryLabel = "Редактировать новость", redirectTo = "" }) {
     return (
         <details className="news-edit-block news-edit-action">
-            <summary className="news-edit-summary">Редактировать новость</summary>
+            <summary className="news-edit-summary">{summaryLabel}</summary>
             <form method="POST" action="/news/update" encType="multipart/form-data" className="news-edit-form">
                 <input type="hidden" name="news_id" value={item.id} />
+                {redirectTo ? <input type="hidden" name="redirect_to" value={redirectTo} /> : null}
 
                 <div className="mb-3">
                     <label className="form-label" htmlFor={`edit-title-${item.id}`}>Заголовок</label>
@@ -363,6 +371,32 @@ function NewsEditBlock({ item }) {
     );
 }
 
+function SuggestedNewsForm() {
+    return (
+        <section className="placeholder-card news-form-card">
+            <details className="news-edit-block news-suggest-block">
+                <summary className="news-edit-summary">Предложить новость</summary>
+                <form method="POST" action="/news/suggest" encType="multipart/form-data" className="news-edit-form">
+                    <div className="mb-3">
+                        <label className="form-label" htmlFor="suggest-title">Заголовок</label>
+                        <input className="form-control" id="suggest-title" name="title" type="text" required />
+                    </div>
+                    <div className="mb-3">
+                        <label className="form-label" htmlFor="suggest-content">Текст новости</label>
+                        <textarea className="form-control" id="suggest-content" name="content" rows="5" required />
+                    </div>
+                    <div className="mb-3">
+                        <label className="form-label" htmlFor="suggest-media">Медиафайлы</label>
+                        <input className="form-control" id="suggest-media" name="media" type="file" accept=".png,.jpg,.jpeg,.gif,.webp,.mp4,.webm,.ogg,.mov,.m4v" multiple />
+                        <div className="form-text text-light">До 3 файлов: изображения или видео.</div>
+                    </div>
+                    <button type="submit" className="btn btn-primary">Отправить на рассмотрение</button>
+                </form>
+            </details>
+        </section>
+    );
+}
+
 function NewsCommentItem({ comment, newsId, currentUserId, canManageNews }) {
     const canDelete = canManageNews || Number(comment.user_id) === Number(currentUserId);
 
@@ -407,7 +441,7 @@ function NewsCommentItem({ comment, newsId, currentUserId, canManageNews }) {
     );
 }
 
-function NewsPage({ news_items = [], can_manage_news = false, user = null }) {
+function NewsPage({ news_items = [], can_manage_news = false, can_suggest_news = false, user = null }) {
     return (
         <div className="section-page">
             <Hero
@@ -435,7 +469,7 @@ function NewsPage({ news_items = [], can_manage_news = false, user = null }) {
                         <button type="submit" className="btn btn-primary">Опубликовать</button>
                     </form>
                 </section>
-            ) : null}
+            ) : can_suggest_news ? <SuggestedNewsForm /> : null}
 
             <div className="news-list">
                 {news_items.map((item) => (
@@ -479,6 +513,51 @@ function NewsPage({ news_items = [], can_manage_news = false, user = null }) {
                     <section className="placeholder-card">
                         <h3>Новостей пока нет</h3>
                         <p>Опубликованные новости отображаются здесь.</p>
+                    </section>
+                ) : null}
+            </div>
+        </div>
+    );
+}
+
+function SuggestedNewsPage({ suggested_news_items = [] }) {
+    return (
+        <div className="section-page">
+            <Hero
+                title="Предложенные новости"
+                description="Здесь администратор просматривает новости на рассмотрении, редактирует их, публикует или отклоняет."
+            />
+
+            <div className="news-list">
+                {suggested_news_items.map((item) => (
+                    <article className="placeholder-card news-card" key={item.id}>
+                        <div className="news-meta">
+                            <span>{item.author_name}</span>
+                            <span>{formatDateTime(item.created_at)}</span>
+                        </div>
+                        <div className="news-suggestion-status">На рассмотрении</div>
+                        <h3>{item.title}</h3>
+                        <NewsMedia media={item.media} title={item.title} />
+                        <p className="news-content">{item.content}</p>
+
+                        <div className="news-card-actions news-suggestion-actions">
+                            <form method="POST" action="/news/publish">
+                                <input type="hidden" name="news_id" value={item.id} />
+                                <button type="submit" className="btn btn-primary">Опубликовать</button>
+                            </form>
+                            <form method="POST" action="/news/reject">
+                                <input type="hidden" name="news_id" value={item.id} />
+                                <button type="submit" className="btn btn-outline-light">Отклонить</button>
+                            </form>
+                            <NewsEditBlock item={item} summaryLabel="Подредактировать" redirectTo="/news/suggestions" />
+                        </div>
+                    </article>
+                ))}
+
+                {!suggested_news_items.length ? (
+                    <section className="placeholder-card">
+                        <h3>Предложенных новостей нет</h3>
+                        <p>Когда пользователи отправят новости на рассмотрение, они появятся здесь.</p>
                     </section>
                 ) : null}
             </div>
@@ -834,6 +913,8 @@ function AppLayout({ bootstrapData }) {
                 return <LeaderboardPage {...bootstrapData} />;
             case "news":
                 return <NewsPage {...bootstrapData} />;
+            case "news_suggestions":
+                return <SuggestedNewsPage {...bootstrapData} />;
             case "missions":
                 return <MissionsPage {...bootstrapData} />;
             case "teams":
@@ -859,7 +940,11 @@ function AppLayout({ bootstrapData }) {
 
     return (
         <>
-            <Header user={bootstrapData.user} activeSection={bootstrapData.activeSection} />
+            <Header
+                user={bootstrapData.user}
+                activeSection={bootstrapData.activeSection}
+                pendingNewsCount={bootstrapData.pending_news_count}
+            />
             <div className="container">
                 <FlashMessages messages={bootstrapData.messages} />
                 {renderPage()}

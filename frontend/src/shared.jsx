@@ -68,7 +68,7 @@ export function Hero({ title, description, extraClass = "" }) {
   );
 }
 
-export function Header({ user, activeSection }) {
+export function Header({ user, activeSection, pendingNewsCount = 0 }) {
   if (!user) return null;
 
   const isAdmin = Boolean(user.isadmin);
@@ -82,6 +82,12 @@ export function Header({ user, activeSection }) {
 
   if (isAdmin) {
     menuItems.push({ key: "approve", href: "/approve", label: "\u041f\u043e\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043d\u0438\u0435" });
+    menuItems.push({
+      key: "news_suggestions",
+      href: "/news/suggestions",
+      label: "\u041f\u0440\u0435\u0434\u043b\u043e\u0436\u0435\u043d\u043d\u044b\u0435 \u043d\u043e\u0432\u043e\u0441\u0442\u0438",
+      badgeCount: Number(pendingNewsCount) || 0
+    });
   }
 
   return (
@@ -105,10 +111,11 @@ export function Header({ user, activeSection }) {
               {menuItems.map((item) => (
                 <li className="nav-item main-nav-item" key={item.key}>
                   <a
-                    className={`nav-link ${activeSection === item.key ? "active" : ""}`.trim()}
+                    className={`nav-link ${activeSection === item.key ? "active" : ""} ${item.badgeCount ? "has-badge" : ""}`.trim()}
                     href={item.href}
                   >
                     {item.label}
+                    {item.badgeCount ? <span className="nav-link-badge">{item.badgeCount}</span> : null}
                   </a>
                 </li>
               ))}
