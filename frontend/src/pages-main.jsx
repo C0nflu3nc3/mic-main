@@ -111,57 +111,61 @@ function NewsEditBlock({ item, summaryLabel = "Редактировать нов
   return (
     <details className="news-edit-block news-edit-action">
       <summary className="news-edit-summary">{summaryLabel}</summary>
-      <form method="POST" action="/news/update" encType="multipart/form-data" className="news-edit-form">
-        <input type="hidden" name="news_id" value={item.id} />
-        {redirectTo ? <input type="hidden" name="redirect_to" value={redirectTo} /> : null}
-        <div className="mb-3">
-          <label className="form-label" htmlFor={`edit-title-${item.id}`}>Заголовок</label>
-          <input className="form-control" id={`edit-title-${item.id}`} name="title" type="text" defaultValue={item.title} required />
-        </div>
-        <div className="mb-3">
-          <label className="form-label" htmlFor={`edit-content-${item.id}`}>Текст новости</label>
-          <textarea className="form-control" id={`edit-content-${item.id}`} name="content" rows="5" defaultValue={item.content} required />
-        </div>
-        {item.media && item.media.length ? (
+      <div className="news-edit-body">
+        <form method="POST" action="/news/update" encType="multipart/form-data" className="news-edit-form">
+          <input type="hidden" name="news_id" value={item.id} />
+          {redirectTo ? <input type="hidden" name="redirect_to" value={redirectTo} /> : null}
           <div className="mb-3">
-            <div className="form-label">Текущие медиа</div>
-            <div className="news-edit-existing-media">
-              {item.media.map((media, index) => (
-                <label className="news-edit-media-item" key={`${media.media_path}-${index}`}>
-                  {media.media_type === "video" ? (
-                    <video className="news-edit-media-preview" controls preload="metadata"><source src={uploadedPath(media.media_path)} /></video>
-                  ) : (
-                    <img className="news-edit-media-preview" src={uploadedPath(media.media_path)} alt={item.title} />
-                  )}
-                  <span className="news-edit-media-meta">{media.media_type === "video" ? "Видео" : "Изображение"}</span>
-                  <span className="news-edit-remove"><input type="checkbox" name="remove_media_ids" value={media.id} /><span>Убрать из новости</span></span>
-                </label>
-              ))}
-            </div>
+            <label className="form-label" htmlFor={`edit-title-${item.id}`}>Заголовок</label>
+            <input className="form-control" id={`edit-title-${item.id}`} name="title" type="text" defaultValue={item.title} required />
           </div>
-        ) : null}
-        <div className="mb-3">
-          <label className="form-label" htmlFor={`edit-media-${item.id}`}>Добавить медиа</label>
-          <input className="form-control" id={`edit-media-${item.id}`} name="media" type="file" accept=".png,.jpg,.jpeg,.gif,.webp,.mp4,.webm,.ogg,.mov,.m4v" multiple />
-          <div className="form-text text-light">Всего в новости можно оставить до 3 файлов.</div>
-        </div>
-        <button type="submit" className="btn btn-primary">Сохранить изменения</button>
-      </form>
+          <div className="mb-3">
+            <label className="form-label" htmlFor={`edit-content-${item.id}`}>Текст новости</label>
+            <textarea className="form-control" id={`edit-content-${item.id}`} name="content" rows="5" defaultValue={item.content} required />
+          </div>
+          {item.media && item.media.length ? (
+            <div className="mb-3">
+              <div className="form-label">Текущие медиа</div>
+              <div className="news-edit-existing-media">
+                {item.media.map((media, index) => (
+                  <label className="news-edit-media-item" key={`${media.media_path}-${index}`}>
+                    {media.media_type === "video" ? (
+                      <video className="news-edit-media-preview" controls preload="metadata"><source src={uploadedPath(media.media_path)} /></video>
+                    ) : (
+                      <img className="news-edit-media-preview" src={uploadedPath(media.media_path)} alt={item.title} />
+                    )}
+                    <span className="news-edit-media-meta">{media.media_type === "video" ? "Видео" : "Изображение"}</span>
+                    <span className="news-edit-remove"><input type="checkbox" name="remove_media_ids" value={media.id} /><span>Убрать из новости</span></span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          ) : null}
+          <div className="mb-3">
+            <label className="form-label" htmlFor={`edit-media-${item.id}`}>Добавить медиа</label>
+            <input className="form-control" id={`edit-media-${item.id}`} name="media" type="file" accept=".png,.jpg,.jpeg,.gif,.webp,.mp4,.webm,.ogg,.mov,.m4v" multiple />
+            <div className="form-text text-light">Всего в новости можно оставить до 3 файлов.</div>
+          </div>
+          <button type="submit" className="btn btn-primary">Сохранить изменения</button>
+        </form>
+      </div>
     </details>
   );
 }
 
 function SuggestedNewsForm() {
   return (
-    <section className="placeholder-card news-form-card">
+    <section className="placeholder-card news-form-card news-suggest-card">
       <details className="news-edit-block news-suggest-block" open={false}>
         <summary className="news-edit-summary">Предложить новость</summary>
-        <form method="POST" action="/news/suggest" encType="multipart/form-data" className="news-edit-form">
-          <div className="mb-3"><label className="form-label" htmlFor="suggest-title">Заголовок</label><input className="form-control" id="suggest-title" name="title" type="text" required /></div>
-          <div className="mb-3"><label className="form-label" htmlFor="suggest-content">Текст новости</label><textarea className="form-control" id="suggest-content" name="content" rows="5" required /></div>
-          <div className="mb-3"><label className="form-label" htmlFor="suggest-media">Медиафайлы</label><input className="form-control" id="suggest-media" name="media" type="file" accept=".png,.jpg,.jpeg,.gif,.webp,.mp4,.webm,.ogg,.mov,.m4v" multiple /><div className="form-text text-light">До 3 файлов: изображения или видео.</div></div>
-          <button type="submit" className="btn btn-primary">Отправить на рассмотрение</button>
-        </form>
+        <div className="news-edit-body">
+          <form method="POST" action="/news/suggest" encType="multipart/form-data" className="news-edit-form">
+            <div className="mb-3"><label className="form-label" htmlFor="suggest-title">Заголовок</label><input className="form-control" id="suggest-title" name="title" type="text" required /></div>
+            <div className="mb-3"><label className="form-label" htmlFor="suggest-content">Текст новости</label><textarea className="form-control" id="suggest-content" name="content" rows="5" required /></div>
+            <div className="mb-3"><label className="form-label" htmlFor="suggest-media">Медиафайлы</label><input className="form-control" id="suggest-media" name="media" type="file" accept=".png,.jpg,.jpeg,.gif,.webp,.mp4,.webm,.ogg,.mov,.m4v" multiple /><div className="form-text text-light">До 3 файлов: изображения или видео.</div></div>
+            <button type="submit" className="btn btn-primary">Отправить на рассмотрение</button>
+          </form>
+        </div>
       </details>
     </section>
   );
@@ -180,12 +184,14 @@ function NewsCommentItem({ comment, newsId, currentUserId, canManageNews }) {
       <div className="news-comment-actions">
         <details className="news-reply-block">
           <summary className="news-reply-summary">Ответить</summary>
-          <form method="POST" action="/news/comment" className="news-reply-form">
-            <input type="hidden" name="news_id" value={newsId} />
-            <input type="hidden" name="parent_comment_id" value={comment.id} />
-            <textarea className="form-control mb-2" name="comment" rows="3" placeholder="Напишите ответ" required />
-            <button type="submit" className="btn btn-outline-light">Отправить ответ</button>
-          </form>
+          <div className="news-edit-body">
+            <form method="POST" action="/news/comment" className="news-reply-form">
+              <input type="hidden" name="news_id" value={newsId} />
+              <input type="hidden" name="parent_comment_id" value={comment.id} />
+              <textarea className="form-control mb-2" name="comment" rows="3" placeholder="Напишите ответ" required />
+              <button type="submit" className="btn btn-outline-light">Отправить ответ</button>
+            </form>
+          </div>
         </details>
         {canDelete ? (
           <form method="POST" action="/news/comment/delete" className="news-delete-comment-form">
