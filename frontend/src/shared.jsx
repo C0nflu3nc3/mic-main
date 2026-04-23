@@ -100,29 +100,29 @@ export function Header({ user, activeSection }) {
             </button>
           </div>
 
+          <div className="menu-collapse" id="mainMenuCollapse">
+            <ul className="nav section-nav" id="main-sections">
+              {menuItems.map((item) => (
+                <li className="nav-item main-nav-item" key={item.key}>
+                  <a
+                    className={`nav-link ${activeSection === item.key ? "active" : ""}`.trim()}
+                    href={item.href}
+                  >
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+              <li className="nav-item menu-extra-item">
+                <a className="nav-link" href="/logout">{"\u0412\u044b\u0445\u043e\u0434"}</a>
+              </li>
+            </ul>
+          </div>
+
           <ul className="nav justify-content-end" id="user-controls">
             <li className="nav-item user-status-item">
               <div className="user-status-panel">{user.view}</div>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="/logout">{"\u0412\u044b\u0445\u043e\u0434"}</a>
-            </li>
-          </ul>
-        </div>
-
-        <div className="menu-collapse" id="mainMenuCollapse">
-          <ul className="nav section-nav" id="main-sections">
-            {menuItems.map((item) => (
-              <li className="nav-item main-nav-item" key={item.key}>
-                <a
-                  className={`nav-link ${activeSection === item.key ? "active" : ""}`.trim()}
-                  href={item.href}
-                >
-                  {item.label}
-                </a>
-              </li>
-            ))}
-            <li className="nav-item menu-extra-item">
               <a className="nav-link" href="/logout">{"\u0412\u044b\u0445\u043e\u0434"}</a>
             </li>
           </ul>
