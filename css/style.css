@@ -28,7 +28,7 @@
   --main-brass: #9d7843;
   --main-brass-bright: #d2a463;
   --main-ink: #0a0f0f;
-  --main-font-display: "Prata", Georgia, serif;
+  --main-font-display: "Cera Stencil", "Manrope", Arial, sans-serif;
   --main-font-story: "IBM Plex Serif", Georgia, serif;
   --main-font-nav: "Cera Stencil", "Manrope", Arial, sans-serif;
 }
@@ -84,9 +84,9 @@ h4,
 h5,
 h6 {
   font-family: var(--main-font-display);
-  font-weight: 400;
-  letter-spacing: 0.025em;
-  line-height: 1.08;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.02;
   color: #e3c181;
 }
 
@@ -941,10 +941,11 @@ a {
 }
 
 .btn {
+  font-family: var(--main-font-nav);
   border-radius: 14px;
   padding: 11px 22px;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
   border-width: 1px;
   box-shadow:
@@ -1388,6 +1389,18 @@ img {
 
   .placeholder-hero h1 {
     font-size: 34px;
+  }
+
+  .bank-page > h3 {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .bank-page > h3 .badge {
+    flex: 0 0 auto;
   }
 
   .placeholder-hero p,
@@ -1901,6 +1914,15 @@ img {
 
   .placeholder-hero h1 {
     font-size: 24px;
+  }
+
+  .bank-page > h3 {
+    gap: 10px;
+    font-size: 18px;
+  }
+
+  .bank-page > h3 .badge {
+    padding: 8px 12px;
   }
 
   .leaderboard-title,
