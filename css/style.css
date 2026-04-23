@@ -1312,17 +1312,22 @@ img {
 
   .menu-toolbar {
     margin-right: 0;
+    min-width: 0;
   }
 
   .header-topbar {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
     flex-wrap: nowrap;
+    column-gap: 12px;
+    row-gap: 8px;
     margin-bottom: 0;
   }
 
   .menu-collapse {
     padding-top: 0;
-    width: auto;
+    width: 100%;
     flex: 1 1 auto;
     min-width: 0;
     order: 2;
@@ -1330,13 +1335,18 @@ img {
 
   .section-nav {
     padding-top: 0;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     align-items: center;
+    justify-content: flex-start;
+    row-gap: 8px;
   }
 
   .header #user-controls {
     flex: 0 0 auto;
     order: 3;
+    justify-self: end;
+    margin-left: 0;
+    min-width: max-content;
   }
 }
 
