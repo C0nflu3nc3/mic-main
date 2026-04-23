@@ -109,7 +109,7 @@ function NewsMedia({ media, title }) {
 
 function NewsEditBlock({ item, summaryLabel = "Редактировать новость", redirectTo = "" }) {
   return (
-    <details className="news-edit-block news-edit-action">
+    <details className="news-edit-block news-edit-action is-collapsed" open>
       <summary className="news-edit-summary">{summaryLabel}</summary>
       <div className="news-edit-body">
         <form method="POST" action="/news/update" encType="multipart/form-data" className="news-edit-form">
@@ -156,7 +156,7 @@ function NewsEditBlock({ item, summaryLabel = "Редактировать нов
 function SuggestedNewsForm() {
   return (
     <section className="placeholder-card news-form-card news-suggest-card">
-      <details className="news-edit-block news-suggest-block" open={false}>
+      <details className="news-edit-block news-suggest-block is-collapsed" open>
         <summary className="news-edit-summary">Предложить новость</summary>
         <div className="news-edit-body">
           <form method="POST" action="/news/suggest" encType="multipart/form-data" className="news-edit-form">
@@ -182,7 +182,7 @@ function NewsCommentItem({ comment, newsId, currentUserId, canManageNews }) {
       </div>
       <p>{comment.comment}</p>
       <div className="news-comment-actions">
-        <details className="news-reply-block">
+        <details className="news-reply-block is-collapsed" open>
           <summary className="news-reply-summary">Ответить</summary>
           <div className="news-edit-body">
             <form method="POST" action="/news/comment" className="news-reply-form">

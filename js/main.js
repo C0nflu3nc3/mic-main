@@ -5,6 +5,25 @@ function initMainUi() {
     const amountInput = document.getElementById("PLT");
     const submitButton = document.getElementById("transferSubmit");
     const stateBlock = document.getElementById("transferState");
+    const animatedDetailsSelector = ".news-edit-block, .news-suggest-block, .news-reply-block";
+
+    document.querySelectorAll(animatedDetailsSelector).forEach(function (details) {
+        const summary = details.querySelector(".news-edit-summary, .news-reply-summary");
+
+        if (!summary || details.dataset.animatedDetailsBound === "true") {
+            return;
+        }
+
+        details.dataset.animatedDetailsBound = "true";
+        details.classList.toggle("is-open", !details.classList.contains("is-collapsed"));
+
+        summary.addEventListener("click", function (event) {
+            event.preventDefault();
+            const willOpen = !details.classList.contains("is-open");
+            details.classList.toggle("is-open", willOpen);
+            details.classList.toggle("is-collapsed", !willOpen);
+        });
+    });
 
     if (menuCollapseElement && menuToggleButton && !menuCollapseElement.dataset.uiBound) {
         menuCollapseElement.dataset.uiBound = "true";
