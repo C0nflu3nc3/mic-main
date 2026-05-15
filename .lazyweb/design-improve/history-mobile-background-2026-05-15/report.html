@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Design Improvement - History Mobile Background</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 32px 18px 64px;
+      background: linear-gradient(180deg, #0f1514 0%, #121c1a 100%);
+      color: #eadfc8;
+      font: 16px/1.65 "Segoe UI", Arial, sans-serif;
+    }
+    main {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+    h1, h2, h3 {
+      color: #f0d49a;
+      line-height: 1.1;
+    }
+    .panel {
+      background: linear-gradient(180deg, #182421 0%, #121b19 100%);
+      border: 1px solid rgba(210, 164, 99, 0.18);
+      border-radius: 18px;
+      padding: 22px 24px;
+      margin-top: 18px;
+    }
+    .callout {
+      background: linear-gradient(180deg, #15314b 0%, #122537 100%);
+      border: 1px solid rgba(138, 186, 255, 0.22);
+      border-radius: 18px;
+      padding: 18px 20px;
+      margin: 18px 0 24px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Design Improvement: History Mobile Background</h1>
+
+    <div class="callout">
+      <strong>TL;DR</strong>
+      <p>The weak spot on mobile was not the cards, but the text-only section intros between them. They were sitting directly on the page texture, so they looked unfinished compared to the richer codex cards below. The fix was to give those intro zones a softer atmospheric backing instead of leaving them visually naked.</p>
+    </div>
+
+    <section class="panel">
+      <h2>Improvement Ideas</h2>
+      <h3>1. Give section intros a soft codex backing</h3>
+      <p>The `Лор / 12 Легионов / Архонты...` intro blocks now have a subtle translucent plate with a vertical accent and a small gold marker.</p>
+
+      <h3>2. Preserve hierarchy without turning everything into heavy blocks</h3>
+      <p>Instead of adding another big dark rectangle, the intro surface uses a faint glow, low-contrast border, and blur. That keeps the page airy while making text readable and deliberate.</p>
+
+      <h3>3. Keep mobile-specific tuning</h3>
+      <p>The adjustment is mobile-first, with a lighter footprint on the narrowest screens so the page still breathes.</p>
+    </section>
+
+    <section class="panel">
+      <h2>What Changed In Code</h2>
+      <p><code>css/style.css</code></p>
+    </section>
+
+    <section class="panel">
+      <h2>Reference Note</h2>
+      <p>Lazyweb MCP references were not available in this session, so this was handled as a local visual audit and direct implementation from the provided screenshot.</p>
+    </section>
+  </main>
+</body>
+</html>

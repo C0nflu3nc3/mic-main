@@ -699,17 +699,23 @@ a {
   display: flex;
   gap: 10px;
   overflow-x: auto;
-  padding: 10px 12px 18px;
-  margin: 0 0 22px;
+  width: fit-content;
+  max-width: 100%;
+  padding: 12px 14px 18px;
+  margin: 0 auto 24px;
   scrollbar-width: thin;
   scroll-snap-type: x proximity;
   position: sticky;
   top: 88px;
   z-index: 12;
-  border-radius: 24px;
+  border-radius: 999px;
   backdrop-filter: blur(14px);
   background:
-    linear-gradient(180deg, rgba(11, 18, 17, 0.74) 0%, rgba(11, 18, 17, 0.34) 72%, rgba(11, 18, 17, 0) 100%);
+    linear-gradient(180deg, rgba(11, 18, 17, 0.84) 0%, rgba(16, 26, 24, 0.62) 100%);
+  border: 1px solid rgba(194, 149, 78, 0.16);
+  box-shadow:
+    0 18px 38px rgba(0, 0, 0, 0.16),
+    inset 0 1px 0 rgba(255, 237, 197, 0.06);
 }
 
 .history-tabs::-webkit-scrollbar {
@@ -830,6 +836,8 @@ a {
   display: grid;
   gap: 14px;
   align-content: start;
+  justify-items: center;
+  text-align: center;
   padding: 26px 28px;
   border-radius: 28px;
   position: relative;
@@ -860,7 +868,7 @@ a {
   margin: 0;
   color: #dfbb76;
   font-size: 30px;
-  text-align: left;
+  text-align: center;
   line-height: 1.08;
 }
 
@@ -868,6 +876,9 @@ a {
 .history-card li {
   color: rgba(232, 220, 196, 0.88);
   line-height: 1.72;
+  max-width: 34ch;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .history-card-kicker,
@@ -888,6 +899,7 @@ a {
   font-weight: 700;
   line-height: 1.35;
   color: rgba(231, 219, 196, 0.86);
+  max-width: 28ch;
 }
 
 .history-expand {
@@ -915,6 +927,8 @@ a {
   padding-top: 12px;
   display: grid;
   gap: 12px;
+  justify-items: center;
+  text-align: center;
 }
 
 .history-expand-panel {
@@ -944,6 +958,7 @@ a {
   overflow: hidden;
   display: grid;
   gap: 12px;
+  justify-items: center;
 }
 
 .history-action-button {
@@ -953,7 +968,7 @@ a {
   text-align: center;
   width: fit-content;
   min-width: min(100%, 230px);
-  justify-self: start;
+  justify-self: center;
   padding: 12px 18px;
   border-radius: 14px;
   border: 1px solid rgba(194, 149, 78, 0.42);
@@ -1002,6 +1017,8 @@ a {
   background: rgba(63, 107, 97, 0.15);
   color: #f2e4bf;
   font-weight: 700;
+  justify-self: center;
+  text-align: center;
 }
 
 .history-portrait-note {
@@ -1011,10 +1028,12 @@ a {
   background: rgba(9, 17, 16, 0.52);
   color: rgba(231, 219, 196, 0.86);
   font-size: 14px;
+  text-align: center;
 }
 
 .history-portrait {
   margin: 4px 0 0;
+  justify-self: center;
 }
 
 .history-portrait-image {
@@ -1137,7 +1156,7 @@ a {
 
 .news-list {
   display: grid;
-  gap: 22px;
+  gap: 28px;
 }
 
 .news-form-card {
@@ -1151,26 +1170,87 @@ a {
 
 .news-card {
   display: grid;
-  gap: 16px;
+  gap: 18px;
+}
+
+.news-card-editorial {
+  padding: 26px 28px 24px;
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at top center, rgba(64, 95, 86, 0.12) 0%, transparent 34%),
+    linear-gradient(180deg, rgba(15, 27, 24, 0.97) 0%, rgba(10, 17, 16, 0.95) 100%);
+  box-shadow:
+    0 24px 56px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 239, 200, 0.05);
+}
+
+.news-card-header {
+  display: grid;
+  gap: 14px;
+  justify-items: center;
+  text-align: center;
+}
+
+.news-card-header h3 {
+  margin: 0;
+  max-width: 18ch;
+  font-size: clamp(30px, 3vw, 42px);
+  line-height: 0.98;
+}
+
+.news-card-media-shell {
+  padding: 14px;
+  border-radius: 22px;
+  border: 1px solid rgba(194, 149, 78, 0.18);
+  background:
+    linear-gradient(180deg, rgba(11, 20, 18, 0.92) 0%, rgba(8, 14, 13, 0.92) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 239, 200, 0.04),
+    0 12px 28px rgba(0, 0, 0, 0.18);
+}
+
+.news-body-panel {
+  padding: 18px 20px;
+  border-radius: 20px;
+  border: 1px solid rgba(194, 149, 78, 0.14);
+  background: rgba(17, 30, 27, 0.68);
 }
 
 .news-meta,
 .news-comment-meta {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   gap: 12px;
   color: var(--main-text-soft);
   font-size: 14px;
+  width: 100%;
+}
+
+.news-meta span,
+.news-comment-meta span,
+.news-comment-meta strong {
+  display: inline-flex;
+  align-items: center;
+}
+
+.news-meta span {
+  padding: 7px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(194, 149, 78, 0.18);
+  background: rgba(20, 33, 30, 0.74);
+  font-size: 13px;
+  letter-spacing: 0.02em;
 }
 
 .news-image {
   width: 100%;
-  max-height: 420px;
+  max-height: 520px;
   height: auto;
   object-fit: contain;
   border-radius: 16px;
-  background: rgba(6, 11, 11, 0.36);
-  border: 1px solid rgba(194, 149, 78, 0.18);
+  background: rgba(5, 10, 10, 0.42);
+  border: 1px solid rgba(194, 149, 78, 0.14);
 }
 
 .news-media-list {
@@ -1181,16 +1261,22 @@ a {
 .news-video {
   display: block;
   width: 100%;
-  max-height: 420px;
+  max-height: 520px;
   height: auto;
   object-fit: contain;
   border-radius: 16px;
-  background: rgba(6, 11, 11, 0.48);
-  border: 1px solid rgba(194, 149, 78, 0.18);
+  background: rgba(5, 10, 10, 0.48);
+  border: 1px solid rgba(194, 149, 78, 0.14);
 }
 
 .news-content {
   white-space: pre-line;
+  margin: 0;
+  color: rgba(236, 227, 207, 0.92);
+  font-size: 18px;
+  line-height: 1.82;
+  text-align: center;
+  max-width: 64ch;
 }
 
 .studios-page {
@@ -1422,13 +1508,29 @@ a {
   border-top: 1px solid rgba(194, 149, 78, 0.14);
 }
 
+.news-comments-shell {
+  padding: 18px 20px 0;
+  border-radius: 22px;
+  border: 1px solid rgba(194, 149, 78, 0.14);
+  background:
+    linear-gradient(180deg, rgba(13, 22, 20, 0.86) 0%, rgba(9, 16, 15, 0.82) 100%);
+}
+
+.news-comments-shell h4 {
+  margin-bottom: 16px;
+}
+
 .news-comment {
-  padding: 12px 0;
-  border-bottom: 1px solid rgba(194, 149, 78, 0.08);
+  padding: 14px 16px;
+  border: 1px solid rgba(194, 149, 78, 0.09);
+  border-radius: 16px;
+  background: rgba(15, 24, 22, 0.48);
+  margin-bottom: 12px;
 }
 
 .news-comment > p {
   margin-bottom: 10px;
+  line-height: 1.68;
 }
 
 .news-comment-actions {
@@ -2344,8 +2446,47 @@ img {
 }
 
 @media (max-width: 576px) {
-  .history-lead-card .history-card-kicker {
+  .history-page .history-card-kicker {
     display: none;
+  }
+
+  .history-section-head {
+    width: 100%;
+    padding-left: 0;
+    border-left: 0;
+    margin-bottom: 18px;
+  }
+
+  .history-section-head::before {
+    left: 15px;
+    top: 18px;
+    width: 10px;
+    height: 10px;
+    box-shadow: 0 0 0 7px rgba(210, 164, 99, 0.08);
+  }
+
+  .history-section-head-main {
+    position: relative;
+    padding: 18px 18px 18px 34px;
+    border-radius: 24px;
+    border: 1px solid rgba(194, 149, 78, 0.14);
+    background:
+      radial-gradient(circle at top left, rgba(214, 174, 100, 0.08) 0%, transparent 28%),
+      linear-gradient(180deg, rgba(16, 25, 22, 0.84) 0%, rgba(11, 18, 17, 0.62) 100%);
+    box-shadow:
+      0 18px 38px rgba(0, 0, 0, 0.14),
+      inset 0 1px 0 rgba(255, 237, 197, 0.04);
+    backdrop-filter: blur(8px);
+  }
+
+  .history-section-head-main::before {
+    content: "";
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    bottom: 20px;
+    width: 1px;
+    background: linear-gradient(180deg, rgba(210, 164, 99, 0.48) 0%, rgba(210, 164, 99, 0.08) 100%);
   }
 
   body {
@@ -2455,6 +2596,8 @@ img {
   .history-tabs {
     gap: 8px;
     flex-wrap: nowrap;
+    width: auto;
+    max-width: none;
     margin-left: -16px;
     margin-right: -16px;
     padding-left: 16px;
@@ -2462,7 +2605,9 @@ img {
     padding-top: 8px;
     padding-bottom: 12px;
     top: 72px;
-    border-radius: 20px;
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
   }
 
   .history-tab {
@@ -2501,6 +2646,32 @@ img {
   .leaderboard-grid,
   .news-list {
     gap: 16px;
+  }
+
+  .news-card-editorial {
+    padding: 18px 16px 16px;
+    border-radius: 22px;
+  }
+
+  .news-card-header h3 {
+    max-width: 100%;
+    font-size: 28px;
+  }
+
+  .news-card-media-shell,
+  .news-body-panel,
+  .news-comments-shell {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .news-content {
+    font-size: 16px;
+    line-height: 1.7;
+  }
+
+  .news-comment {
+    padding: 12px;
   }
 
   .bank-page {
@@ -2787,6 +2958,17 @@ img {
     padding: 16px 14px;
   }
 
+  .history-section-head-main {
+    padding: 16px 14px 16px 30px;
+    border-radius: 20px;
+  }
+
+  .history-section-head-main::before {
+    left: 17px;
+    top: 18px;
+    bottom: 18px;
+  }
+
   .history-hero h1 {
     font-size: 26px;
   }
@@ -2817,6 +2999,10 @@ img {
 
   .history-card h3 {
     font-size: 22px;
+  }
+
+  .news-card-header h3 {
+    font-size: 24px;
   }
 
   .history-codex-list li {

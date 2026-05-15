@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Design Improvement - News + History Navigation</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 32px 18px 64px;
+      background: linear-gradient(180deg, #0f1514 0%, #121c1a 100%);
+      color: #eadfc8;
+      font: 16px/1.65 "Segoe UI", Arial, sans-serif;
+    }
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h1, h2, h3 {
+      color: #f0d49a;
+      line-height: 1.1;
+    }
+    .panel {
+      background: linear-gradient(180deg, #182421 0%, #121b19 100%);
+      border: 1px solid rgba(210, 164, 99, 0.18);
+      border-radius: 18px;
+      padding: 22px 24px;
+      margin-top: 18px;
+    }
+    .callout {
+      background: linear-gradient(180deg, #15314b 0%, #122537 100%);
+      border: 1px solid rgba(138, 186, 255, 0.22);
+      border-radius: 18px;
+      padding: 18px 20px;
+      margin: 18px 0 24px;
+    }
+    ul {
+      padding-left: 20px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Design Improvement: News + History Navigation</h1>
+
+    <div class="callout">
+      <strong>TL;DR</strong>
+      <p>The news cards looked structurally correct but visually flat: the image, text, and comments all sat on one level. The history page had a stronger tone, but the section rail and card alignment still felt uneven. The best fix was to make news feel editorial and layered, then make history feel more ceremonial and centered.</p>
+    </div>
+
+    <section class="panel">
+      <h2>Improvement Ideas</h2>
+      <h3>1. Turn news into an editorial card</h3>
+      <p>Each news item now has a clearer stack: meta row, centered title, framed media stage, separate text panel, and separate comments panel.</p>
+
+      <h3>2. Make comments feel like part of a discussion layer</h3>
+      <p>Instead of plain lines of text under the post, comments now sit in softer nested surfaces. This makes the comment area feel intentional rather than appended.</p>
+
+      <h3>3. Make history cards feel centered and ceremonial</h3>
+      <p>The `Лор / Ноктюрн / Архонты` cards now center their content, buttons, and expanded sections so the page feels more like a codex and less like generic dashboard cards.</p>
+
+      <h3>4. Upgrade the history tab rail</h3>
+      <p>The `Лор / 12 Легионов / Архонты / Кодекс...` row now behaves more like a navigation rail than a string of unrelated buttons.</p>
+    </section>
+
+    <section class="panel">
+      <h2>What Changed In Code</h2>
+      <ul>
+        <li><code>frontend/src/pages-main.jsx</code></li>
+        <li><code>js/react-app.jsx</code></li>
+        <li><code>css/style.css</code></li>
+      </ul>
+    </section>
+
+    <section class="panel">
+      <h2>Reference Note</h2>
+      <p>Lazyweb MCP references were not available in this session, so this pass was done as a local design audit and direct implementation from the provided screenshot.</p>
+    </section>
+  </main>
+</body>
+</html>

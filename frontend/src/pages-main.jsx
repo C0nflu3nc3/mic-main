@@ -251,12 +251,20 @@ export function NewsPage({
       ) : can_suggest_news ? <SuggestedNewsForm /> : null}
       <div className="news-list">
         {news_items.map((item) => (
-          <article className="placeholder-card news-card" key={item.id}>
-            <div className="news-meta"><span>{item.author_name}</span><span>{formatDateTime(item.created_at)}</span></div>
-            <h3>{item.title}</h3>
-            <NewsMedia media={item.media} title={item.title} />
-            <p className="news-content">{item.content}</p>
-            <div className="news-comments">
+          <article className="placeholder-card news-card news-card-editorial" key={item.id}>
+            <div className="news-card-header">
+              <div className="news-meta"><span>{item.author_name}</span><span>{formatDateTime(item.created_at)}</span></div>
+              <h3>{item.title}</h3>
+            </div>
+            {item.media && item.media.length ? (
+              <div className="news-card-media-shell">
+                <NewsMedia media={item.media} title={item.title} />
+              </div>
+            ) : null}
+            <div className="news-body-panel">
+              <p className="news-content">{item.content}</p>
+            </div>
+            <div className="news-comments news-comments-shell">
               <h4>Комментарии</h4>
               {item.comments && item.comments.length ? item.comments.map((comment) => (
                 <NewsCommentItem key={comment.id} comment={comment} newsId={item.id} currentUserId={user?.id} canManageNews={can_manage_news} />
@@ -284,15 +292,23 @@ export function SuggestedNewsPage({ suggested_news_items = [] }) {
       <Hero title="Предложенные новости" description="Здесь администратор просматривает новости на рассмотрении, редактирует их, публикует или отклоняет." />
       <div className="news-list">
         {suggested_news_items.map((item) => (
-          <article className="placeholder-card news-card" key={item.id}>
-            <div className="news-meta">
-              <span>{item.author_name}</span>
-              <span>{formatDateTime(item.created_at)}</span>
+          <article className="placeholder-card news-card news-card-editorial" key={item.id}>
+            <div className="news-card-header">
+              <div className="news-meta">
+                <span>{item.author_name}</span>
+                <span>{formatDateTime(item.created_at)}</span>
+              </div>
+              <div className="news-suggestion-status">На рассмотрении</div>
+              <h3>{item.title}</h3>
             </div>
-            <div className="news-suggestion-status">На рассмотрении</div>
-            <h3>{item.title}</h3>
-            <NewsMedia media={item.media} title={item.title} />
-            <p className="news-content">{item.content}</p>
+            {item.media && item.media.length ? (
+              <div className="news-card-media-shell">
+                <NewsMedia media={item.media} title={item.title} />
+              </div>
+            ) : null}
+            <div className="news-body-panel">
+              <p className="news-content">{item.content}</p>
+            </div>
             <div className="news-card-actions news-suggestion-actions">
               <form method="POST" action="/news/publish">
                 <input type="hidden" name="news_id" value={item.id} />
