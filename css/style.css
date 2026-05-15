@@ -721,7 +721,7 @@ a {
 
 .home-page .placeholder-grid .placeholder-card {
   min-height: 0;
-  padding: 30px 34px 28px;
+  padding: 30px 34px 16px;
   border-radius: 34px;
   gap: 18px;
 }
