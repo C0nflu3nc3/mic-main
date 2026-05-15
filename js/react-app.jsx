@@ -214,7 +214,7 @@ function HomePage() {
     ];
 
     return (
-        <div className="section-page">
+        <div className="section-page home-page ceremonial-page">
             <Hero
                 title="Главная страница"
                 description="Здесь отображаются основные разделы системы: таблица лидеров, новости и миссии за валюту."
@@ -262,7 +262,7 @@ function LeaderboardTable({ title, rows }) {
 
 function LeaderboardPage({ overall_leaderboard = [], duel_leaderboard = [] }) {
     return (
-        <div className="section-page leaderboard-page">
+        <div className="section-page leaderboard-page ceremonial-page">
             <Hero
                 title="Таблица лидеров"
                 description="Здесь отображаются отдельные таблицы общего рейтинга и дуэльных очков."
@@ -446,7 +446,7 @@ function NewsPage({ news_items = [], can_manage_news = false, can_suggest_news =
     const pendingCount = Number(pending_news_count) || 0;
 
     return (
-        <div className="section-page">
+        <div className="section-page news-page ceremonial-page">
             <Hero
                 title="Новости"
                 description="Здесь публикуются новости проекта, изображения, видео и комментарии пользователей."
@@ -542,7 +542,7 @@ function NewsPage({ news_items = [], can_manage_news = false, can_suggest_news =
 
 function SuggestedNewsPage({ suggested_news_items = [] }) {
     return (
-        <div className="section-page">
+        <div className="section-page news-page news-suggestions-page ceremonial-page">
             <Hero
                 title="Предложенные новости"
                 description="Здесь администратор просматривает новости на рассмотрении, редактирует их, публикует или отклоняет."
@@ -595,7 +595,7 @@ function SuggestedNewsPage({ suggested_news_items = [] }) {
 
 function MissionsPage({ is_admin = false, can_take_missions = false, current_team_mission_count = 0, missions = [] }) {
     return (
-        <div className="section-page">
+        <div className="section-page missions-page ceremonial-page">
             <Hero
                 title="Миссии за валюту"
                 description="Легион может взять до 3 заданий одновременно. На одно задание могут откликнуться не более 3 легионов."
@@ -871,7 +871,7 @@ function TeamsPage(props) {
 
 function ApprovePage({ approve_items = [] }) {
     return (
-        <div className="section-page">
+        <div className="section-page approve-page ceremonial-page">
             <Hero
                 title="Подтверждение"
                 description="Здесь администратор подтверждает или отклоняет выполнение принятых заданий. После подтверждения награда автоматически начисляется отряду."
@@ -916,7 +916,7 @@ function ApprovePage({ approve_items = [] }) {
 
 function StudiosPage({ studios_items = [], can_manage_studios = false }) {
     return (
-        <div className="section-page studios-page">
+        <div className="section-page studios-page ceremonial-page">
             <Hero
                 title="Студии"
                 description="Здесь собраны студии Империи. Администратор может добавлять новые студии, а сами карточки удобно просматривать на телефоне и компьютере."
@@ -978,7 +978,7 @@ function StudiosPage({ studios_items = [], can_manage_studios = false }) {
 }
 function PlaceholderPage({ section_title, section_description }) {
     return (
-        <div className="section-page">
+        <div className="section-page placeholder-page ceremonial-page">
             <Hero title={section_title} description={section_description} />
         </div>
     );

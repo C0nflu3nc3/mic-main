@@ -42,7 +42,7 @@ export function HomePage() {
   ];
 
   return (
-    <div className="section-page">
+    <div className="section-page home-page ceremonial-page">
       <Hero title="Главная страница" description="Здесь отображаются основные разделы системы: таблица лидеров, новости и миссии за валюту." />
       <div className="placeholder-grid">
         {cards.map((card) => (
@@ -80,7 +80,7 @@ function LeaderboardTable({ title, rows }) {
 
 export function LeaderboardPage({ overall_leaderboard = [], duel_leaderboard = [] }) {
   return (
-    <div className="section-page leaderboard-page">
+    <div className="section-page leaderboard-page ceremonial-page">
       <Hero title="Таблица лидеров" description="Здесь отображаются отдельные таблицы общего рейтинга и дуэльных очков." extraClass="leaderboard-hero" />
       <div className="leaderboard-grid">
         <LeaderboardTable title="Очки влияния" rows={overall_leaderboard} />
@@ -227,7 +227,7 @@ export function NewsPage({
   const pendingCount = Number(pending_news_count) || 0;
 
   return (
-    <div className="section-page">
+    <div className="section-page news-page ceremonial-page">
       <Hero title="Новости" description="Здесь публикуются новости проекта, изображения, видео и комментарии пользователей." />
       {can_manage_news ? (
         <div className="news-page-actions">
@@ -288,7 +288,7 @@ export function NewsPage({
 
 export function SuggestedNewsPage({ suggested_news_items = [] }) {
   return (
-    <div className="section-page">
+    <div className="section-page news-page news-suggestions-page ceremonial-page">
       <Hero title="Предложенные новости" description="Здесь администратор просматривает новости на рассмотрении, редактирует их, публикует или отклоняет." />
       <div className="news-list">
         {suggested_news_items.map((item) => (

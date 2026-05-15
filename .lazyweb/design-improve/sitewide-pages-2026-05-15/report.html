@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Sitewide Pages Design Harmonization</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 40px;
+      font: 16px/1.65 Georgia, "Times New Roman", serif;
+      background: #101715;
+      color: #eadfca;
+    }
+    main {
+      max-width: 920px;
+      margin: 0 auto;
+      background: rgba(14, 24, 22, 0.92);
+      border: 1px solid rgba(194, 149, 78, 0.32);
+      border-radius: 20px;
+      padding: 32px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.28);
+    }
+    h1, h2, h3 {
+      color: #f0d49a;
+      margin-top: 0;
+    }
+    h2 {
+      margin-top: 28px;
+    }
+    ul {
+      padding-left: 20px;
+    }
+    code {
+      color: #f2c97d;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Sitewide Pages Design Harmonization</h1>
+    <p><strong>Date:</strong> 2026-05-15</p>
+    <p><strong>Goal:</strong> bring the rest of the site closer to the visual language of <code>История и кодекс</code>.</p>
+
+    <h2>What was wrong</h2>
+    <ul>
+      <li>The history page had a stronger, more premium visual system than the rest of the product.</li>
+      <li>Other page heroes felt flatter and more generic.</li>
+      <li>Cards across news, missions, studios, leaderboard, and placeholder pages did not feel like one family.</li>
+      <li>Desktop and mobile rhythm varied too much from page to page.</li>
+    </ul>
+
+    <h2>What was changed</h2>
+    <ul>
+      <li>Introduced a shared <code>ceremonial-page</code> wrapper for non-history pages.</li>
+      <li>Upgraded hero blocks with richer gradients, stronger shadows, and an inner frame.</li>
+      <li>Unified card treatment for home, missions, approve, studios, news forms, and leaderboard shells.</li>
+      <li>Improved centering and composition for card content and actions.</li>
+      <li>Added mobile-specific ceremonial tuning so the design holds together on small screens.</li>
+    </ul>
+
+    <h2>Pages affected</h2>
+    <ul>
+      <li>Главная</li>
+      <li>Таблица лидеров</li>
+      <li>Новости</li>
+      <li>Предложенные новости</li>
+      <li>Миссии за валюту</li>
+      <li>Подтверждение</li>
+      <li>Студии</li>
+      <li>Placeholder pages</li>
+    </ul>
+
+    <h2>Note</h2>
+    <p>Lazyweb MCP references were not available in this session, so this report is based on a local design audit plus direct implementation in the codebase.</p>
+  </main>
+</body>
+</html>
