@@ -2,6 +2,7 @@
 
 import { FlashMessages, Header } from "./shared";
 import { HomePage, LeaderboardPage, LoginPage, NewsPage, SuggestedNewsPage } from "./pages-main";
+import { HistoryPage } from "./history-page.jsx";
 import { ApprovePage, MissionsPage, PlaceholderPage, TeamsPage } from "./pages-secondary";
 
 function App({ bootstrapData }) {
@@ -19,6 +20,8 @@ function App({ bootstrapData }) {
         return <LoginPage messages={bootstrapData.messages} />;
       case "home":
         return <HomePage />;
+      case "history":
+        return <HistoryPage />;
       case "leaderboard":
         return <LeaderboardPage {...bootstrapData} />;
       case "news":

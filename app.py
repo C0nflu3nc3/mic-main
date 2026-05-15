@@ -876,12 +876,10 @@ def history_page():
         return redirect_response
 
     return render_react_page(
-        "placeholder",
-        "История и кодекс",
+        "history",
+        "??????? ? ??????",
         user=user,
         active_section="history",
-        section_title="История и кодекс",
-        section_description="Здесь собраны энциклопедия программы, лор и информация о главных персонажах.",
     )
 
 

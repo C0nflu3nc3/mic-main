@@ -1,4 +1,6 @@
-﻿const bootstrap = window.__BOOTSTRAP__ || {};
+const HistoryPage = window.HistoryPage;
+
+const bootstrap = window.__BOOTSTRAP__ || {};
 
 function formatDateTime(value) {
     if (!value) {
@@ -919,6 +921,8 @@ function AppLayout({ bootstrapData }) {
                 return <LoginPage messages={bootstrapData.messages} />;
             case "home":
                 return <HomePage />;
+            case "history":
+                return <HistoryPage />;
             case "leaderboard":
                 return <LeaderboardPage {...bootstrapData} />;
             case "news":
