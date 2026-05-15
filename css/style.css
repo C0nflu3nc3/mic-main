@@ -1059,6 +1059,29 @@ a {
   white-space: pre-line;
 }
 
+.studios-page {
+  font-family: "Manrope", Arial, sans-serif;
+}
+
+.studios-page h1,
+.studios-page h2,
+.studios-page h3,
+.studios-page h4,
+.studios-page h5,
+.studios-page h6 {
+  font-family: var(--main-font-story);
+}
+
+.studios-page .placeholder-hero p,
+.studios-page .news-edit-summary,
+.studios-page .news-card-actions,
+.studios-page .form-label,
+.studios-page .form-text,
+.studios-page .btn,
+.studios-page .news-content {
+  font-family: "Manrope", Arial, sans-serif;
+}
+
 .news-edit-block {
   margin-top: 6px;
   padding-top: 10px;
@@ -1780,7 +1803,7 @@ img {
   }
 
   .menu-collapse {
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: flex-start;
     gap: 14px;
@@ -1789,6 +1812,10 @@ img {
     flex: 1 1 auto;
     min-width: 0;
     order: 2;
+  }
+
+  .menu-collapse.is-open {
+    display: flex;
   }
 
   .section-nav {

@@ -92,7 +92,7 @@ function initMainUi() {
         };
 
         const syncMenuState = function () {
-            setMenuState(desktopMenuQuery.matches);
+            setMenuState(menuCollapseElement.classList.contains("is-open"));
         };
 
         menuToggleButton.addEventListener("click", function () {
@@ -107,7 +107,7 @@ function initMainUi() {
             });
         });
 
-        syncMenuState();
+        setMenuState(false);
 
         if (typeof desktopMenuQuery.addEventListener === "function") {
             desktopMenuQuery.addEventListener("change", syncMenuState);
