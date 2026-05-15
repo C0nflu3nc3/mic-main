@@ -668,7 +668,7 @@ a {
 .history-page h4,
 .history-page h5,
 .history-page h6 {
-  font-family: var(--main-font-story);
+  font-family: "Prata", Georgia, serif;
 }
 
 .history-page .history-section-kicker,
