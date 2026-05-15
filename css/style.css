@@ -731,19 +731,17 @@ a {
     max-height 0.35s ease,
     opacity 0.22s ease,
     transform 0.32s ease;
+  will-change: max-height, opacity, transform;
 }
 
 .news-edit-action.is-open .news-edit-body,
 .news-suggest-block.is-open .news-edit-body,
-.news-reply-block.is-open .news-edit-body {
+.news-reply-block.is-open .news-edit-body,
+.news-edit-action.is-closing .news-edit-body,
+.news-suggest-block.is-closing .news-edit-body,
+.news-reply-block.is-closing .news-edit-body {
   opacity: 1;
   transform: translateY(0);
-}
-
-.news-edit-action.is-open .news-edit-body,
-.news-suggest-block.is-open .news-edit-body,
-.news-reply-block.is-open .news-edit-body {
-  max-height: 4000px;
 }
 
 .news-edit-summary {

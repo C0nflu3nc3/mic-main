@@ -9,19 +9,76 @@ function initMainUi() {
 
     document.querySelectorAll(animatedDetailsSelector).forEach(function (details) {
         const summary = details.querySelector(".news-edit-summary, .news-reply-summary");
+        const body = details.querySelector(".news-edit-body");
 
-        if (!summary || details.dataset.animatedDetailsBound === "true") {
+        if (!summary || !body || details.dataset.animatedDetailsBound === "true") {
             return;
         }
 
         details.dataset.animatedDetailsBound = "true";
-        details.classList.toggle("is-open", !details.classList.contains("is-collapsed"));
+        details.open = false;
+        details.classList.add("is-collapsed");
+        body.style.maxHeight = "0px";
+        body.style.opacity = "0";
+        body.style.transform = "translateY(-8px)";
+
+        const openDetails = function () {
+            details.open = true;
+            details.classList.remove("is-collapsed", "is-closing");
+            details.classList.add("is-open");
+
+            body.style.maxHeight = body.scrollHeight + "px";
+            body.style.opacity = "1";
+            body.style.transform = "translateY(0)";
+
+            const finishOpen = function (event) {
+                if (event.propertyName !== "max-height") {
+                    return;
+                }
+                if (details.classList.contains("is-open")) {
+                    body.style.maxHeight = "none";
+                }
+                body.removeEventListener("transitionend", finishOpen);
+            };
+
+            body.addEventListener("transitionend", finishOpen);
+        };
+
+        const closeDetails = function () {
+            details.classList.remove("is-open");
+            details.classList.add("is-closing");
+
+            body.style.maxHeight = body.scrollHeight + "px";
+            body.style.opacity = "1";
+            body.style.transform = "translateY(0)";
+            body.getBoundingClientRect();
+
+            window.requestAnimationFrame(function () {
+                body.style.maxHeight = "0px";
+                body.style.opacity = "0";
+                body.style.transform = "translateY(-8px)";
+            });
+
+            const finishClose = function (event) {
+                if (event.propertyName !== "max-height") {
+                    return;
+                }
+                details.open = false;
+                details.classList.remove("is-closing");
+                details.classList.add("is-collapsed");
+                body.removeEventListener("transitionend", finishClose);
+            };
+
+            body.addEventListener("transitionend", finishClose);
+        };
 
         summary.addEventListener("click", function (event) {
             event.preventDefault();
-            const willOpen = !details.classList.contains("is-open");
-            details.classList.toggle("is-open", willOpen);
-            details.classList.toggle("is-collapsed", !willOpen);
+            if (details.classList.contains("is-open") || details.classList.contains("is-closing")) {
+                closeDetails();
+                return;
+            }
+            openDetails();
         });
     });
 
