@@ -233,6 +233,15 @@ a {
   display: none !important;
 }
 
+.menu-collapse #user-controls {
+  width: 100%;
+  margin-left: 0;
+  margin-top: 8px;
+  padding-top: 10px;
+  justify-content: flex-end;
+  border-top: 1px solid rgba(194, 149, 78, 0.18);
+}
+
 .section-nav .nav-link {
   font-family: var(--main-font-nav);
   color: #e7dbbf;

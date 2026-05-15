@@ -127,16 +127,15 @@ function Header({ user, activeSection, pendingNewsCount = 0 }) {
                                 <a className="nav-link" href="/logout">Выход</a>
                             </li>
                         </ul>
+                        <ul className="nav menu-account-controls" id="user-controls">
+                            <li className="nav-item user-status-item">
+                                <div className="user-status-panel">{user.view}</div>
+                            </li>
+                            <li className="nav-item">
+                                <a className="nav-link" href="/logout">Выход</a>
+                            </li>
+                        </ul>
                     </div>
-
-                    <ul className="nav justify-content-end" id="user-controls">
-                        <li className="nav-item user-status-item">
-                            <div className="user-status-panel">{user.view}</div>
-                        </li>
-                        <li className="nav-item">
-                            <a className="nav-link" href="/logout">Выход</a>
-                        </li>
-                    </ul>
                 </div>
             </div>
         </div>
