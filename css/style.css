@@ -668,7 +668,8 @@ a {
 .history-page h4,
 .history-page h5,
 .history-page h6 {
-  font-family: "Prata", Georgia, serif;
+  font-family: var(--main-font-display);
+  letter-spacing: 0.02em;
 }
 
 .history-page .history-section-kicker,
