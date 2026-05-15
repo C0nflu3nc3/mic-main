@@ -877,9 +877,12 @@ def history_page():
 
     return render_react_page(
         "history",
-        "??????? ? ??????",
+        "\u0418\u0441\u0442\u043e\u0440\u0438\u044f \u0438 \u043a\u043e\u0434\u0435\u043a\u0441",
         user=user,
         active_section="history",
+    )
+
+
     )
 
 
