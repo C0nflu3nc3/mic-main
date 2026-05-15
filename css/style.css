@@ -706,7 +706,7 @@ a {
     linear-gradient(180deg, rgba(31, 48, 43, 0.94) 0%, rgba(14, 21, 20, 0.94) 100%);
   color: #e7dbbf;
   font-family: var(--main-font-nav);
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 800;
   letter-spacing: 0.03em;
   text-transform: uppercase;
@@ -742,7 +742,7 @@ a {
   margin-bottom: 8px;
   color: #d2a463;
   font-family: var(--main-font-nav);
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 800;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -2348,8 +2348,8 @@ img {
   }
 
   .history-tab {
-    padding: 9px 14px;
-    font-size: 12px;
+    padding: 10px 16px;
+    font-size: 15px;
   }
 
   .history-codex-card {
@@ -2689,8 +2689,8 @@ img {
   }
 
   .history-tab {
-    font-size: 11px;
-    padding: 8px 12px;
+    font-size: 14px;
+    padding: 9px 14px;
   }
 
   .history-card h3 {

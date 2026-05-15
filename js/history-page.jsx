@@ -169,7 +169,7 @@ function HistoryPage() {
       </nav>
 
       <section className="history-section" id="lore">
-        <SectionHead kicker="Лор Империи" title="Основание" description="Краткое введение и история создания Империи." />
+        <SectionHead kicker="Лор" title="Эпоха Основания" description="Краткое введение и история создания Империи." />
         <div className="history-grid history-grid-2">
           <article className="placeholder-card history-card history-lead-card">
             <div className="history-card-kicker">{historyLore.empire.kicker}</div>
