@@ -704,6 +704,39 @@ a {
     inset 0 1px 0 rgba(255, 239, 200, 0.05);
 }
 
+.home-page {
+  max-width: 1320px;
+}
+
+.home-page > .placeholder-hero {
+  max-width: 1220px;
+}
+
+.home-page .placeholder-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 30px;
+  max-width: 1320px;
+  margin: 0 auto;
+}
+
+.home-page .placeholder-grid .placeholder-card {
+  min-height: 0;
+  padding: 30px 34px 28px;
+  border-radius: 34px;
+  gap: 18px;
+}
+
+.home-page .placeholder-grid .placeholder-card p {
+  max-width: 40ch;
+  font-size: 17px;
+  line-height: 1.72;
+}
+
+.home-page .placeholder-grid .placeholder-card h3,
+.home-page .placeholder-card-link {
+  font-size: 19px;
+}
+
 .home-page .placeholder-grid .placeholder-card::before,
 .missions-page .mission-card::before,
 .approve-page .mission-card::before,
@@ -757,9 +790,11 @@ a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 58px;
-  padding-left: 22px;
-  padding-right: 22px;
+  min-height: 66px;
+  padding-left: 28px;
+  padding-right: 28px;
+  border-radius: 18px;
+  letter-spacing: 0.02em;
 }
 
 .ceremonial-page .news-form-card {
@@ -2744,6 +2779,20 @@ img {
     line-height: 1.04;
   }
 
+  .home-page .placeholder-grid {
+    gap: 18px;
+  }
+
+  .home-page .placeholder-grid .placeholder-card {
+    padding: 24px 18px 22px;
+    gap: 14px;
+  }
+
+  .home-page .placeholder-grid .placeholder-card p {
+    font-size: 16px;
+    line-height: 1.58;
+  }
+
   .home-page .placeholder-card-link {
     min-height: 54px;
     width: 100%;
@@ -3268,6 +3317,15 @@ img {
   .container {
     padding-left: 10px;
     padding-right: 10px;
+  }
+
+  .home-page .placeholder-grid .placeholder-card {
+    padding: 20px 14px 18px;
+    border-radius: 24px;
+  }
+
+  .home-page .placeholder-grid .placeholder-card p {
+    font-size: 15px;
   }
 
   .placeholder-hero,
