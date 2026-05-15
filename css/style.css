@@ -731,11 +731,15 @@ a {
 
 .history-section-head {
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 8px;
   margin-bottom: 16px;
+}
+
+.history-section-head-main {
+  width: 100%;
 }
 
 .history-section-kicker {
@@ -755,7 +759,7 @@ a {
 
 .history-section-description {
   margin: 0;
-  max-width: 50ch;
+  max-width: 72ch;
   color: var(--main-text-soft);
   line-height: 1.6;
   font-size: 16px;
@@ -2071,10 +2075,15 @@ img {
     align-items: center;
     justify-content: center;
     min-height: 48px;
-    padding: 10px 14px;
-    font-size: 15px;
+    padding: 11px 16px;
+    font-size: 16px;
     text-align: center;
     width: 100%;
+  }
+
+  .menu-toggle-button {
+    font-size: 17px;
+    padding: 10px 16px;
   }
 
   .main-nav-item {
@@ -2248,15 +2257,15 @@ img {
     background-attachment: scroll;
     font-size: 17px;
     background-image:
-      linear-gradient(180deg, rgba(3, 7, 7, 0.9) 0%, rgba(8, 14, 13, 0.94) 45%, rgba(10, 18, 16, 0.92) 100%),
-      radial-gradient(circle at 18% 18%, rgba(64, 80, 58, 0.12) 0%, transparent 28%),
-      radial-gradient(circle at 82% 22%, rgba(180, 136, 68, 0.08) 0%, transparent 24%),
-      radial-gradient(circle at 50% 100%, rgba(33, 59, 52, 0.12) 0%, transparent 36%),
+      linear-gradient(180deg, rgba(8, 13, 12, 0.88) 0%, rgba(14, 22, 20, 0.9) 45%, rgba(17, 28, 25, 0.88) 100%),
+      radial-gradient(circle at 18% 18%, rgba(84, 98, 72, 0.14) 0%, transparent 28%),
+      radial-gradient(circle at 82% 22%, rgba(200, 154, 82, 0.1) 0%, transparent 24%),
+      radial-gradient(circle at 50% 100%, rgba(49, 83, 75, 0.14) 0%, transparent 36%),
       url('../static/background.jpg');
   }
 
   body::before {
-    opacity: 0.42;
+    opacity: 0.36;
   }
 
   .header {
@@ -2704,7 +2713,7 @@ img {
   }
 
   .history-tab {
-    font-size: 15px;
+    font-size: 16px;
     padding: 10px 16px;
   }
 
@@ -2860,7 +2869,7 @@ img {
   }
 
   .section-nav .nav-link {
-    font-size: 14px;
+    font-size: 15px;
     letter-spacing: 0.03em;
   }
 

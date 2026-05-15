@@ -74,11 +74,11 @@ function Subsection({ title, body = [], items = [] }) {
 function SectionHead({ kicker, title, description }) {
   return (
     <div className="history-section-head">
-      <div>
+      <div className="history-section-head-main">
         <div className="history-section-kicker">{kicker}</div>
         <h2 className="history-section-title">{title}</h2>
+        {description ? <p className="history-section-description">{description}</p> : null}
       </div>
-      {description ? <p className="history-section-description">{description}</p> : null}
     </div>
   );
 }
@@ -157,7 +157,7 @@ function HistoryPage() {
     <div className="section-page history-page">
       <section className="placeholder-hero history-hero">
         <h1>История и кодекс</h1>
-        <p>Здесь собраны энциклопедия Империи, её лор, архонты, кодекс, артефакты и гимн.</p>
+        <p>Здесь собраны хроники Империи: лор, архонты, кодекс, артефакты и гимн.</p>
       </section>
 
       <nav className="history-tabs" aria-label="Якоря разделов истории">
