@@ -189,7 +189,7 @@ a {
   min-height: 44px;
   padding: clamp(8px, 0.8vw, 10px) clamp(12px, 1.1vw, 18px);
   color: #19110a;
-  font-size: clamp(13px, 0.8rem + 0.18vw, 16px);
+  font-size: clamp(15px, 0.9rem + 0.2vw, 18px);
   font-weight: 800;
   letter-spacing: 0.03em;
   text-transform: uppercase;
@@ -254,7 +254,7 @@ a {
     inset 0 1px 0 rgba(227, 193, 129, 0.1),
     0 10px 24px rgba(0, 0, 0, 0.18);
   font-weight: 700;
-  font-size: clamp(13px, 0.8rem + 0.18vw, 16px);
+  font-size: clamp(15px, 0.9rem + 0.2vw, 18px);
   letter-spacing: 0.03em;
   text-transform: uppercase;
 }
@@ -2072,7 +2072,7 @@ img {
     justify-content: center;
     min-height: 48px;
     padding: 10px 14px;
-    font-size: 13px;
+    font-size: 15px;
     text-align: center;
     width: 100%;
   }
@@ -2246,6 +2246,16 @@ img {
 @media (max-width: 576px) {
   body {
     background-attachment: scroll;
+    background-image:
+      linear-gradient(180deg, rgba(3, 7, 7, 0.9) 0%, rgba(8, 14, 13, 0.94) 45%, rgba(10, 18, 16, 0.92) 100%),
+      radial-gradient(circle at 18% 18%, rgba(64, 80, 58, 0.12) 0%, transparent 28%),
+      radial-gradient(circle at 82% 22%, rgba(180, 136, 68, 0.08) 0%, transparent 24%),
+      radial-gradient(circle at 50% 100%, rgba(33, 59, 52, 0.12) 0%, transparent 36%),
+      url('../static/background.jpg');
+  }
+
+  body::before {
+    opacity: 0.42;
   }
 
   .header {
@@ -2688,6 +2698,10 @@ img {
     padding-right: 14px;
   }
 
+  body::before {
+    opacity: 0.48;
+  }
+
   .history-tab {
     font-size: 14px;
     padding: 9px 14px;
@@ -2845,13 +2859,13 @@ img {
   }
 
   .section-nav .nav-link {
-    font-size: 12px;
+    font-size: 14px;
     letter-spacing: 0.03em;
   }
 
   .btn {
     padding: 10px 14px;
-    font-size: 13px;
+    font-size: 14px;
   }
 
   .modal-title {
