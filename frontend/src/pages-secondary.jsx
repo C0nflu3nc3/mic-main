@@ -2,7 +2,7 @@
 
 export function MissionsPage({ is_admin = false, can_take_missions = false, current_team_mission_count = 0, missions = [] }) {
   return (
-    <div className="section-page missions-page ceremonial-page">
+    <div className="section-page">
       <Hero title="Миссии за валюту" description="Легион может взять до 3 заданий одновременно. На одно задание могут откликнуться не более 3 легионов." />
       {is_admin ? (
         <section className="placeholder-card mission-form-card">
@@ -91,7 +91,7 @@ function BankOperations({ is_admin = false, current_team_id = null, current_plt 
             <label htmlFor="PLT">Количество GRZ:</label>
             <input name="score" type="number" min="0" max={defaultMax} step="1" defaultValue={defaultScore} id="PLT" className="form-control" placeholder="цена" disabled={!transferPossible && !is_admin} />
             <label htmlFor="comment">Комментарий:</label>
-            <input name="comment" type="text" className="form-control" id="comment" placeholder="Введите сообщение команде" />
+            <input name="comment" type="text" className="form-control" id="comment" placeholder="Введите сообщение Леши" />
             <div className="form-text" id="transferState">{!is_admin && current_plt <= 0 ? "Перевод недоступен: у текущего легиона нулевой баланс." : ""}</div>
           </div>
           <div className="modal-footer"><button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button><button type="submit" className="btn btn-primary" id="transferSubmit" disabled={!transferPossible && !is_admin}>Отправить</button></div></div></div>
@@ -106,12 +106,12 @@ function BankOperations({ is_admin = false, current_team_id = null, current_plt 
 }
 
 export function TeamsPage(props) {
-  return <div className="bank-page section-page ceremonial-page">{props.is_admin ? <AdminBankView scoreboard={props.scoreboard} /> : <UserBankView current_plt={props.current_plt} />}<BankOperations {...props} /></div>;
+  return <div className="bank-page section-page">{props.is_admin ? <AdminBankView scoreboard={props.scoreboard} /> : <UserBankView current_plt={props.current_plt} />}<BankOperations {...props} /></div>;
 }
 
 export function ApprovePage({ approve_items = [] }) {
   return (
-    <div className="section-page approve-page ceremonial-page">
+    <div className="section-page">
       <Hero title="Подтверждение" description="Здесь администратор подтверждает или отклоняет выполнение принятых заданий. После подтверждения награда автоматически начисляется отряду." />
       <div className="news-list">
         {approve_items.map((item) => (
@@ -183,7 +183,7 @@ function StudioCard({ item, canManageStudios }) {
 
 export function StudiosPage({ studios_items = [], can_manage_studios = false }) {
   return (
-    <div className="section-page studios-page ceremonial-page">
+    <div className="section-page studios-page">
       <Hero
         title="Студии"
         description="Здесь собраны студии Империи. Администратор может добавлять новые студии, а сами карточки удобно просматривать на телефоне и компьютере."
@@ -205,5 +205,5 @@ export function StudiosPage({ studios_items = [], can_manage_studios = false }) 
 }
 
 export function PlaceholderPage({ section_title, section_description }) {
-  return <div className="section-page placeholder-page ceremonial-page"><Hero title={section_title} description={section_description} /></div>;
+  return <div className="section-page"><Hero title={section_title} description={section_description} /></div>;
 }
