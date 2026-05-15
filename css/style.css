@@ -43,10 +43,10 @@ body {
   min-height: 100vh;
   margin: 0;
   background-image:
-    linear-gradient(180deg, rgba(5, 11, 10, 0.72) 0%, rgba(12, 22, 20, 0.8) 42%, rgba(16, 27, 24, 0.74) 100%),
-    radial-gradient(circle at 18% 18%, rgba(106, 127, 96, 0.18) 0%, transparent 28%),
-    radial-gradient(circle at 82% 22%, rgba(214, 165, 92, 0.14) 0%, transparent 24%),
-    radial-gradient(circle at 50% 100%, rgba(54, 95, 85, 0.16) 0%, transparent 36%),
+    radial-gradient(circle at top center, rgba(214, 174, 100, 0.13) 0%, transparent 30%),
+    radial-gradient(circle at 50% 50%, rgba(78, 98, 81, 0.18) 0%, transparent 54%),
+    radial-gradient(circle at center, rgba(0, 0, 0, 0.12) 0%, rgba(0, 0, 0, 0.3) 68%, rgba(0, 0, 0, 0.48) 100%),
+    linear-gradient(180deg, rgba(9, 16, 14, 0.62) 0%, rgba(12, 21, 18, 0.78) 34%, rgba(16, 27, 24, 0.9) 100%),
     url('../static/background.jpg');
   background-size: cover;
   background-position: center;
@@ -60,21 +60,10 @@ body::before {
   inset: 0;
   pointer-events: none;
   background:
-    repeating-linear-gradient(
-      90deg,
-      rgba(255, 255, 255, 0.015) 0,
-      rgba(255, 255, 255, 0.015) 1px,
-      transparent 1px,
-      transparent 90px
-    ),
-    repeating-linear-gradient(
-      0deg,
-      rgba(0, 0, 0, 0.03) 0,
-      rgba(0, 0, 0, 0.03) 1px,
-      transparent 1px,
-      transparent 72px
-    );
-  opacity: 0.32;
+    radial-gradient(circle at 18% 16%, rgba(255, 255, 255, 0.045) 0%, transparent 24%),
+    radial-gradient(circle at 82% 72%, rgba(0, 0, 0, 0.12) 0%, transparent 28%),
+    linear-gradient(180deg, rgba(255, 245, 214, 0.02) 0%, transparent 24%, transparent 100%);
+  opacity: 0.6;
 }
 
 h1,
@@ -644,18 +633,42 @@ a {
 
 .history-hero {
   max-width: 1180px;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
+  padding: 42px 54px 40px;
+  border-radius: 34px;
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at top center, rgba(214, 174, 100, 0.12) 0%, transparent 42%),
+    linear-gradient(135deg, rgba(12, 22, 20, 0.96) 0%, rgba(11, 18, 17, 0.93) 52%, rgba(14, 24, 21, 0.97) 100%);
+  box-shadow:
+    0 28px 72px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 236, 194, 0.06);
+}
+
+.history-hero::before {
+  content: "";
+  position: absolute;
+  inset: 18px;
+  border-radius: 28px;
+  border: 1px solid rgba(194, 149, 78, 0.1);
+  pointer-events: none;
 }
 
 .history-hero h1 {
   font-size: clamp(36px, 4.8vw, 58px);
   text-align: center;
+  margin-bottom: 14px;
+  text-shadow: 0 14px 32px rgba(0, 0, 0, 0.22);
 }
 
 .history-hero p {
-  max-width: 72ch;
+  max-width: 52ch;
   margin: 0 auto;
   text-align: center;
+  font-size: 18px;
+  line-height: 1.6;
+  color: rgba(230, 216, 188, 0.9);
 }
 
 .history-page {
@@ -686,10 +699,17 @@ a {
   display: flex;
   gap: 10px;
   overflow-x: auto;
-  padding: 0 2px 14px;
-  margin: 0 0 8px;
+  padding: 10px 12px 18px;
+  margin: 0 0 22px;
   scrollbar-width: thin;
   scroll-snap-type: x proximity;
+  position: sticky;
+  top: 88px;
+  z-index: 12;
+  border-radius: 24px;
+  backdrop-filter: blur(14px);
+  background:
+    linear-gradient(180deg, rgba(11, 18, 17, 0.74) 0%, rgba(11, 18, 17, 0.34) 72%, rgba(11, 18, 17, 0) 100%);
 }
 
 .history-tabs::-webkit-scrollbar {
@@ -699,7 +719,7 @@ a {
 .history-tab {
   flex: 0 0 auto;
   white-space: nowrap;
-  padding: 10px 18px;
+  padding: 11px 20px;
   border-radius: 999px;
   border: 1px solid rgba(194, 149, 78, 0.34);
   background:
@@ -713,7 +733,13 @@ a {
   text-decoration: none;
   box-shadow:
     inset 0 1px 0 rgba(227, 193, 129, 0.08),
-    0 10px 24px rgba(0, 0, 0, 0.16);
+    0 12px 28px rgba(0, 0, 0, 0.18);
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease,
+    color 180ms ease;
 }
 
 .history-tab:hover,
@@ -722,10 +748,14 @@ a {
   background:
     linear-gradient(180deg, rgba(236, 199, 132, 1) 0%, rgba(160, 111, 53, 1) 100%);
   border-color: rgba(255, 223, 162, 0.95);
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 240, 204, 0.3),
+    0 14px 30px rgba(0, 0, 0, 0.2);
 }
 
 .history-section {
-  margin-top: 28px;
+  margin-top: 34px;
   scroll-margin-top: 150px;
 }
 
@@ -735,11 +765,28 @@ a {
   align-items: flex-start;
   justify-content: flex-start;
   gap: 8px;
-  margin-bottom: 16px;
+  margin-bottom: 22px;
+  padding-left: 18px;
+  border-left: 2px solid rgba(194, 149, 78, 0.28);
+  position: relative;
+}
+
+.history-section-head::before {
+  content: "";
+  position: absolute;
+  left: -5px;
+  top: 6px;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(210, 164, 99, 0.9);
+  box-shadow: 0 0 0 6px rgba(210, 164, 99, 0.08);
 }
 
 .history-section-head-main {
   width: 100%;
+  display: grid;
+  gap: 6px;
 }
 
 .history-section-kicker {
@@ -759,7 +806,7 @@ a {
 
 .history-section-description {
   margin: 0;
-  max-width: 72ch;
+  max-width: 48ch;
   color: var(--main-text-soft);
   line-height: 1.6;
   font-size: 16px;
@@ -767,7 +814,7 @@ a {
 
 .history-grid {
   display: grid;
-  gap: 18px;
+  gap: 22px;
 }
 
 .history-grid-2 {
@@ -781,16 +828,46 @@ a {
 .history-card {
   min-height: auto;
   display: grid;
-  gap: 12px;
+  gap: 14px;
   align-content: start;
+  padding: 26px 28px;
+  border-radius: 28px;
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgba(14, 24, 22, 0.96) 0%, rgba(10, 17, 16, 0.94) 100%);
+  box-shadow:
+    0 22px 48px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 237, 197, 0.05);
+}
+
+.history-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 88px;
+  background:
+    linear-gradient(180deg, rgba(56, 83, 74, 0.14) 0%, rgba(56, 83, 74, 0) 100%);
+  pointer-events: none;
+}
+
+.history-card > * {
+  position: relative;
+  z-index: 1;
 }
 
 .history-card h3 {
   margin: 0;
   color: #dfbb76;
-  font-size: 28px;
+  font-size: 30px;
   text-align: left;
   line-height: 1.08;
+}
+
+.history-card p,
+.history-card li {
+  color: rgba(232, 220, 196, 0.88);
+  line-height: 1.72;
 }
 
 .history-card-kicker,
@@ -890,6 +967,12 @@ a {
   box-shadow:
     inset 0 1px 0 rgba(255, 239, 200, 0.34),
     0 10px 22px rgba(0, 0, 0, 0.18);
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    background 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease;
 }
 
 .history-action-button:hover,
@@ -898,6 +981,10 @@ a {
   background:
     linear-gradient(180deg, rgba(236, 199, 132, 1) 0%, rgba(160, 111, 53, 1) 100%);
   border-color: rgba(255, 223, 162, 0.95);
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 245, 218, 0.28),
+    0 14px 28px rgba(0, 0, 0, 0.2);
 }
 
 .history-action-button-open {
@@ -943,6 +1030,8 @@ a {
 
 .history-codex-card {
   padding: 18px 20px;
+  background:
+    linear-gradient(180deg, rgba(13, 23, 21, 0.98) 0%, rgba(9, 16, 15, 0.96) 100%);
 }
 
 .history-codex-list {
@@ -955,10 +1044,11 @@ a {
 
 .history-codex-list li {
   display: grid;
-  grid-template-columns: 64px minmax(0, 1fr);
+  grid-template-columns: 74px minmax(0, 1fr);
   gap: 14px;
-  padding: 12px 0;
+  padding: 14px 0;
   border-bottom: 1px solid rgba(194, 149, 78, 0.16);
+  align-items: start;
 }
 
 .history-codex-list li:last-child {
@@ -972,6 +1062,7 @@ a {
   font-size: 16px;
   font-weight: 800;
   letter-spacing: 0.12em;
+  padding-top: 2px;
 }
 
 .history-codex-text {
@@ -2253,19 +2344,23 @@ img {
 }
 
 @media (max-width: 576px) {
+  .history-lead-card .history-card-kicker {
+    display: none;
+  }
+
   body {
     background-attachment: scroll;
     font-size: 17px;
     background-image:
-      linear-gradient(180deg, rgba(8, 13, 12, 0.88) 0%, rgba(14, 22, 20, 0.9) 45%, rgba(17, 28, 25, 0.88) 100%),
-      radial-gradient(circle at 18% 18%, rgba(84, 98, 72, 0.14) 0%, transparent 28%),
-      radial-gradient(circle at 82% 22%, rgba(200, 154, 82, 0.1) 0%, transparent 24%),
-      radial-gradient(circle at 50% 100%, rgba(49, 83, 75, 0.14) 0%, transparent 36%),
+      radial-gradient(circle at top center, rgba(214, 174, 100, 0.11) 0%, transparent 28%),
+      radial-gradient(circle at 50% 42%, rgba(78, 98, 81, 0.16) 0%, transparent 54%),
+      radial-gradient(circle at center, rgba(0, 0, 0, 0.08) 0%, rgba(0, 0, 0, 0.26) 70%, rgba(0, 0, 0, 0.42) 100%),
+      linear-gradient(180deg, rgba(10, 15, 14, 0.62) 0%, rgba(13, 21, 18, 0.8) 38%, rgba(17, 28, 25, 0.9) 100%),
       url('../static/background.jpg');
   }
 
   body::before {
-    opacity: 0.36;
+    opacity: 0.44;
   }
 
   .header {
@@ -2336,7 +2431,7 @@ img {
   }
 
   .history-hero {
-    padding: 20px 16px;
+    padding: 24px 18px 22px;
   }
 
   .history-hero h1 {
@@ -2364,12 +2459,15 @@ img {
     margin-right: -16px;
     padding-left: 16px;
     padding-right: 16px;
-    padding-bottom: 10px;
+    padding-top: 8px;
+    padding-bottom: 12px;
+    top: 72px;
+    border-radius: 20px;
   }
 
   .history-tab {
-    padding: 11px 18px;
-    font-size: 16px;
+    padding: 12px 18px;
+    font-size: 17px;
   }
 
   .history-codex-card {
@@ -2709,11 +2807,11 @@ img {
   }
 
   body::before {
-    opacity: 0.48;
+    opacity: 0.38;
   }
 
   .history-tab {
-    font-size: 16px;
+    font-size: 17px;
     padding: 10px 16px;
   }
 

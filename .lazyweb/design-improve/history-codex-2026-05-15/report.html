@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Design Improvement - History & Codex</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0f1514;
+      --panel: #14201d;
+      --panel-2: #192824;
+      --text: #eadfc8;
+      --muted: #cbbda2;
+      --gold: #d2a463;
+      --line: rgba(210, 164, 99, 0.2);
+      --callout: #122537;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 32px 18px 64px;
+      background: linear-gradient(180deg, #0f1514 0%, #121c1a 100%);
+      color: var(--text);
+      font: 16px/1.65 "Segoe UI", Arial, sans-serif;
+    }
+
+    main {
+      max-width: 920px;
+      margin: 0 auto;
+    }
+
+    h1, h2, h3 {
+      line-height: 1.1;
+      color: #f0d49a;
+      margin: 0 0 14px;
+    }
+
+    h1 { font-size: 40px; }
+    h2 { font-size: 26px; margin-top: 34px; }
+    h3 { font-size: 22px; margin-top: 28px; }
+
+    p, li { color: var(--text); }
+
+    .panel {
+      background: linear-gradient(180deg, var(--panel-2) 0%, var(--panel) 100%);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 22px 24px;
+      box-shadow: 0 18px 42px rgba(0, 0, 0, 0.24);
+    }
+
+    .callout {
+      background: linear-gradient(180deg, #15314b 0%, #122537 100%);
+      border: 1px solid rgba(138, 186, 255, 0.25);
+      border-radius: 18px;
+      padding: 18px 20px;
+      margin: 18px 0 24px;
+    }
+
+    code, pre {
+      font-family: Consolas, "SFMono-Regular", monospace;
+    }
+
+    pre {
+      overflow: auto;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: rgba(8, 14, 13, 0.78);
+    }
+
+    .muted { color: var(--muted); }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Design Improvement: History &amp; Codex</h1>
+
+    <section class="callout">
+      <strong>TL;DR</strong>
+      <p>The screen already has a strong fantasy-codex direction, but it felt visually flat: too many elements used the same panel weight, the background texture was noisier than the content, and the section hierarchy was not strong enough. The best improvement path was to calm the background down, deepen the hero and tabs, and make section heads and cards feel more editorial.</p>
+    </section>
+
+    <section class="panel">
+      <h2>Current State</h2>
+      <p class="muted">This audit was based on the user-provided desktop screenshot of the <code>История и кодекс</code> page.</p>
+
+      <h3>1. Calm the background and add a vignette</h3>
+      <p>The page had a good olive-stone texture, but it was competing with the content. We shifted it toward a darker olive-stone base, added a soft gold glow at the top center, and introduced a vignette so the eye stays on the cards and headings.</p>
+      <pre>┌──────────────────────────────────────────────┐
+│      soft gold glow                          │
+│   darker olive stone texture                 │
+│      content stays brightest in center       │
+│   edges fall off into a subtle vignette      │
+└──────────────────────────────────────────────┘</pre>
+
+      <h3>2. Turn the hero into a real title plate</h3>
+      <p>The hero was readable, but it behaved more like a generic card than a page opener. The updated version has more internal depth, a subtle inner frame, and tighter title/description balance.</p>
+      <pre>┌──────────────────────────────────────────────┐
+│   [inner frame]                              │
+│   ИСТОРИЯ И КОДЕКС                           │
+│   хроники Империи: лор, архонты...           │
+└──────────────────────────────────────────────┘</pre>
+
+      <h3>3. Make the section tabs feel like a navigation rail</h3>
+      <p>The quick links were useful, but visually too close to the rest of the buttons on the site. The updated tabs now read more like a dedicated section navigator: slightly larger, with stronger lift, blur, and a sticky rail feel.</p>
+      <pre>[ ЛОР ] [ 12 ЛЕГИОНОВ ] [ АРХОНТЫ ] [ КОДЕКС ]
+  raised chips on a soft dark rail</pre>
+
+      <h3>4. Strengthen hierarchy inside each section</h3>
+      <p>Section heads now behave more like editorial breaks: kicker, big title, then description, with a left rule and a small marker. Cards got more breathing room and a softer top glow to feel like carved tablets rather than plain repeat panels.</p>
+      <pre>ЛОР
+Эпоха Основания
+Краткое введение...
+
+┌ card ────────────────────────┐
+│ РОЖДЕНИЕ ИМПЕРИИ             │
+│ Лор                          │
+│ text...                      │
+└──────────────────────────────┘</pre>
+    </section>
+
+    <section class="panel" style="margin-top: 22px;">
+      <h2>What&apos;s Working</h2>
+      <p>The gold-on-deep-green palette is already distinctive and fits the world well. The menu and tabs are consistent with the fantasy-imperial direction. The page also already had good spacing between major regions, which made it safe to push the visual styling further without hurting readability.</p>
+    </section>
+
+    <section class="panel" style="margin-top: 22px;">
+      <h2>Reference Note</h2>
+      <p class="muted">Lazyweb MCP references were not available in this session, so this report uses a local visual audit based on the provided screenshot and direct implementation in code.</p>
+    </section>
+  </main>
+</body>
+</html>
