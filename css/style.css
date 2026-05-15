@@ -1524,7 +1524,8 @@ a {
 .studios-page h4,
 .studios-page h5,
 .studios-page h6 {
-  font-family: var(--main-font-story);
+  font-family: var(--main-font-display);
+  letter-spacing: 0.02em;
 }
 
 .studios-page .placeholder-hero p,
@@ -1535,6 +1536,33 @@ a {
 .studios-page .btn,
 .studios-page .news-content {
   font-family: "Manrope", Arial, sans-serif;
+}
+
+.studios-page .placeholder-hero h1 {
+  font-family: var(--main-font-display);
+}
+
+.studios-page .placeholder-card:not(.studio-card):not(.news-form-card) {
+  max-width: 960px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 36px 40px;
+  display: grid;
+  gap: 14px;
+  justify-items: center;
+  align-content: center;
+  text-align: center;
+}
+
+.studios-page .placeholder-card:not(.studio-card):not(.news-form-card) p {
+  max-width: 34ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.studios-page .studio-card h3,
+.studios-page .placeholder-card:not(.studio-card):not(.news-form-card) h3 {
+  font-family: var(--main-font-display);
 }
 
 .news-edit-block {

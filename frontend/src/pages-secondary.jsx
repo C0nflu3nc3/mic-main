@@ -183,7 +183,7 @@ function StudioCard({ item, canManageStudios }) {
 
 export function StudiosPage({ studios_items = [], can_manage_studios = false }) {
   return (
-    <div className="section-page studios-page">
+    <div className="section-page studios-page ceremonial-page">
       <Hero
         title="Студии"
         description="Здесь собраны студии Империи. Администратор может добавлять новые студии, а сами карточки удобно просматривать на телефоне и компьютере."
