@@ -438,6 +438,107 @@ def add_news_comment(conn, news_id, user_id, comment, parent_comment_id=None):
     return True
 
 
+def ensure_studios_table(conn):
+    schema_changed = False
+    with conn.cursor() as cursor:
+        cursor.execute("SHOW TABLES LIKE 'Studios'")
+        if cursor.fetchone() is None:
+            cursor.execute(
+                """
+                CREATE TABLE Studios (
+                    id int NOT NULL AUTO_INCREMENT,
+                    title varchar(255) NOT NULL,
+                    description text NOT NULL,
+                    image_path varchar(255) DEFAULT NULL,
+                    user_id int NOT NULL,
+                    created_at datetime NOT NULL,
+                    PRIMARY KEY (id),
+                    KEY idx_studios_user_id (user_id),
+                    KEY idx_studios_created_at (created_at),
+                    CONSTRAINT fk_studios_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+                """
+            )
+            schema_changed = True
+        else:
+            required_columns = {
+                "title": "ALTER TABLE Studios ADD COLUMN title varchar(255) NOT NULL AFTER id",
+                "description": "ALTER TABLE Studios ADD COLUMN description text NOT NULL AFTER title",
+                "image_path": "ALTER TABLE Studios ADD COLUMN image_path varchar(255) DEFAULT NULL AFTER description",
+                "user_id": "ALTER TABLE Studios ADD COLUMN user_id int NOT NULL AFTER image_path",
+                "created_at": "ALTER TABLE Studios ADD COLUMN created_at datetime NOT NULL AFTER user_id",
+            }
+            for column_name, alter_sql in required_columns.items():
+                cursor.execute(f"SHOW COLUMNS FROM Studios LIKE '{column_name}'")
+                if cursor.fetchone() is None:
+                    cursor.execute(alter_sql)
+                    schema_changed = True
+
+    if schema_changed:
+        conn.commit()
+
+
+def get_studios(conn):
+    with conn.cursor() as cursor:
+        cursor.execute(
+            """
+            SELECT
+                Studios.id,
+                Studios.title,
+                Studios.description,
+                Studios.image_path,
+                Studios.created_at,
+                users.login AS author_name
+            FROM Studios
+            JOIN users ON users.id = Studios.user_id
+            ORDER BY Studios.created_at DESC, Studios.id DESC
+            """
+        )
+        return cursor.fetchall()
+
+
+def get_studio(conn, studio_id):
+    with conn.cursor() as cursor:
+        cursor.execute(
+            """
+            SELECT
+                Studios.id,
+                Studios.title,
+                Studios.description,
+                Studios.image_path,
+                Studios.created_at,
+                users.login AS author_name
+            FROM Studios
+            JOIN users ON users.id = Studios.user_id
+            WHERE Studios.id = %s
+            LIMIT 1
+            """,
+            (studio_id,),
+        )
+        return cursor.fetchone()
+
+
+def add_studio(conn, user_id, title, description, image_path):
+    with conn.cursor() as cursor:
+        cursor.execute(
+            """
+            INSERT INTO Studios (title, description, image_path, user_id, created_at)
+            VALUES (%s, %s, %s, %s, NOW())
+            """,
+            (title, description, image_path, user_id),
+        )
+    conn.commit()
+    return True
+
+
+def delete_studio(conn, studio_id):
+    with conn.cursor() as cursor:
+        cursor.execute("DELETE FROM Studios WHERE id = %s", (studio_id,))
+        deleted = cursor.rowcount > 0
+    conn.commit()
+    return deleted
+
+
 def delete_news_comment(conn, comment_id, current_user_id, can_manage_all=False):
     with conn.cursor() as cursor:
         select_sql = """

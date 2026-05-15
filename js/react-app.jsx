@@ -1,4 +1,4 @@
-const HistoryPage = window.HistoryPage;
+﻿const HistoryPage = window.HistoryPage;
 
 const bootstrap = window.__BOOTSTRAP__ || {};
 
@@ -898,6 +898,68 @@ function ApprovePage({ approve_items = [] }) {
     );
 }
 
+function StudiosPage({ studios_items = [], can_manage_studios = false }) {
+    return (
+        <div className="section-page studios-page">
+            <Hero
+                title="Студии"
+                description="Здесь собраны студии Империи. Администратор может добавлять новые студии, а сами карточки удобно просматривать на телефоне и компьютере."
+            />
+            {can_manage_studios ? (
+                <section className="placeholder-card news-form-card news-suggest-card studios-form-card">
+                    <details className="news-edit-block news-suggest-block is-collapsed studios-create-block">
+                        <summary className="news-edit-summary">Добавить студию</summary>
+                        <div className="news-edit-body">
+                            <form method="POST" action="/studios/add" encType="multipart/form-data" className="news-edit-form">
+                                <div className="mb-3">
+                                    <label className="form-label" htmlFor="studio-title">Название студии</label>
+                                    <input className="form-control" id="studio-title" name="title" type="text" required />
+                                </div>
+                                <div className="mb-3">
+                                    <label className="form-label" htmlFor="studio-description">Описание студии</label>
+                                    <textarea className="form-control" id="studio-description" name="description" rows="5" required />
+                                </div>
+                                <div className="mb-3">
+                                    <label className="form-label" htmlFor="studio-image">Изображение</label>
+                                    <input className="form-control" id="studio-image" name="image" type="file" accept=".png,.jpg,.jpeg,.gif,.webp" />
+                                    <div className="form-text text-light">Картинка необязательна. Если нужна, лучше одно изображение на студию.</div>
+                                </div>
+                                <button type="submit" className="btn btn-primary">Добавить студию</button>
+                            </form>
+                        </div>
+                    </details>
+                </section>
+            ) : null}
+            <div className="news-list">
+                {studios_items.map((item) => (
+                    <article className="placeholder-card news-card studio-card" key={item.id}>
+                        <div className="news-meta">
+                            <span>{item.author_name}</span>
+                            <span>{formatDateTime(item.created_at)}</span>
+                        </div>
+                        <h3>{item.title}</h3>
+                        {item.image_path ? <img className="news-image studio-image" src={uploadedPath(item.image_path)} alt={item.title} /> : null}
+                        <p className="news-content">{item.description}</p>
+                        {can_manage_studios ? (
+                            <div className="news-card-actions studio-card-actions">
+                                <form method="POST" action="/studios/delete" onSubmit={(event) => { if (!window.confirm("Вы уверены, что хотите удалить эту студию?")) { event.preventDefault(); } }}>
+                                    <input type="hidden" name="studio_id" value={item.id} />
+                                    <button type="submit" className="btn btn-outline-light">Удалить студию</button>
+                                </form>
+                            </div>
+                        ) : null}
+                    </article>
+                ))}
+                {!studios_items.length ? (
+                    <section className="placeholder-card">
+                        <h3>Студий пока нет</h3>
+                        <p>Добавленные администратором студии появятся здесь.</p>
+                    </section>
+                ) : null}
+            </div>
+        </div>
+    );
+}
 function PlaceholderPage({ section_title, section_description }) {
     return (
         <div className="section-page">
@@ -921,6 +983,8 @@ function AppLayout({ bootstrapData }) {
                 return <LoginPage messages={bootstrapData.messages} />;
             case "home":
                 return <HomePage />;
+            case "studios":
+                return <StudiosPage {...bootstrapData} />;
             case "history":
                 return <HistoryPage />;
             case "leaderboard":

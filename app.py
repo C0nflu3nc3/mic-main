@@ -1,4 +1,4 @@
-import json
+﻿import json
 import os
 import shutil
 from datetime import date, datetime
@@ -9,11 +9,13 @@ from werkzeug.utils import secure_filename
 from api.add_operation import create_transfer
 from api.functions import (
     add_news,
+    add_studio,
     add_news_comment,
     accept_mission,
     approve_mission,
     count_pending_news,
     delete_news_comment,
+    delete_studio,
     cancel_mission,
     create_mission,
     delete_mission,
@@ -23,6 +25,8 @@ from api.functions import (
     get_news_for_update,
     get_missions,
     get_news,
+    get_studio,
+    get_studios,
     get_operations,
     get_plt,
     publish_news,
@@ -31,6 +35,7 @@ from api.functions import (
     get_teams_for_select,
     ensure_news_comment_columns,
     ensure_news_media_columns,
+    ensure_studios_table,
     reject_mission,
     update_news,
 )
@@ -51,6 +56,7 @@ legacy_upload_folder = os.path.join(default_upload_root, "news")
 
 app.config["UPLOAD_ROOT"] = persistent_upload_root
 app.config["UPLOAD_FOLDER"] = os.path.join(persistent_upload_root, "news")
+app.config["STUDIOS_UPLOAD_FOLDER"] = os.path.join(persistent_upload_root, "studios")
 app.config["LEGACY_UPLOAD_FOLDER"] = legacy_upload_folder
 app.config["MAX_CONTENT_LENGTH"] = 100 * 1024 * 1024
 
@@ -58,6 +64,7 @@ ALLOWED_IMAGE_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
 ALLOWED_VIDEO_EXTENSIONS = {"mp4", "webm", "ogg", "mov", "m4v"}
 os.makedirs(app.config["UPLOAD_ROOT"], exist_ok=True)
 os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
+os.makedirs(app.config["STUDIOS_UPLOAD_FOLDER"], exist_ok=True)
 
 
 def bootstrap_news_uploads():
@@ -159,6 +166,10 @@ def can_suggest_news(user):
     return not bool(user["isadmin"]) and not bool(user.get("isjournalist"))
 
 
+def can_manage_studios(user):
+    return bool(user["isadmin"])
+
+
 def can_take_missions(user):
     return not bool(user["isadmin"]) and not bool(user.get("isjournalist"))
 
@@ -186,7 +197,7 @@ def get_news_media_type(filename):
     return None
 
 
-def save_news_media(uploaded_file, allowed_extensions, fallback_base_name):
+def save_uploaded_media(uploaded_file, allowed_extensions, fallback_base_name, target_folder, public_prefix):
     if uploaded_file is None or uploaded_file.filename == "":
         return None
     if not is_allowed_extension(uploaded_file.filename, allowed_extensions):
@@ -203,17 +214,27 @@ def save_news_media(uploaded_file, allowed_extensions, fallback_base_name):
 
     extension = extension.lower()
     filename = f"{safe_base_name}{extension}"
-    file_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+    file_path = os.path.join(target_folder, filename)
     suffix = 2
     while os.path.exists(file_path):
         filename = f"{safe_base_name}-{suffix}{extension}"
-        file_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+        file_path = os.path.join(target_folder, filename)
         suffix += 1
 
-    os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
-    file_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+    os.makedirs(target_folder, exist_ok=True)
+    file_path = os.path.join(target_folder, filename)
     uploaded_file.save(file_path)
-    return f"uploads/news/{filename}"
+    return f"{public_prefix}/{filename}"
+
+
+def save_news_media(uploaded_file, allowed_extensions, fallback_base_name):
+    return save_uploaded_media(
+        uploaded_file,
+        allowed_extensions,
+        fallback_base_name,
+        app.config["UPLOAD_FOLDER"],
+        "uploads/news",
+    )
 
 
 def save_news_image(uploaded_file):
@@ -222,6 +243,16 @@ def save_news_image(uploaded_file):
 
 def save_news_video(uploaded_file):
     return save_news_media(uploaded_file, ALLOWED_VIDEO_EXTENSIONS, "news-video")
+
+
+def save_studio_image(uploaded_file):
+    return save_uploaded_media(
+        uploaded_file,
+        ALLOWED_IMAGE_EXTENSIONS,
+        "studio-image",
+        app.config["STUDIOS_UPLOAD_FOLDER"],
+        "uploads/studios",
+    )
 
 
 def collect_news_media_files(uploaded_files):
@@ -859,14 +890,84 @@ def studios_page():
     if redirect_response:
         return redirect_response
 
+    conn = get_connection()
+    try:
+        ensure_studios_table(conn)
+        studios_items = get_studios(conn)
+    finally:
+        conn.close()
+
     return render_react_page(
-        "placeholder",
-        "Студии",
+        "studios",
+        "\u0421\u0442\u0443\u0434\u0438\u0438",
         user=user,
         active_section="studios",
-        section_title="Студии",
-        section_description="Здесь размещается полное описание студий с картинками и разбивкой по тематическим блокам.",
+        can_manage_studios=can_manage_studios(user),
+        studios_items=studios_items,
     )
+
+
+@app.route("/studios/add", methods=["POST"])
+def add_studio_page():
+    user, redirect_response = require_user()
+    if redirect_response:
+        return redirect_response
+    if not can_manage_studios(user):
+        return redirect(url_for("studios_page"))
+
+    title = request.form.get("title", "").strip()
+    description = request.form.get("description", "").strip()
+    image_file = request.files.get("image")
+
+    if not title or not description:
+        flash("\u0417\u0430\u043f\u043e\u043b\u043d\u0438\u0442\u0435 \u043d\u0430\u0437\u0432\u0430\u043d\u0438\u0435 \u0438 \u043e\u043f\u0438\u0441\u0430\u043d\u0438\u0435 \u0441\u0442\u0443\u0434\u0438\u0438")
+        return redirect(url_for("studios_page"))
+
+    image_path = save_studio_image(image_file)
+
+    conn = get_connection()
+    try:
+        ensure_studios_table(conn)
+        add_studio(conn, int(user["id"]), title, description, image_path)
+    finally:
+        conn.close()
+
+    flash("\u0421\u0442\u0443\u0434\u0438\u044f \u0434\u043e\u0431\u0430\u0432\u043b\u0435\u043d\u0430")
+    return redirect(url_for("studios_page"))
+
+
+@app.route("/studios/delete", methods=["POST"])
+def delete_studio_page():
+    user, redirect_response = require_user()
+    if redirect_response:
+        return redirect_response
+    if not can_manage_studios(user):
+        return redirect(url_for("studios_page"))
+
+    studio_id = request.form.get("studio_id", "").strip()
+    if not studio_id.isdigit():
+        flash("\u041d\u0435\u0432\u0435\u0440\u043d\u044b\u0439 \u0438\u0434\u0435\u043d\u0442\u0438\u0444\u0438\u043a\u0430\u0442\u043e\u0440 \u0441\u0442\u0443\u0434\u0438\u0438")
+        return redirect(url_for("studios_page"))
+
+    conn = get_connection()
+    try:
+        ensure_studios_table(conn)
+        studio_item = get_studio(conn, int(studio_id))
+        deleted = delete_studio(conn, int(studio_id))
+    finally:
+        conn.close()
+
+    if deleted and studio_item and studio_item.get("image_path"):
+        relative_path = str(studio_item["image_path"]).replace("uploads/", "", 1)
+        studio_file_path = os.path.join(app.config["UPLOAD_ROOT"], relative_path)
+        if os.path.exists(studio_file_path):
+            try:
+                os.remove(studio_file_path)
+            except OSError:
+                pass
+
+    flash("\u0421\u0442\u0443\u0434\u0438\u044f \u0443\u0434\u0430\u043b\u0435\u043d\u0430")
+    return redirect(url_for("studios_page"))
 
 
 @app.route("/history", methods=["GET"])
@@ -880,9 +981,6 @@ def history_page():
         "\u0418\u0441\u0442\u043e\u0440\u0438\u044f \u0438 \u043a\u043e\u0434\u0435\u043a\u0441",
         user=user,
         active_section="history",
-    )
-
-
     )
 
 
