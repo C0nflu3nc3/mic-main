@@ -208,7 +208,7 @@ export function HistoryPage() {
       </section>
 
       <section className="history-section" id="codex">
-        <SectionHead kicker="Кодекс" title="Заветы Империи" description="Закон, которому подчиняются все жители." />
+        <SectionHead kicker="Кодекс" title="Великие Заветы Империи" description="Закон, которому подчиняются все жители." />
         <article className="placeholder-card history-card history-codex-card">
           <ol className="history-codex-list">
             {historyCodexRules.map((rule, index) => (
