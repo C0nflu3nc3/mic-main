@@ -658,6 +658,29 @@ a {
   text-align: center;
 }
 
+.history-page {
+  font-family: "Manrope", Arial, sans-serif;
+}
+
+.history-page h1,
+.history-page h2,
+.history-page h3,
+.history-page h4,
+.history-page h5,
+.history-page h6 {
+  font-family: var(--main-font-story);
+}
+
+.history-page .history-section-kicker,
+.history-page .history-card-kicker,
+.history-page .history-card-subtitle,
+.history-page .history-subsection-title,
+.history-page .history-codex-index,
+.history-page .history-tab,
+.history-page .history-action-button {
+  font-family: var(--main-font-nav);
+}
+
 .history-tabs {
   display: flex;
   gap: 10px;
@@ -896,6 +919,21 @@ a {
   background: rgba(9, 17, 16, 0.52);
   color: rgba(231, 219, 196, 0.86);
   font-size: 14px;
+}
+
+.history-portrait {
+  margin: 4px 0 0;
+}
+
+.history-portrait-image {
+  display: block;
+  width: 100%;
+  max-height: 320px;
+  object-fit: contain;
+  border-radius: 16px;
+  border: 1px solid rgba(194, 149, 78, 0.28);
+  background: rgba(9, 17, 16, 0.66);
+  padding: 8px;
 }
 
 .history-codex-card {
@@ -2328,6 +2366,11 @@ img {
 
   .history-card-subtitle {
     font-size: 14px;
+  }
+
+  .history-portrait-image {
+    max-height: 260px;
+    padding: 6px;
   }
 
   .history-expand summary,

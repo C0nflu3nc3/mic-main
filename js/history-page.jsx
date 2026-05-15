@@ -34,7 +34,7 @@ function Subsection({ title, body = [], items = [] }) {
   return (
     <div className="history-subsection">
       <div className="history-subsection-title">{title}</div>
-      <ExpandablePanel openLabel="?????????" closeLabel="?????? ???????????">
+      <ExpandablePanel openLabel="Подробнее" closeLabel="Скрыть подробности">
         <div className="history-subsection-body">
           {body.length ? <Paragraphs items={body} /> : null}
           {items.length ? <BulletList items={items} /> : null}
@@ -68,8 +68,8 @@ function HistoryCard({
   totemDetails = [],
   portrait = null,
   extraClass = "",
-  openLabel = "?????????",
-  closeLabel = "????????"
+  openLabel = "Подробнее",
+  closeLabel = "Свернуть подробности"
 }) {
   return (
     <article className={`placeholder-card history-card ${extraClass}`.trim()}>
@@ -84,7 +84,15 @@ function HistoryCard({
           {totemTitle ? <h4>{totemTitle}</h4> : null}
           {totem ? <div className="history-highlight">{totem}</div> : null}
           {totemDetails.length ? <Paragraphs items={totemDetails} /> : null}
-          {portrait ? <div className="history-portrait-note">{portrait}</div> : null}
+          {portrait ? (
+            typeof portrait === "string" && portrait.startsWith("/static/heroes/") ? (
+              <figure className="history-portrait">
+                <img className="history-portrait-image" src={portrait} alt={`Портрет ${title}`} loading="lazy" />
+              </figure>
+            ) : (
+              <div className="history-portrait-note">{portrait}</div>
+            )
+          ) : null}
         </div>
       </ExpandablePanel>
     </article>
@@ -93,17 +101,17 @@ function HistoryCard({
 
 function AnthemCard() {
   const anthemSections = [
-    { title: "?????? 1", lines: [...historyAnthem[0].lines, ...historyAnthem[1].lines] },
-    historyAnthem[2],
-    { title: "?????? 2", lines: [...historyAnthem[3].lines, ...historyAnthem[4].lines] },
-    historyAnthem[5]
+    { title: "Куплет 1", lines: [...historyAnthem[0].lines, ...historyAnthem[1].lines] },
+    { title: "Припев", lines: historyAnthem[2].lines },
+    { title: "Куплет 2", lines: [...historyAnthem[3].lines, ...historyAnthem[4].lines] },
+    { title: "Припев", lines: historyAnthem[5].lines }
   ];
 
   return (
     <article className="placeholder-card history-card history-anthem-card">
-      <div className="history-card-kicker">????</div>
-      <h3>???? ???????</h3>
-      <ExpandablePanel openLabel="???????? ????? ?????" closeLabel="?????? ????? ?????">
+      <div className="history-card-kicker">Гимн</div>
+      <h3>Текст гимна</h3>
+      <ExpandablePanel openLabel="Показать текст гимна" closeLabel="Свернуть текст гимна">
         <div className="history-expand-body">
           {anthemSections.map((part, index) => (
             <section className="history-anthem-stanza" key={`${part.title}-${index}`}>
@@ -121,24 +129,26 @@ function HistoryPage() {
   return (
     <div className="section-page history-page">
       <section className="placeholder-hero history-hero">
-        <h1>??????? ? ??????</h1>
-        <p>????? ??????? ??? ???????, ???????? ?? ????????, ??????, ??????????, ??????? ? ???? ? ???? ??????? ????????????.</p>
+        <h1>История и кодекс</h1>
+        <p>Здесь собраны энциклопедия Империи, её лор, архонты, кодекс, артефакты и гимн.</p>
       </section>
 
-      <nav className="history-tabs" aria-label="??????? ??????? ?? ???????? ???????">
+      <nav className="history-tabs" aria-label="Якоря разделов истории">
         {historyQuickLinks.map((item) => (
-          <a className="history-tab" href={`#${item.id}`} key={item.id}>{item.label}</a>
+          <a className="history-tab" href={`#${item.id}`} key={item.id}>
+            {item.label}
+          </a>
         ))}
       </nav>
 
       <section className="history-section" id="lore">
-        <SectionHead kicker="??????????" title="??? ???????" description="??????? ???? ?? ??????????? ????? ? ?????? ???????." />
+        <SectionHead kicker="Лор Империи" title="Основание" description="Краткое введение и история создания Империи." />
         <div className="history-grid history-grid-2">
           <article className="placeholder-card history-card history-lead-card">
             <div className="history-card-kicker">{historyLore.empire.kicker}</div>
             <h3>{historyLore.empire.title}</h3>
             <Paragraphs items={historyLore.empire.intro} />
-            <ExpandablePanel openLabel="?????? ?????????" closeLabel="????????">
+            <ExpandablePanel openLabel="Читать полностью" closeLabel="Свернуть">
               <div className="history-expand-body">
                 <Paragraphs items={historyLore.empire.full} />
               </div>
@@ -149,10 +159,9 @@ function HistoryPage() {
             <div className="history-card-kicker">{historyLore.nocturne.kicker}</div>
             <h3>{historyLore.nocturne.title}</h3>
             <Paragraphs items={historyLore.nocturne.intro} />
-            <ExpandablePanel openLabel="?????? ?????????" closeLabel="????????">
+            <ExpandablePanel openLabel="Читать полностью" closeLabel="Свернуть">
               <div className="history-expand-body">
                 <Paragraphs items={historyLore.nocturne.full} />
-                <div className="history-portrait-note">{historyLore.nocturne.portrait}</div>
               </div>
             </ExpandablePanel>
           </article>
@@ -160,11 +169,11 @@ function HistoryPage() {
       </section>
 
       <section className="history-section" id="legions">
-        <SectionHead kicker="?????????" title="12 ????????" description="?????? ?????? ????? ???????????-?????????? ? ??????????? ???? ? ???????." />
+        <SectionHead kicker="12 Легионов" title="Структура легионов" description="Сводка по двенадцати легионам и их покровителям." />
         <div className="history-grid history-grid-3">
           {historyLegions.map((legion) => (
             <article className="placeholder-card history-card history-legion-card" key={legion.title}>
-              <div className="history-card-kicker">??????</div>
+              <div className="history-card-kicker">Легион</div>
               <h3>{legion.title}</h3>
               <div className="history-card-subtitle">{legion.subtitle}</div>
               <p>{legion.description}</p>
@@ -174,14 +183,14 @@ function HistoryPage() {
       </section>
 
       <section className="history-section" id="archons">
-        <SectionHead kicker="?????????" title="???????" description="??????? ????????, ??????????? ? ????? ??????? ????????? ???????." />
+        <SectionHead kicker="Архонты" title="Главные персонажи" description="Карточки героев, их описание и тотемы." />
         <div className="history-grid history-grid-3">
           {historyArchons.map((archon) => (
             <HistoryCard
               key={archon.title}
               title={archon.title}
               subtitle={archon.subtitle}
-              kicker="??????"
+              kicker="Архонт"
               intro={archon.intro}
               detailsTitle={archon.detailsTitle}
               details={archon.details}
@@ -189,15 +198,15 @@ function HistoryPage() {
               totem={archon.totem}
               totemDetails={archon.totemDetails}
               portrait={archon.portrait}
-              openLabel="?????????"
-              closeLabel="?????? ???????????"
+              openLabel="Подробнее"
+              closeLabel="Свернуть подробности"
             />
           ))}
         </div>
       </section>
 
       <section className="history-section" id="codex">
-        <SectionHead kicker="?????" title="?????? ???????" description="???? ??????, ??????? ?????? ??????? ? ??????? ? ??????????." />
+        <SectionHead kicker="Кодекс" title="Правила Империи" description="Закон, которому подчиняются все жители." />
         <article className="placeholder-card history-card history-codex-card">
           <ol className="history-codex-list">
             {historyCodexRules.map((rule, index) => (
@@ -211,11 +220,11 @@ function HistoryPage() {
       </section>
 
       <section className="history-section" id="artifacts">
-        <SectionHead kicker="?????????" title="????????? ? ???????" description="??? ???????? ???????? ???????: ?????? ?? ???????????? ? ???????? ???????." />
+        <SectionHead kicker="Артефакты" title="Хаосинатор и Хекстек" description="Механизмы, из которых складывается энергия Империи." />
         <div className="history-grid history-grid-2">
           {historyArtifacts.map((artifact) => (
             <article className="placeholder-card history-card history-artifact-card" key={artifact.id}>
-              <div className="history-card-kicker">????????</div>
+              <div className="history-card-kicker">Артефакт</div>
               <h3>{artifact.title}</h3>
               <Paragraphs items={artifact.intro} />
               <div className="history-subsections">
@@ -229,7 +238,7 @@ function HistoryPage() {
       </section>
 
       <section className="history-section" id="anthem">
-        <SectionHead kicker="??????" title="???? ???????" description="????? ????? ?????? ??????? ? ????????? ????????, ????? ?? ??????????? ????????." />
+        <SectionHead kicker="Гимн" title="Гимн Империи" description="Текст гимна, разделённый на куплеты и припевы." />
         <AnthemCard />
       </section>
     </div>
