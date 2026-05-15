@@ -10,6 +10,33 @@ function BulletList({ items }) {
   return <ul className="history-bullet-list">{items.map((item, index) => <li key={`${item}-${index}`}>{item}</li>)}</ul>;
 }
 
+function toRoman(num) {
+  const map = [
+    [1000, "M"],
+    [900, "CM"],
+    [500, "D"],
+    [400, "CD"],
+    [100, "C"],
+    [90, "XC"],
+    [50, "L"],
+    [40, "XL"],
+    [10, "X"],
+    [9, "IX"],
+    [5, "V"],
+    [4, "IV"],
+    [1, "I"]
+  ];
+  let value = num;
+  let result = "";
+  for (const [arabic, roman] of map) {
+    while (value >= arabic) {
+      result += roman;
+      value -= arabic;
+    }
+  }
+  return result;
+}
+
 function ExpandablePanel({ openLabel, closeLabel, children, openClassName = "", closeClassName = "" }) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -213,7 +240,7 @@ export function HistoryPage() {
           <ol className="history-codex-list">
             {historyCodexRules.map((rule, index) => (
               <li key={`${index}-${rule}`}>
-                <span className="history-codex-index">{String(index + 1).padStart(2, "0")}</span>
+                <span className="history-codex-index">{toRoman(index + 1)}</span>
                 <span className="history-codex-text">{rule}</span>
               </li>
             ))}
