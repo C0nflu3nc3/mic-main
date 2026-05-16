@@ -1,4 +1,4 @@
-const { useState } = React;
+const { useEffect, useState } = React;
 
 function Paragraphs({ items }) {
   return items.map((item, index) => <p key={`${item}-${index}`}>{item}</p>);
@@ -79,6 +79,63 @@ function SectionHead({ kicker, title, description }) {
         <h2 className="history-section-title">{title}</h2>
         {description ? <p className="history-section-description">{description}</p> : null}
       </div>
+    </div>
+  );
+}
+
+function HistoryProgress() {
+  const [stage, setStage] = useState("beginning");
+
+  useEffect(() => {
+    const stagesBySection = {
+      lore: "beginning",
+      legions: "beginning",
+      archons: "middle",
+      codex: "middle",
+      artifacts: "end",
+      anthem: "end"
+    };
+
+    const updateStage = () => {
+      const sections = Array.from(document.querySelectorAll(".history-section[id]"));
+      let currentId = "lore";
+
+      for (const section of sections) {
+        const rect = section.getBoundingClientRect();
+        if (rect.top <= window.innerHeight * 0.34) {
+          currentId = section.id;
+        }
+      }
+
+      setStage(stagesBySection[currentId] || "beginning");
+    };
+
+    updateStage();
+    window.addEventListener("scroll", updateStage, { passive: true });
+    window.addEventListener("resize", updateStage);
+    return () => {
+      window.removeEventListener("scroll", updateStage);
+      window.removeEventListener("resize", updateStage);
+    };
+  }, []);
+
+  const items = [
+    { id: "beginning", label: "Начало" },
+    { id: "middle", label: "Середина" },
+    { id: "end", label: "Финал" }
+  ];
+
+  return (
+    <div className="history-progress" aria-label="Путь по истории">
+      {items.map((item) => (
+        <div
+          key={item.id}
+          className={`history-progress-item ${stage === item.id ? "is-active" : ""}`}
+        >
+          <span className="history-progress-dot" />
+          <span className="history-progress-label">{item.label}</span>
+        </div>
+      ))}
     </div>
   );
 }
@@ -167,6 +224,8 @@ function HistoryPage() {
           </a>
         ))}
       </nav>
+
+      <HistoryProgress />
 
       <section className="history-section" id="lore">
         <SectionHead kicker="Лор" title="Эпоха Основания" description="Краткое введение и история создания Империи." />

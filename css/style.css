@@ -1030,6 +1030,53 @@ a {
     0 14px 30px rgba(0, 0, 0, 0.2);
 }
 
+.history-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  width: fit-content;
+  max-width: 100%;
+  margin: -4px auto 28px;
+  padding: 8px 16px 0;
+}
+
+.history-progress-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: rgba(223, 206, 175, 0.62);
+  transition: color 180ms ease, transform 180ms ease;
+}
+
+.history-progress-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(194, 149, 78, 0.28);
+  box-shadow: 0 0 0 6px rgba(194, 149, 78, 0.05);
+  transition: background 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.history-progress-label {
+  font-family: var(--main-font-nav);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.history-progress-item.is-active {
+  color: #f0d49a;
+  transform: translateY(-1px);
+}
+
+.history-progress-item.is-active .history-progress-dot {
+  background: rgba(214, 174, 100, 0.96);
+  box-shadow: 0 0 0 8px rgba(214, 174, 100, 0.14);
+  transform: scale(1.06);
+}
+
 .history-section {
   margin-top: 34px;
   scroll-margin-top: 150px;
@@ -2780,12 +2827,14 @@ img {
   }
 
   .home-page .placeholder-grid {
+    grid-template-columns: 1fr;
     gap: 18px;
   }
 
   .home-page .placeholder-grid .placeholder-card {
     padding: 24px 18px 22px;
     gap: 14px;
+    width: 100%;
   }
 
   .home-page .placeholder-grid .placeholder-card p {
@@ -2796,6 +2845,22 @@ img {
   .home-page .placeholder-card-link {
     min-height: 54px;
     width: 100%;
+  }
+
+  .history-progress {
+    justify-content: flex-start;
+    margin: 0 0 22px;
+    padding-left: 2px;
+    gap: 14px;
+  }
+
+  .history-progress-item {
+    gap: 8px;
+  }
+
+  .history-progress-label {
+    font-size: 11px;
+    letter-spacing: 0.08em;
   }
 
   .missions-page .mission-info,
@@ -3396,6 +3461,10 @@ img {
     padding-right: 14px;
   }
 
+  .home-page .placeholder-grid {
+    grid-template-columns: 1fr;
+  }
+
   body::before {
     opacity: 0.38;
   }
@@ -3403,6 +3472,15 @@ img {
   .history-tab {
     font-size: 17px;
     padding: 10px 16px;
+  }
+
+  .history-progress {
+    gap: 10px;
+    justify-content: flex-start;
+  }
+
+  .history-progress-label {
+    font-size: 10px;
   }
 
   .history-card h3 {

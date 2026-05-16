@@ -26,18 +26,18 @@ def create_transfer(conn, is_admin, current_user_id, parent, target, score, comm
     receiver_team_name = get_team_name_by_team_id(conn, target_team_id)
 
     if sender_team_name is None or receiver_team_name is None:
-        return False, "Команда не найдена"
+        return False, "Фракция не найдена"
 
     current_balance = get_plt(conn, sender_team_id_real)
     if current_balance < score_value:
         return False, "Недостаточно GRZ"
 
     base_comment = comment.strip()
-    receiver_comment = base_comment or f"Пополнение от команды {sender_team_name}"
+    receiver_comment = base_comment or f"Пополнение от фракции {sender_team_name}"
     sender_comment = (
-        f"{base_comment}: Передача GRZ команде {receiver_team_name}"
+        f"{base_comment}: Передача GRZ фракции {receiver_team_name}"
         if base_comment
-        else f"Передача GRZ команде {receiver_team_name}"
+        else f"Передача GRZ фракции {receiver_team_name}"
     )
 
     try:

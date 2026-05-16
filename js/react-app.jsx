@@ -770,7 +770,7 @@ function BankOperations({ is_admin = false, current_team_id = null, current_plt 
                                     <input name="parent" type="hidden" id="parent" value={current_team_id || ""} />
                                 ) : (
                                     <>
-                                        <label htmlFor="userSRC">Выберите легион отправителя:</label>
+                                        <label htmlFor="userSRC">Выберите фракцию отправителя:</label>
                                         <select className="form-control" id="userSRC" name="parent" defaultValue={defaultSourceId}>
                                             {teams_for_select.map((team) => (
                                                 <option key={`src-${team.id}`} value={team.id} data-balance={team.balance}>
@@ -781,7 +781,7 @@ function BankOperations({ is_admin = false, current_team_id = null, current_plt 
                                     </>
                                 )}
 
-                                <label htmlFor="usersDST">Выберите легион получателя:</label>
+                                <label htmlFor="usersDST">Выберите фракцию получателя:</label>
                                 <select className="form-control" id="usersDST" name="user" defaultValue={defaultTargetId}>
                                     {teams_for_select.map((team) => (
                                         <option key={`dst-${team.id}`} value={team.id}>
@@ -804,13 +804,13 @@ function BankOperations({ is_admin = false, current_team_id = null, current_plt 
                                     disabled={!transferPossible && !is_admin}
                                 />
 
-                                <label htmlFor="comment">Комментарий:</label>
+                                <label htmlFor="comment">Комментарий фракции:</label>
                                 <input
                                     name="comment"
                                     type="text"
                                     className="form-control"
                                     id="comment"
-                                    placeholder="Введите сообщение команде"
+                                    placeholder="Введите сообщение легиону"
                                 />
 
                                 <div className="form-text" id="transferState">
