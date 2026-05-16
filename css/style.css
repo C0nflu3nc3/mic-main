@@ -1034,47 +1034,69 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 22px;
   width: fit-content;
   max-width: 100%;
   margin: -4px auto 28px;
   padding: 8px 16px 0;
 }
 
-.history-progress-item {
-  display: inline-flex;
+.history-progress-track {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   align-items: center;
-  gap: 10px;
-  color: rgba(223, 206, 175, 0.62);
-  transition: color 180ms ease, transform 180ms ease;
+  gap: 52px;
+  min-width: 128px;
+  padding: 10px 4px;
 }
 
-.history-progress-dot {
+.history-progress-track::before {
+  content: "";
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  top: 50%;
+  height: 1px;
+  transform: translateY(-50%);
+  background: linear-gradient(90deg, rgba(194, 149, 78, 0.22) 0%, rgba(194, 149, 78, 0.14) 100%);
+}
+
+.history-progress-stop {
+  position: relative;
+  z-index: 1;
   width: 10px;
   height: 10px;
   border-radius: 999px;
   background: rgba(194, 149, 78, 0.28);
   box-shadow: 0 0 0 6px rgba(194, 149, 78, 0.05);
-  transition: background 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+  justify-self: center;
 }
 
-.history-progress-label {
-  font-family: var(--main-font-nav);
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+.history-progress-indicator {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: rgba(214, 174, 100, 0.98);
+  box-shadow:
+    0 0 0 8px rgba(214, 174, 100, 0.14),
+    0 0 18px rgba(214, 174, 100, 0.18);
+  transform: translate(0, -50%);
+  transition: transform 240ms ease, box-shadow 240ms ease;
 }
 
-.history-progress-item.is-active {
-  color: #f0d49a;
-  transform: translateY(-1px);
+.history-progress--beginning .history-progress-indicator {
+  transform: translate(4px, -50%);
 }
 
-.history-progress-item.is-active .history-progress-dot {
-  background: rgba(214, 174, 100, 0.96);
-  box-shadow: 0 0 0 8px rgba(214, 174, 100, 0.14);
-  transform: scale(1.06);
+.history-progress--middle .history-progress-indicator {
+  transform: translate(calc(50% - 6px), -50%);
+}
+
+.history-progress--end .history-progress-indicator {
+  transform: translate(calc(100% - 16px), -50%);
 }
 
 .history-section {
@@ -2851,16 +2873,16 @@ img {
     justify-content: flex-start;
     margin: 0 0 22px;
     padding-left: 2px;
-    gap: 14px;
   }
 
-  .history-progress-item {
-    gap: 8px;
+  .history-progress-track {
+    gap: 34px;
+    min-width: 102px;
   }
 
-  .history-progress-label {
-    font-size: 11px;
-    letter-spacing: 0.08em;
+  .history-progress-track::before {
+    left: 8px;
+    right: 8px;
   }
 
   .missions-page .mission-info,
@@ -3475,12 +3497,12 @@ img {
   }
 
   .history-progress {
-    gap: 10px;
     justify-content: flex-start;
   }
 
-  .history-progress-label {
-    font-size: 10px;
+  .history-progress-track {
+    gap: 26px;
+    min-width: 88px;
   }
 
   .history-card h3 {

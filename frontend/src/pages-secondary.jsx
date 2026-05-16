@@ -86,11 +86,11 @@ function BankOperations({ is_admin = false, current_team_id = null, current_plt 
           <div className="modal-dialog"><div className="modal-content"><div className="modal-header"><h1 className="modal-title fs-5" id="exampleModalLabel">Форма отправки герцев</h1><button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button></div>
           <div className="modal-body">
             {!is_admin ? <input name="parent" type="hidden" id="parent" value={current_team_id || ""} /> : <><label htmlFor="userSRC">Выберите фракцию отправителя:</label><select className="form-control" id="userSRC" name="parent" defaultValue={defaultSourceId}>{teams_for_select.map((team) => <option key={`src-${team.id}`} value={team.id} data-balance={team.balance}>{team.name}</option>)}</select></>}
-            <label htmlFor="usersDST">Выберите фракцию получателя:</label>
+            <label htmlFor="usersDST">Выберите легион получателя:</label>
             <select className="form-control" id="usersDST" name="user" defaultValue={defaultTargetId}>{teams_for_select.map((team) => <option key={`dst-${team.id}`} value={team.id}>{team.name}</option>)}</select>
             <label htmlFor="PLT">Количество GRZ:</label>
             <input name="score" type="number" min="0" max={defaultMax} step="1" defaultValue={defaultScore} id="PLT" className="form-control" placeholder="цена" disabled={!transferPossible && !is_admin} />
-            <label htmlFor="comment">Комментарий фракции:</label>
+            <label htmlFor="comment">Комментарий легиону:</label>
             <input name="comment" type="text" className="form-control" id="comment" placeholder="Введите сообщение легиону" />
             <div className="form-text" id="transferState">{!is_admin && current_plt <= 0 ? "Перевод недоступен: у текущего легиона нулевой баланс." : ""}</div>
           </div>

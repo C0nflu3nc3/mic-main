@@ -781,7 +781,7 @@ function BankOperations({ is_admin = false, current_team_id = null, current_plt 
                                     </>
                                 )}
 
-                                <label htmlFor="usersDST">Выберите фракцию получателя:</label>
+                                <label htmlFor="usersDST">Выберите легион получателя:</label>
                                 <select className="form-control" id="usersDST" name="user" defaultValue={defaultTargetId}>
                                     {teams_for_select.map((team) => (
                                         <option key={`dst-${team.id}`} value={team.id}>
@@ -804,7 +804,7 @@ function BankOperations({ is_admin = false, current_team_id = null, current_plt 
                                     disabled={!transferPossible && !is_admin}
                                 />
 
-                                <label htmlFor="comment">Комментарий фракции:</label>
+                                <label htmlFor="comment">Комментарий легиону:</label>
                                 <input
                                     name="comment"
                                     type="text"

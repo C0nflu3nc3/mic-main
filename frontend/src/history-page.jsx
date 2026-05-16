@@ -128,16 +128,17 @@ function HistoryProgress() {
   ];
 
   return (
-    <div className="history-progress" aria-label="Путь по истории">
-      {items.map((item) => (
-        <div
-          key={item.id}
-          className={`history-progress-item ${stage === item.id ? "is-active" : ""}`}
-        >
-          <span className="history-progress-dot" />
-          <span className="history-progress-label">{item.label}</span>
-        </div>
-      ))}
+    <div className={`history-progress history-progress--${stage}`} aria-label="Путь по истории">
+      <div className="history-progress-track" aria-hidden="true">
+        {items.map((item) => (
+          <span
+            key={item.id}
+            className={`history-progress-stop ${stage === item.id ? "is-active" : ""}`}
+            title={item.label}
+          />
+        ))}
+        <span className="history-progress-indicator" />
+      </div>
     </div>
   );
 }
