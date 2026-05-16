@@ -1429,17 +1429,19 @@ a {
   padding: 14px 16px;
 }
 
-.studios-form-card {
+.ceremonial-page .studios-form-card {
   min-height: auto;
   padding: 0;
   margin-bottom: 24px;
+  border-radius: 0;
   background: transparent;
   border: 0;
   box-shadow: none;
+  overflow: visible;
 }
 
-.studios-form-card::before,
-.studios-form-card::after {
+.ceremonial-page .studios-form-card::before,
+.ceremonial-page .studios-form-card::after {
   display: none;
 }
 
