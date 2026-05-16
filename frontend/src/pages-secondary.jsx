@@ -70,7 +70,7 @@ function UserBankView({ current_plt }) {
   return (
     <section className="bank-balance-strip">
       <h3>
-        <span className="bank-balance-label">Герцы твоего легиона:</span>
+        <span className="bank-balance-label">Герцы твоего Легиона:</span>
         <span className="badge text-bg-success">{current_plt}</span>
       </h3>
     </section>
