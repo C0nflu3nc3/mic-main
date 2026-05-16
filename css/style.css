@@ -1,4 +1,4 @@
-@font-face {
+﻿@font-face {
   font-family: "Cera Stencil";
   src: url("fonts/type me! fonts - Cera Stencil PRO Trial Medium.otf") format("opentype");
   font-weight: 500;
@@ -1030,141 +1030,6 @@ a {
     0 14px 30px rgba(0, 0, 0, 0.2);
 }
 
-.history-progress {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: fit-content;
-  max-width: 100%;
-  margin: -4px auto 28px;
-  padding: 8px 16px 0;
-}
-
-.history-progress-track {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  align-items: center;
-  gap: 52px;
-  min-width: 128px;
-  padding: 10px 4px;
-}
-
-.history-progress-track::before {
-  content: "";
-  position: absolute;
-  left: 10px;
-  right: 10px;
-  top: 50%;
-  height: 1px;
-  transform: translateY(-50%);
-  background: linear-gradient(90deg, rgba(194, 149, 78, 0.22) 0%, rgba(194, 149, 78, 0.14) 100%);
-}
-
-.history-progress-stop {
-  position: relative;
-  z-index: 1;
-  width: 10px;
-  height: 10px;
-  border-radius: 999px;
-  background: rgba(194, 149, 78, 0.28);
-  box-shadow: 0 0 0 6px rgba(194, 149, 78, 0.05);
-  justify-self: center;
-}
-
-.history-progress-indicator {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  width: 12px;
-  height: 12px;
-  border-radius: 999px;
-  background: rgba(214, 174, 100, 0.98);
-  box-shadow:
-    0 0 0 8px rgba(214, 174, 100, 0.14),
-    0 0 18px rgba(214, 174, 100, 0.18);
-  transform: translate(0, -50%);
-  transition: transform 240ms ease, box-shadow 240ms ease;
-}
-
-.history-progress--beginning .history-progress-indicator {
-  transform: translate(4px, -50%);
-}
-
-.history-progress--middle .history-progress-indicator {
-  transform: translate(calc(50% - 6px), -50%);
-}
-
-.history-progress--end .history-progress-indicator {
-  transform: translate(calc(100% - 16px), -50%);
-}
-
-.history-section {
-  margin-top: 34px;
-  scroll-margin-top: 150px;
-}
-
-.history-section-head {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-  gap: 8px;
-  margin-bottom: 22px;
-  padding-left: 18px;
-  border-left: 2px solid rgba(194, 149, 78, 0.28);
-  position: relative;
-}
-
-.history-section-head::before {
-  content: "";
-  position: absolute;
-  left: -5px;
-  top: 6px;
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-  background: rgba(210, 164, 99, 0.9);
-  box-shadow: 0 0 0 6px rgba(210, 164, 99, 0.08);
-}
-
-.history-section-head-main {
-  width: 100%;
-  display: grid;
-  gap: 6px;
-}
-
-.history-section-kicker {
-  margin-bottom: 8px;
-  color: #d2a463;
-  font-family: var(--main-font-nav);
-  font-size: 15px;
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-.history-section-title {
-  margin: 0;
-  font-size: clamp(30px, 3vw, 42px);
-}
-
-.history-section-description {
-  margin: 0;
-  max-width: 48ch;
-  color: var(--main-text-soft);
-  line-height: 1.6;
-  font-size: 16px;
-}
-
-.history-grid {
-  display: grid;
-  gap: 22px;
-}
-
-.history-grid-2 {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
 
 .history-grid-3 {
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1388,11 +1253,14 @@ a {
 
 .history-codex-card {
   padding: 18px 20px;
+  justify-items: stretch;
+  text-align: left;
   background:
     linear-gradient(180deg, rgba(13, 23, 21, 0.98) 0%, rgba(9, 16, 15, 0.96) 100%);
 }
 
 .history-codex-list {
+  width: 100%;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -1426,6 +1294,10 @@ a {
 .history-codex-text {
   color: var(--main-text-soft);
   line-height: 1.6;
+  text-align: left;
+  max-width: none;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .history-subsections {
@@ -1466,10 +1338,14 @@ a {
 }
 
 .history-anthem-card {
+  justify-items: stretch;
+  text-align: left;
   gap: 14px;
 }
 
 .history-anthem-stanza {
+  width: 100%;
+  justify-items: stretch;
   padding-top: 12px;
   border-top: 1px solid rgba(194, 149, 78, 0.18);
   display: grid;
@@ -1485,12 +1361,17 @@ a {
   margin: 0;
   color: #dfbb76;
   font-size: 22px;
+  text-align: left;
 }
 
 .history-anthem-stanza p {
   margin: 0;
   color: rgba(231, 219, 196, 0.9);
   line-height: 1.7;
+  text-align: left;
+  max-width: none;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .news-list {
@@ -2082,6 +1963,38 @@ a {
   border: 1px solid rgba(194, 149, 78, 0.26);
 }
 
+.bank-balance-strip {
+  max-width: 1040px;
+  margin: 0 auto 10px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.bank-balance-strip h3 {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 0 0;
+  color: #f0d49a;
+  font-size: clamp(34px, 3.2vw, 46px);
+  line-height: 1.02;
+}
+
+.bank-balance-label {
+  display: inline-flex;
+  align-items: center;
+}
+
+.bank-balance-strip .badge {
+  padding: 10px 18px;
+  font-size: 0.62em;
+  line-height: 1;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 241, 208, 0.16),
+    0 10px 24px rgba(0, 0, 0, 0.16);
+}
+
 .btn {
   font-family: var(--main-font-nav);
   border-radius: 14px;
@@ -2274,17 +2187,21 @@ a {
 }
 
 .bank-action-bar {
-  margin-top: 18px;
-  margin-bottom: 28px;
+  margin-top: 6px;
+  margin-bottom: 24px;
   max-width: 1040px;
   margin-left: auto;
   margin-right: auto;
   padding-left: 0;
+  display: flex;
+  justify-content: flex-start;
 }
 
 .bank-action-button {
   min-width: 280px;
   max-width: 100%;
+  padding-left: 28px;
+  padding-right: 28px;
 }
 
 .modal-content {
@@ -2590,7 +2507,8 @@ img {
     font-size: 34px;
   }
 
-  .bank-page > h3 {
+  .bank-page > h3,
+  .bank-balance-strip h3 {
     width: 100%;
     display: flex;
     align-items: center;
@@ -2598,7 +2516,8 @@ img {
     gap: 12px;
   }
 
-  .bank-page > h3 .badge {
+  .bank-page > h3 .badge,
+  .bank-balance-strip .badge {
     flex: 0 0 auto;
   }
 
@@ -2869,22 +2788,6 @@ img {
     width: 100%;
   }
 
-  .history-progress {
-    justify-content: flex-start;
-    margin: 0 0 22px;
-    padding-left: 2px;
-  }
-
-  .history-progress-track {
-    gap: 34px;
-    min-width: 102px;
-  }
-
-  .history-progress-track::before {
-    left: 8px;
-    right: 8px;
-  }
-
   .missions-page .mission-info,
   .approve-page .mission-info,
   .missions-page .mission-teams,
@@ -2938,22 +2841,6 @@ img {
     border-radius: 24px;
     border: 1px solid rgba(194, 149, 78, 0.14);
     background:
-      radial-gradient(circle at top left, rgba(214, 174, 100, 0.08) 0%, transparent 28%),
-      linear-gradient(180deg, rgba(16, 25, 22, 0.84) 0%, rgba(11, 18, 17, 0.62) 100%);
-    box-shadow:
-      0 18px 38px rgba(0, 0, 0, 0.14),
-      inset 0 1px 0 rgba(255, 237, 197, 0.04);
-    backdrop-filter: blur(8px);
-  }
-
-  .history-section-head-main::before {
-    content: "";
-    position: absolute;
-    left: 20px;
-    top: 20px;
-    bottom: 20px;
-    width: 1px;
-    background: linear-gradient(180deg, rgba(210, 164, 99, 0.48) 0%, rgba(210, 164, 99, 0.08) 100%);
   }
 
   body {
@@ -3429,12 +3316,14 @@ img {
     font-size: 24px;
   }
 
-  .bank-page > h3 {
+  .bank-page > h3,
+  .bank-balance-strip h3 {
     gap: 10px;
     font-size: 18px;
   }
 
-  .bank-page > h3 .badge {
+  .bank-page > h3 .badge,
+  .bank-balance-strip .badge {
     padding: 8px 12px;
   }
 
@@ -3494,15 +3383,6 @@ img {
   .history-tab {
     font-size: 17px;
     padding: 10px 16px;
-  }
-
-  .history-progress {
-    justify-content: flex-start;
-  }
-
-  .history-progress-track {
-    gap: 26px;
-    min-width: 88px;
   }
 
   .history-card h3 {
@@ -3574,13 +3454,6 @@ img {
   }
 
   .bank-page .bank-scoreboard-table tbody td {
-    grid-template-columns: 88px minmax(0, 1fr);
-    gap: 6px;
-    font-size: 14px;
-    align-items: start;
-  }
-
-  .bank-page .bank-scoreboard-panel {
     width: min(calc(100vw - 22px), 380px);
     max-width: none;
     margin-left: auto;

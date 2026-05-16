@@ -729,9 +729,12 @@ function AdminBankView({ scoreboard = [] }) {
 
 function UserBankView({ current_plt }) {
     return (
-        <h3>
-            ГЕРЦЫ ТВОЕГО ЛЕГИОНА: <span className="badge text-bg-success">{current_plt}</span>
-        </h3>
+        <section className="bank-balance-strip">
+            <h3>
+                <span className="bank-balance-label">Герцы твоего легиона:</span>
+                <span className="badge text-bg-success">{current_plt}</span>
+            </h3>
+        </section>
     );
 }
 
