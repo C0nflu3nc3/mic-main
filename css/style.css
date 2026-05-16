@@ -1031,8 +1031,22 @@ a {
 }
 
 
+.history-grid {
+  display: grid;
+  gap: 28px;
+  align-items: stretch;
+}
+
+.history-grid-2 {
+  grid-template-columns: repeat(2, minmax(320px, 1fr));
+}
+
 .history-grid-3 {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(240px, 1fr));
+}
+
+.history-grid-desktop-tight {
+  align-items: start;
 }
 
 .history-card {
@@ -2440,13 +2454,15 @@ img {
     max-width: 100%;
   }
 
+  .history-section-head {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 820px) {
   .history-grid-2,
   .history-grid-3 {
     grid-template-columns: 1fr;
-  }
-
-  .history-section-head {
-    align-items: flex-start;
   }
 }
 

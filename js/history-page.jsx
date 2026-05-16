@@ -1,4 +1,4 @@
-﻿const { useState } = React;
+const { useState } = React;
 
 function Paragraphs({ items }) {
   return items.map((item, index) => <p key={`${item}-${index}`}>{item}</p>);
@@ -9,21 +9,7 @@ function BulletList({ items }) {
 }
 
 function toRoman(num) {
-  const map = [
-    [1000, "M"],
-    [900, "CM"],
-    [500, "D"],
-    [400, "CD"],
-    [100, "C"],
-    [90, "XC"],
-    [50, "L"],
-    [40, "XL"],
-    [10, "X"],
-    [9, "IX"],
-    [5, "V"],
-    [4, "IV"],
-    [1, "I"]
-  ];
+  const map = [[1000, "M"], [900, "CM"], [500, "D"], [400, "CD"], [100, "C"], [90, "XC"], [50, "L"], [40, "XL"], [10, "X"], [9, "IX"], [5, "V"], [4, "IV"], [1, "I"]];
   let value = num;
   let result = "";
   for (const [arabic, roman] of map) {
@@ -35,13 +21,13 @@ function toRoman(num) {
   return result;
 }
 
-function ExpandablePanel({ openLabel, closeLabel, children, openClassName = "", closeClassName = "" }) {
+function ExpandablePanel({ openLabel, closeLabel, children }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div className={`history-expand-panel ${isOpen ? "is-open" : ""}`.trim()}>
       {!isOpen ? (
-        <button type="button" className={`btn history-action-button history-action-button-open ${openClassName}`.trim()} onClick={() => setIsOpen(true)}>
+        <button type="button" className="btn history-action-button history-action-button-open" onClick={() => setIsOpen(true)}>
           {openLabel}
         </button>
       ) : null}
@@ -49,7 +35,7 @@ function ExpandablePanel({ openLabel, closeLabel, children, openClassName = "", 
         <div className="history-expand-body-inner">{children}</div>
       </div>
       {isOpen ? (
-        <button type="button" className={`btn history-action-button history-action-button-close ${closeClassName}`.trim()} onClick={() => setIsOpen(false)}>
+        <button type="button" className="btn history-action-button history-action-button-close" onClick={() => setIsOpen(false)}>
           {closeLabel}
         </button>
       ) : null}
@@ -61,7 +47,7 @@ function Subsection({ title, body = [], items = [] }) {
   return (
     <div className="history-subsection">
       <div className="history-subsection-title">{title}</div>
-      <ExpandablePanel openLabel="РџРѕРґСЂРѕР±РЅРµРµ" closeLabel="РЎРєСЂС‹С‚СЊ РїРѕРґСЂРѕР±РЅРѕСЃС‚Рё">
+      <ExpandablePanel openLabel="Подробнее" closeLabel="Скрыть подробности">
         <div className="history-subsection-body">
           {body.length ? <Paragraphs items={body} /> : null}
           {items.length ? <BulletList items={items} /> : null}
@@ -83,7 +69,6 @@ function SectionHead({ kicker, title, description }) {
   );
 }
 
-
 function HistoryCard({
   title,
   subtitle,
@@ -94,18 +79,15 @@ function HistoryCard({
   totemTitle,
   totem = null,
   totemDetails = [],
-  portrait = null,
-  extraClass = "",
-  openLabel = "РџРѕРґСЂРѕР±РЅРµРµ",
-  closeLabel = "РЎРІРµСЂРЅСѓС‚СЊ РїРѕРґСЂРѕР±РЅРѕСЃС‚Рё"
+  portrait = null
 }) {
   return (
-    <article className={`placeholder-card history-card ${extraClass}`.trim()}>
+    <article className="placeholder-card history-card">
       {kicker ? <div className="history-card-kicker">{kicker}</div> : null}
       <h3>{title}</h3>
       {subtitle ? <div className="history-card-subtitle">{subtitle}</div> : null}
       {intro.length ? <Paragraphs items={intro} /> : null}
-      <ExpandablePanel openLabel={openLabel} closeLabel={closeLabel}>
+      <ExpandablePanel openLabel="Подробнее" closeLabel="Скрыть подробности">
         <div className="history-expand-body">
           {detailsTitle ? <h4>{detailsTitle}</h4> : null}
           {details.length ? <Paragraphs items={details} /> : null}
@@ -113,13 +95,9 @@ function HistoryCard({
           {totem ? <div className="history-highlight">{totem}</div> : null}
           {totemDetails.length ? <Paragraphs items={totemDetails} /> : null}
           {portrait ? (
-            typeof portrait === "string" && portrait.startsWith("/static/heroes/") ? (
-              <figure className="history-portrait">
-                <img className="history-portrait-image" src={portrait} alt={`РџРѕСЂС‚СЂРµС‚ ${title}`} loading="lazy" />
-              </figure>
-            ) : (
-              <div className="history-portrait-note">{portrait}</div>
-            )
+            <figure className="history-portrait">
+              <img className="history-portrait-image" src={portrait} alt={`Портрет ${title}`} loading="lazy" />
+            </figure>
           ) : null}
         </div>
       </ExpandablePanel>
@@ -128,20 +106,12 @@ function HistoryCard({
 }
 
 function AnthemCard() {
-  const anthemSections = [
-    { title: "РљСѓРїР»РµС‚ 1", lines: [...historyAnthem[0].lines, ...historyAnthem[1].lines] },
-    { title: "РџСЂРёРїРµРІ", lines: historyAnthem[2].lines },
-    { title: "РљСѓРїР»РµС‚ 2", lines: [...historyAnthem[3].lines, ...historyAnthem[4].lines] },
-    { title: "РџСЂРёРїРµРІ", lines: historyAnthem[5].lines }
-  ];
-
   return (
     <article className="placeholder-card history-card history-anthem-card">
-      <div className="history-card-kicker">Р“РёРјРЅ</div>
-      <h3>РўРµРєСЃС‚ РіРёРјРЅР°</h3>
-      <ExpandablePanel openLabel="РџРѕРєР°Р·Р°С‚СЊ С‚РµРєСЃС‚ РіРёРјРЅР°" closeLabel="РЎРІРµСЂРЅСѓС‚СЊ С‚РµРєСЃС‚ РіРёРјРЅР°">
+      <h3>Текст гимна</h3>
+      <ExpandablePanel openLabel="Показать текст гимна" closeLabel="Свернуть текст гимна">
         <div className="history-expand-body">
-          {anthemSections.map((part, index) => (
+          {historyAnthem.map((part, index) => (
             <section className="history-anthem-stanza" key={`${part.title}-${index}`}>
               <h4>{part.title}</h4>
               {part.lines.map((line, lineIndex) => <p key={`${part.title}-${index}-${lineIndex}`}>{line}</p>)}
@@ -157,11 +127,11 @@ function HistoryPage() {
   return (
     <div className="section-page history-page">
       <section className="placeholder-hero history-hero">
-        <h1>РСЃС‚РѕСЂРёСЏ Рё РєРѕРґРµРєСЃ</h1>
-        <p>Р—РґРµСЃСЊ СЃРѕР±СЂР°РЅС‹ С…СЂРѕРЅРёРєРё РРјРїРµСЂРёРё: Р»РѕСЂ, Р°СЂС…РѕРЅС‚С‹, РєРѕРґРµРєСЃ, Р°СЂС‚РµС„Р°РєС‚С‹ Рё РіРёРјРЅ.</p>
+        <h1>История и кодекс</h1>
+        <p>Здесь собраны хроники Империи: лор, архонты, кодекс, артефакты и гимн.</p>
       </section>
 
-      <nav className="history-tabs" aria-label="РЇРєРѕСЂСЏ СЂР°Р·РґРµР»РѕРІ РёСЃС‚РѕСЂРёРё">
+      <nav className="history-tabs" aria-label="Разделы истории Империи">
         {historyQuickLinks.map((item) => (
           <a className="history-tab" href={`#${item.id}`} key={item.id}>
             {item.label}
@@ -170,13 +140,13 @@ function HistoryPage() {
       </nav>
 
       <section className="history-section" id="lore">
-        <SectionHead kicker="Р›РѕСЂ" title="Р­РїРѕС…Р° РћСЃРЅРѕРІР°РЅРёСЏ" description="РљСЂР°С‚РєРѕРµ РІРІРµРґРµРЅРёРµ Рё РёСЃС‚РѕСЂРёСЏ СЃРѕР·РґР°РЅРёСЏ РРјРїРµСЂРёРё." />
-        <div className="history-grid history-grid-2">
+        <SectionHead kicker="Лор" title="Эпоха Основания" description="Краткое введение в историю создания Империи." />
+        <div className="history-grid history-grid-2 history-grid-desktop-tight">
           <article className="placeholder-card history-card history-lead-card">
             <div className="history-card-kicker">{historyLore.empire.kicker}</div>
             <h3>{historyLore.empire.title}</h3>
             <Paragraphs items={historyLore.empire.intro} />
-            <ExpandablePanel openLabel="Р§РёС‚Р°С‚СЊ РїРѕР»РЅРѕСЃС‚СЊСЋ" closeLabel="РЎРІРµСЂРЅСѓС‚СЊ">
+            <ExpandablePanel openLabel="Читать полностью" closeLabel="Свернуть">
               <div className="history-expand-body">
                 <Paragraphs items={historyLore.empire.full} />
               </div>
@@ -187,7 +157,7 @@ function HistoryPage() {
             <div className="history-card-kicker">{historyLore.nocturne.kicker}</div>
             <h3>{historyLore.nocturne.title}</h3>
             <Paragraphs items={historyLore.nocturne.intro} />
-            <ExpandablePanel openLabel="Р§РёС‚Р°С‚СЊ РїРѕР»РЅРѕСЃС‚СЊСЋ" closeLabel="РЎРІРµСЂРЅСѓС‚СЊ">
+            <ExpandablePanel openLabel="Читать полностью" closeLabel="Свернуть">
               <div className="history-expand-body">
                 <Paragraphs items={historyLore.nocturne.full} />
               </div>
@@ -197,11 +167,10 @@ function HistoryPage() {
       </section>
 
       <section className="history-section" id="legions">
-        <SectionHead kicker="12 Р›РµРіРёРѕРЅРѕРІ" title="РЎС‚СЂСѓРєС‚СѓСЂР° Р»РµРіРёРѕРЅРѕРІ" description="РЎРІРѕРґРєР° РїРѕ РґРІРµРЅР°РґС†Р°С‚Рё Р»РµРіРёРѕРЅР°Рј Рё РёС… РїРѕРєСЂРѕРІРёС‚РµР»СЏРј." />
+        <SectionHead kicker="12 Легионов" title="Структура легионов" description="Сводка по двенадцати легионам и их покровителям." />
         <div className="history-grid history-grid-3">
           {historyLegions.map((legion) => (
             <article className="placeholder-card history-card history-legion-card" key={legion.title}>
-              <div className="history-card-kicker">Р›РµРіРёРѕРЅ</div>
               <h3>{legion.title}</h3>
               <div className="history-card-subtitle">{legion.subtitle}</div>
               <p>{legion.description}</p>
@@ -211,14 +180,13 @@ function HistoryPage() {
       </section>
 
       <section className="history-section" id="archons">
-        <SectionHead kicker="РђСЂС…РѕРЅС‚С‹" title="Р“Р»Р°РІРЅС‹Рµ РїРµСЂСЃРѕРЅР°Р¶Рё" description="РљР°СЂС‚РѕС‡РєРё РіРµСЂРѕРµРІ, РёС… РѕРїРёСЃР°РЅРёРµ Рё С‚РѕС‚РµРјС‹." />
+        <SectionHead kicker="Архонты" title="Архонты Империи" description="Главные фигуры, на которых держится порядок Империи." />
         <div className="history-grid history-grid-3">
           {historyArchons.map((archon) => (
             <HistoryCard
               key={archon.title}
               title={archon.title}
               subtitle={archon.subtitle}
-              kicker="РђСЂС…РѕРЅС‚"
               intro={archon.intro}
               detailsTitle={archon.detailsTitle}
               details={archon.details}
@@ -226,15 +194,13 @@ function HistoryPage() {
               totem={archon.totem}
               totemDetails={archon.totemDetails}
               portrait={archon.portrait}
-              openLabel="РџРѕРґСЂРѕР±РЅРµРµ"
-              closeLabel="РЎРІРµСЂРЅСѓС‚СЊ РїРѕРґСЂРѕР±РЅРѕСЃС‚Рё"
             />
           ))}
         </div>
       </section>
 
       <section className="history-section" id="codex">
-        <SectionHead kicker="РљРѕРґРµРєСЃ" title="Р’РµР»РёРєРёРµ Р—Р°РІРµС‚С‹ РРјРїРµСЂРёРё" description="Р—Р°РєРѕРЅ, РєРѕС‚РѕСЂРѕРјСѓ РїРѕРґС‡РёРЅСЏСЋС‚СЃСЏ РІСЃРµ Р¶РёС‚РµР»Рё." />
+        <SectionHead kicker="Кодекс" title="Великие Заветы Империи" description="Законы, которым подчиняются все жители Империи." />
         <article className="placeholder-card history-card history-codex-card">
           <ol className="history-codex-list">
             {historyCodexRules.map((rule, index) => (
@@ -248,11 +214,10 @@ function HistoryPage() {
       </section>
 
       <section className="history-section" id="artifacts">
-        <SectionHead kicker="РђСЂС‚РµС„Р°РєС‚С‹" title="РҐР°РѕСЃРёРЅР°С‚РѕСЂ Рё РҐРµРєСЃС‚РµРє" description="РњРµС…Р°РЅРёР·РјС‹, РёР· РєРѕС‚РѕСЂС‹С… СЃРєР»Р°РґС‹РІР°РµС‚СЃСЏ СЌРЅРµСЂРіРёСЏ РРјРїРµСЂРёРё." />
+        <SectionHead kicker="Артефакты" title="Артефакты и механизмы" description="Механизмы и силы, на которых держится устройство Империи." />
         <div className="history-grid history-grid-2">
           {historyArtifacts.map((artifact) => (
             <article className="placeholder-card history-card history-artifact-card" key={artifact.id}>
-              <div className="history-card-kicker">РђСЂС‚РµС„Р°РєС‚</div>
               <h3>{artifact.title}</h3>
               <Paragraphs items={artifact.intro} />
               <div className="history-subsections">
@@ -266,7 +231,7 @@ function HistoryPage() {
       </section>
 
       <section className="history-section" id="anthem">
-        <SectionHead kicker="Р“РёРјРЅ" title="Р“РёРјРЅ РРјРїРµСЂРёРё" description="РўРµРєСЃС‚ РіРёРјРЅР°, СЂР°Р·РґРµР»С‘РЅРЅС‹Р№ РЅР° РєСѓРїР»РµС‚С‹ Рё РїСЂРёРїРµРІС‹." />
+        <SectionHead kicker="Гимн" title="Гимн Империи" description="Текст, который собирает Империю в одно целое." />
         <AnthemCard />
       </section>
     </div>
