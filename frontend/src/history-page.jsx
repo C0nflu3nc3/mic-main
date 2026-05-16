@@ -31,6 +31,20 @@ function toRoman(num) {
   return result;
 }
 
+function clampProgress(value) {
+  return Math.min(1, Math.max(0, value));
+}
+
+function getSectionProgress(overallProgress, index, total) {
+  if (total <= 0) {
+    return 0;
+  }
+  const segmentSize = 1 / total;
+  const start = index * segmentSize;
+  const local = (overallProgress - start) / segmentSize;
+  return clampProgress(local);
+}
+
 function ExpandablePanel({ openLabel, closeLabel, children }) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -67,10 +81,14 @@ function Subsection({ title, body = [], items = [] }) {
   );
 }
 
-function SectionHead({ kicker, title, description }) {
+function SectionHead({ kicker, title, description, mobileProgress = 0 }) {
   return (
     <div className="history-section-head">
-      <div className="history-section-head-main">
+      <div className="history-section-head-main" style={{ "--history-section-progress": mobileProgress }}>
+        <span className="history-section-progress-rail" aria-hidden="true">
+          <span className="history-section-progress-line" />
+          <span className="history-section-progress-dot" />
+        </span>
         <div className="history-section-kicker">{kicker}</div>
         <h2 className="history-section-title">{title}</h2>
         {description ? <p className="history-section-description">{description}</p> : null}
@@ -135,6 +153,7 @@ function AnthemCard() {
 
 export function HistoryPage() {
   const [progress, setProgress] = useState(0);
+  const sectionCount = historyQuickLinks.length;
 
   useEffect(() => {
     const updateProgress = () => {
@@ -168,11 +187,6 @@ export function HistoryPage() {
 
   return (
     <div className="section-page history-page">
-      <div className="history-mobile-progress" style={{ "--history-progress": progress }} aria-hidden="true">
-        <span className="history-mobile-progress-track" />
-        <span className="history-mobile-progress-dot" />
-      </div>
-
       <section className="placeholder-hero history-hero">
         <h1>История и кодекс</h1>
         <p>Здесь собраны хроники Империи: лор, архонты, кодекс, артефакты и гимн.</p>
@@ -187,7 +201,12 @@ export function HistoryPage() {
       </nav>
 
       <section className="history-section" id="lore">
-        <SectionHead kicker="Лор" title="Эпоха Основания" description="Краткое введение в историю создания Империи." />
+        <SectionHead
+          kicker="Лор"
+          title="Эпоха Основания"
+          description="Краткое введение в историю создания Империи."
+          mobileProgress={getSectionProgress(progress, 0, sectionCount)}
+        />
         <div className="history-grid history-grid-2 history-grid-desktop-tight">
           <article className="placeholder-card history-card history-lead-card">
             <div className="history-card-kicker">{historyLore.empire.kicker}</div>
@@ -214,7 +233,12 @@ export function HistoryPage() {
       </section>
 
       <section className="history-section" id="legions">
-        <SectionHead kicker="12 Легионов" title="Структура легионов" description="Сводка по двенадцати легионам и их покровителям." />
+        <SectionHead
+          kicker="12 Легионов"
+          title="Структура легионов"
+          description="Сводка по двенадцати легионам и их покровителям."
+          mobileProgress={getSectionProgress(progress, 1, sectionCount)}
+        />
         <div className="history-grid history-grid-3">
           {historyLegions.map((legion) => (
             <article className="placeholder-card history-card history-legion-card" key={legion.title}>
@@ -227,7 +251,12 @@ export function HistoryPage() {
       </section>
 
       <section className="history-section" id="archons">
-        <SectionHead kicker="Архонты" title="Архонты Империи" description="Главные фигуры, на которых держится порядок Империи." />
+        <SectionHead
+          kicker="Архонты"
+          title="Архонты Империи"
+          description="Главные фигуры, на которых держится порядок Империи."
+          mobileProgress={getSectionProgress(progress, 2, sectionCount)}
+        />
         <div className="history-grid history-grid-3">
           {historyArchons.map((archon) => (
             <HistoryCard
@@ -247,7 +276,12 @@ export function HistoryPage() {
       </section>
 
       <section className="history-section" id="codex">
-        <SectionHead kicker="Кодекс" title="Великие Заветы Империи" description="Законы, которым подчиняются все жители Империи." />
+        <SectionHead
+          kicker="Кодекс"
+          title="Великие Заветы Империи"
+          description="Законы, которым подчиняются все жители Империи."
+          mobileProgress={getSectionProgress(progress, 3, sectionCount)}
+        />
         <article className="placeholder-card history-card history-codex-card">
           <ol className="history-codex-list">
             {historyCodexRules.map((rule, index) => (
@@ -261,7 +295,12 @@ export function HistoryPage() {
       </section>
 
       <section className="history-section" id="artifacts">
-        <SectionHead kicker="Артефакты" title="Артефакты и механизмы" description="Механизмы и силы, на которых держится устройство Империи." />
+        <SectionHead
+          kicker="Артефакты"
+          title="Артефакты и механизмы"
+          description="Механизмы и силы, на которых держится устройство Империи."
+          mobileProgress={getSectionProgress(progress, 4, sectionCount)}
+        />
         <div className="history-grid history-grid-2">
           {historyArtifacts.map((artifact) => (
             <article className="placeholder-card history-card history-artifact-card" key={artifact.id}>
@@ -278,7 +317,12 @@ export function HistoryPage() {
       </section>
 
       <section className="history-section" id="anthem">
-        <SectionHead kicker="Гимн" title="Гимн Империи" description="Текст, который собирает Империю в одно целое." />
+        <SectionHead
+          kicker="Гимн"
+          title="Гимн Империи"
+          description="Текст, который собирает Империю в одно целое."
+          mobileProgress={getSectionProgress(progress, 5, sectionCount)}
+        />
         <AnthemCard />
       </section>
     </div>

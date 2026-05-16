@@ -989,6 +989,10 @@ a {
     inset 0 1px 0 rgba(255, 237, 197, 0.06);
 }
 
+.history-section-progress-rail {
+  display: none;
+}
+
 .history-tabs::-webkit-scrollbar {
   height: 6px;
 }
@@ -1034,7 +1038,7 @@ a {
 
 .history-grid {
   display: grid;
-  gap: 28px;
+  gap: 34px;
   align-items: stretch;
 }
 
@@ -1057,12 +1061,12 @@ a {
 .history-card {
   min-height: auto;
   display: grid;
-  gap: 14px;
+  gap: 12px;
   align-content: start;
   justify-items: center;
   text-align: center;
-  padding: 26px 28px;
-  border-radius: 28px;
+  padding: 22px 24px;
+  border-radius: 26px;
   position: relative;
   overflow: hidden;
   background:
@@ -1076,10 +1080,14 @@ a {
   content: "";
   position: absolute;
   inset: 0 0 auto 0;
-  height: 88px;
+  height: 76px;
   background:
     linear-gradient(180deg, rgba(56, 83, 74, 0.14) 0%, rgba(56, 83, 74, 0) 100%);
   pointer-events: none;
+}
+
+.history-section {
+  margin-top: 34px;
 }
 
 .history-card > * {
@@ -2873,7 +2881,7 @@ img {
 
   .history-section-head-main {
     position: relative;
-    padding: 18px 18px 18px 34px;
+    padding: 18px 18px 18px 42px;
     border-radius: 24px;
     border: 1px solid rgba(194, 149, 78, 0.14);
     background:
@@ -2883,39 +2891,37 @@ img {
       inset 0 1px 0 rgba(255, 239, 200, 0.04);
   }
 
-  .history-mobile-progress {
-    display: block;
-    position: fixed;
-    left: 12px;
-    top: 210px;
-    width: 24px;
-    height: 120px;
-    z-index: 15;
+  .history-section-progress-rail {
+    position: absolute;
+    left: 14px;
+    top: 16px;
+    bottom: 16px;
+    width: 16px;
     pointer-events: none;
   }
 
-  .history-mobile-progress-track {
+  .history-section-progress-line {
     position: absolute;
-    left: 11px;
-    top: 10px;
-    bottom: 10px;
+    left: 7px;
+    top: 0;
+    bottom: 0;
     width: 2px;
     border-radius: 999px;
-    background: linear-gradient(180deg, rgba(214, 174, 100, 0.32) 0%, rgba(214, 174, 100, 0.78) 100%);
-    box-shadow: 0 0 0 1px rgba(214, 174, 100, 0.06);
+    background: linear-gradient(180deg, rgba(214, 174, 100, 0.28) 0%, rgba(214, 174, 100, 0.78) 100%);
+    box-shadow: 0 0 0 1px rgba(214, 174, 100, 0.05);
   }
 
-  .history-mobile-progress-dot {
+  .history-section-progress-dot {
     position: absolute;
-    left: 3px;
-    top: calc(10px + (100px * var(--history-progress, 0)));
-    width: 18px;
-    height: 18px;
+    left: 0;
+    top: calc(var(--history-section-progress, 0) * 100%);
+    width: 16px;
+    height: 16px;
     border-radius: 999px;
     background:
       radial-gradient(circle at 35% 35%, rgba(255, 240, 202, 0.95) 0%, rgba(255, 240, 202, 0.95) 20%, rgba(214, 174, 100, 0.98) 21%, rgba(214, 174, 100, 0.98) 100%);
     box-shadow:
-      0 0 0 8px rgba(214, 174, 100, 0.08),
+      0 0 0 7px rgba(214, 174, 100, 0.08),
       0 6px 16px rgba(0, 0, 0, 0.24);
     transform: translateY(-50%);
     transition: top 180ms ease-out;
@@ -3463,23 +3469,15 @@ img {
     padding: 10px 16px;
   }
 
-  .history-mobile-progress {
-    left: 10px;
-    top: 198px;
-    height: 108px;
+  .history-section-progress-rail {
+    left: 12px;
+    top: 14px;
+    bottom: 14px;
   }
 
-  .history-mobile-progress-track {
-    left: 10px;
-    top: 9px;
-    bottom: 9px;
-  }
-
-  .history-mobile-progress-dot {
-    left: 2px;
-    top: calc(9px + (90px * var(--history-progress, 0)));
-    width: 16px;
-    height: 16px;
+  .history-section-progress-dot {
+    width: 15px;
+    height: 15px;
   }
 
   .history-card h3 {
