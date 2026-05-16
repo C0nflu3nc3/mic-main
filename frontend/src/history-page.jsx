@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   historyArchons,
@@ -134,8 +134,45 @@ function AnthemCard() {
 }
 
 export function HistoryPage() {
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    const updateProgress = () => {
+      const page = document.querySelector(".history-page");
+      const sections = page ? [...page.querySelectorAll(".history-section")] : [];
+      if (!page || sections.length === 0) {
+        setProgress(0);
+        return;
+      }
+
+      const firstSectionTop = sections[0].getBoundingClientRect().top + window.scrollY;
+      const lastSectionBottom = sections[sections.length - 1].getBoundingClientRect().bottom + window.scrollY;
+      const viewportOffsetTop = window.innerHeight * 0.18;
+      const viewportOffsetBottom = window.innerHeight * 0.72;
+      const start = firstSectionTop - viewportOffsetTop;
+      const end = lastSectionBottom - viewportOffsetBottom;
+      const distance = Math.max(end - start, 1);
+      const nextProgress = Math.min(1, Math.max(0, (window.scrollY - start) / distance));
+      setProgress(nextProgress);
+    };
+
+    updateProgress();
+    window.addEventListener("scroll", updateProgress, { passive: true });
+    window.addEventListener("resize", updateProgress);
+
+    return () => {
+      window.removeEventListener("scroll", updateProgress);
+      window.removeEventListener("resize", updateProgress);
+    };
+  }, []);
+
   return (
     <div className="section-page history-page">
+      <div className="history-mobile-progress" style={{ "--history-progress": progress }} aria-hidden="true">
+        <span className="history-mobile-progress-track" />
+        <span className="history-mobile-progress-dot" />
+      </div>
+
       <section className="placeholder-hero history-hero">
         <h1>История и кодекс</h1>
         <p>Здесь собраны хроники Империи: лор, архонты, кодекс, артефакты и гимн.</p>

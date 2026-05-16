@@ -943,6 +943,7 @@ a {
 
 .history-page {
   font-family: "Manrope", Arial, sans-serif;
+  position: relative;
 }
 
 .history-page h1,
@@ -1035,6 +1036,10 @@ a {
   display: grid;
   gap: 28px;
   align-items: stretch;
+}
+
+.history-mobile-progress {
+  display: none;
 }
 
 .history-grid-2 {
@@ -2867,6 +2872,48 @@ img {
     border-radius: 24px;
     border: 1px solid rgba(194, 149, 78, 0.14);
     background:
+      linear-gradient(180deg, rgba(16, 27, 24, 0.92) 0%, rgba(10, 18, 17, 0.94) 100%);
+    box-shadow:
+      0 16px 28px rgba(0, 0, 0, 0.18),
+      inset 0 1px 0 rgba(255, 239, 200, 0.04);
+  }
+
+  .history-mobile-progress {
+    display: block;
+    position: fixed;
+    left: 12px;
+    top: 210px;
+    width: 24px;
+    height: 120px;
+    z-index: 15;
+    pointer-events: none;
+  }
+
+  .history-mobile-progress-track {
+    position: absolute;
+    left: 11px;
+    top: 10px;
+    bottom: 10px;
+    width: 2px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(214, 174, 100, 0.32) 0%, rgba(214, 174, 100, 0.78) 100%);
+    box-shadow: 0 0 0 1px rgba(214, 174, 100, 0.06);
+  }
+
+  .history-mobile-progress-dot {
+    position: absolute;
+    left: 3px;
+    top: calc(10px + (100px * var(--history-progress, 0)));
+    width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    background:
+      radial-gradient(circle at 35% 35%, rgba(255, 240, 202, 0.95) 0%, rgba(255, 240, 202, 0.95) 20%, rgba(214, 174, 100, 0.98) 21%, rgba(214, 174, 100, 0.98) 100%);
+    box-shadow:
+      0 0 0 8px rgba(214, 174, 100, 0.08),
+      0 6px 16px rgba(0, 0, 0, 0.24);
+    transform: translateY(-50%);
+    transition: top 180ms ease-out;
   }
 
   body {
@@ -3409,6 +3456,25 @@ img {
   .history-tab {
     font-size: 17px;
     padding: 10px 16px;
+  }
+
+  .history-mobile-progress {
+    left: 10px;
+    top: 198px;
+    height: 108px;
+  }
+
+  .history-mobile-progress-track {
+    left: 10px;
+    top: 9px;
+    bottom: 9px;
+  }
+
+  .history-mobile-progress-dot {
+    left: 2px;
+    top: calc(9px + (90px * var(--history-progress, 0)));
+    width: 16px;
+    height: 16px;
   }
 
   .history-card h3 {
