@@ -80,7 +80,7 @@ function BankOperations({ is_admin = false, current_team_id = null, current_plt 
 
   return (
     <>
-      <div className="bank-action-bar"><button type="button" className="btn btn-primary bank-action-button" data-bs-toggle="modal" data-bs-target="#exampleModal">Отправить герцы легиону</button></div>
+      <div className="bank-action-bar"><button type="button" className="btn btn-primary bank-action-button" data-bs-toggle="modal" data-bs-target="#exampleModal">Отправить герцы Легиону</button></div>
       <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <form method="POST" action="/api/add_operation">
           <div className="modal-dialog"><div className="modal-content"><div className="modal-header"><h1 className="modal-title fs-5" id="exampleModalLabel">Форма отправки герцев</h1><button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button></div>
@@ -90,8 +90,8 @@ function BankOperations({ is_admin = false, current_team_id = null, current_plt 
             <select className="form-control" id="usersDST" name="user" defaultValue={defaultTargetId}>{teams_for_select.map((team) => <option key={`dst-${team.id}`} value={team.id}>{team.name}</option>)}</select>
             <label htmlFor="PLT">Количество GRZ:</label>
             <input name="score" type="number" min="0" max={defaultMax} step="1" defaultValue={defaultScore} id="PLT" className="form-control" placeholder="цена" disabled={!transferPossible && !is_admin} />
-            <label htmlFor="comment">Комментарий легиону:</label>
-            <input name="comment" type="text" className="form-control" id="comment" placeholder="Введите сообщение легиону" />
+            <label htmlFor="comment">Комментарий Легиону:</label>
+            <input name="comment" type="text" className="form-control" id="comment" placeholder="Введите сообщение Легиону" />
             <div className="form-text" id="transferState">{!is_admin && current_plt <= 0 ? "Перевод недоступен: у текущего легиона нулевой баланс." : ""}</div>
           </div>
           <div className="modal-footer"><button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button><button type="submit" className="btn btn-primary" id="transferSubmit" disabled={!transferPossible && !is_admin}>Отправить</button></div></div></div>
