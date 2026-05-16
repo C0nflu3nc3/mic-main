@@ -821,15 +821,11 @@ a {
 
 .leaderboard-page .leaderboard-panel .table-card {
   width: 100%;
-  padding: 16px 18px 12px;
-  border-radius: 28px;
-  border: 1px solid rgba(194, 149, 78, 0.2);
-  background:
-    radial-gradient(circle at top center, rgba(64, 95, 86, 0.1) 0%, transparent 34%),
-    linear-gradient(180deg, rgba(14, 25, 23, 0.94) 0%, rgba(10, 17, 16, 0.92) 100%);
-  box-shadow:
-    0 22px 48px rgba(0, 0, 0, 0.18),
-    inset 0 1px 0 rgba(255, 237, 197, 0.05);
+  padding: 0;
+  border-radius: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .leaderboard-page .leaderboard-panel .table-responsive {
@@ -2884,7 +2880,7 @@ img {
     width: 100%;
     padding-left: 0;
     border-left: 0;
-    margin-bottom: 18px;
+    margin: 6px 0 26px;
   }
 
   .history-section-head::before {
@@ -2897,14 +2893,44 @@ img {
 
   .history-section-head-main {
     position: relative;
-    padding: 18px 18px 18px 42px;
-    border-radius: 24px;
-    border: 1px solid rgba(194, 149, 78, 0.14);
+    padding: 19px 18px 20px 42px;
+    border-radius: 26px;
+    border: 1px solid rgba(194, 149, 78, 0.22);
     background:
-      linear-gradient(180deg, rgba(16, 27, 24, 0.92) 0%, rgba(10, 18, 17, 0.94) 100%);
+      radial-gradient(circle at top left, rgba(214, 174, 100, 0.12) 0%, transparent 34%),
+      linear-gradient(180deg, rgba(58, 63, 46, 0.92) 0%, rgba(37, 43, 33, 0.96) 100%);
     box-shadow:
-      0 16px 28px rgba(0, 0, 0, 0.18),
-      inset 0 1px 0 rgba(255, 239, 200, 0.04);
+      0 18px 32px rgba(0, 0, 0, 0.18),
+      inset 0 1px 0 rgba(255, 239, 200, 0.07);
+  }
+
+  .history-section-head-main::after {
+    content: "";
+    position: absolute;
+    left: 42px;
+    right: 18px;
+    bottom: 14px;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(214, 174, 100, 0.45) 0%, rgba(214, 174, 100, 0.1) 100%);
+    opacity: 0.72;
+    pointer-events: none;
+  }
+
+  .history-section-kicker {
+    color: rgba(248, 229, 185, 0.96);
+    font-size: 18px;
+    letter-spacing: 0.04em;
+    margin-bottom: 10px;
+  }
+
+  .history-section-title {
+    margin-bottom: 10px;
+  }
+
+  .history-section-description {
+    color: rgba(239, 228, 202, 0.9);
+    font-size: 17px;
+    line-height: 1.52;
   }
 
   .history-section-progress-rail {
@@ -3443,14 +3469,20 @@ img {
   }
 
   .history-section-head-main {
-    padding: 16px 14px 16px 30px;
-    border-radius: 20px;
+    padding: 16px 14px 18px 30px;
+    border-radius: 22px;
   }
 
   .history-section-head-main::before {
     left: 17px;
     top: 18px;
     bottom: 18px;
+  }
+
+  .history-section-head-main::after {
+    left: 30px;
+    right: 14px;
+    bottom: 12px;
   }
 
   .history-hero h1 {
@@ -3463,6 +3495,10 @@ img {
 
   .history-section-title {
     font-size: 24px;
+  }
+
+  .history-section-kicker {
+    font-size: 17px;
   }
 
   .history-tabs {
