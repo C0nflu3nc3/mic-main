@@ -2340,6 +2340,22 @@ img {
 }
 
 @media (min-width: 993px) {
+  .history-page {
+    max-width: 1080px;
+  }
+
+  .history-hero {
+    max-width: 1080px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .history-tabs {
+    max-width: 980px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
   .header {
     min-height: auto !important;
   }
