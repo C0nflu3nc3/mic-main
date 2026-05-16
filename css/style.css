@@ -828,8 +828,16 @@ a {
   box-shadow: none;
 }
 
+.leaderboard-page .leaderboard-panel .table-card::before {
+  display: none;
+}
+
 .leaderboard-page .leaderboard-panel .table-responsive {
   margin-bottom: 0;
+}
+
+.leaderboard-page .leaderboard-panel .elegant-table {
+  box-shadow: none;
 }
 
 .leaderboard-page .leaderboard-title,
@@ -1419,6 +1427,20 @@ a {
 .news-suggest-card {
   min-height: auto;
   padding: 14px 16px;
+}
+
+.studios-form-card {
+  min-height: auto;
+  padding: 0;
+  margin-bottom: 24px;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+.studios-form-card::before,
+.studios-form-card::after {
+  display: none;
 }
 
 .news-card {
