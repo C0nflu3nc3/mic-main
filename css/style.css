@@ -3120,11 +3120,13 @@ img {
   }
 
   .history-tabs-toggle {
-    display: inline-flex;
-    position: sticky;
+    display: flex;
+    position: fixed;
     top: 72px;
+    right: 10px;
+    left: auto;
     z-index: 13;
-    margin: 0 -4px 8px auto;
+    margin: 0;
     width: 34px;
     height: 34px;
     padding: 0;
@@ -3799,6 +3801,16 @@ img {
   line-height: 1.62;
 }
 
+.bonus-intro-card {
+  margin-bottom: 14px;
+}
+
+.bonus-intro-card p {
+  margin-bottom: 0;
+  font-size: clamp(22px, 2.2vw, 36px);
+  line-height: 1.38;
+}
+
 .bonus-list {
   margin: 0 0 12px;
   padding-left: 20px;
@@ -3811,9 +3823,14 @@ img {
 }
 
 .bonus-image {
-  width: 100%;
-  height: auto;
+  display: block;
+  width: min(100%, 760px);
+  height: clamp(180px, 34vw, 420px);
+  margin-left: auto;
+  margin-right: auto;
   margin-top: 10px;
+  object-fit: contain;
+  background: rgba(7, 12, 12, 0.86);
   border-radius: 14px;
   border: 1px solid rgba(194, 149, 78, 0.28);
   box-shadow:
