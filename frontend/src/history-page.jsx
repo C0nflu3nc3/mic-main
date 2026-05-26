@@ -153,6 +153,7 @@ function AnthemCard() {
 
 export function HistoryPage() {
   const [progress, setProgress] = useState(0);
+  const [isTabsOpen, setIsTabsOpen] = useState(true);
   const sectionCount = historyQuickLinks.length;
 
   useEffect(() => {
@@ -192,7 +193,21 @@ export function HistoryPage() {
         <p>Здесь собраны хроники Империи: лор, архонты, кодекс, артефакты и гимн.</p>
       </section>
 
-      <nav className="history-tabs" aria-label="Разделы истории Империи">
+      <button
+        type="button"
+        className="btn history-tabs-toggle"
+        aria-expanded={isTabsOpen}
+        aria-controls="history-tabs-nav"
+        onClick={() => setIsTabsOpen((value) => !value)}
+      >
+        {isTabsOpen ? "Скрыть разделы" : "Показать разделы"}
+      </button>
+
+      <nav
+        id="history-tabs-nav"
+        className={`history-tabs${isTabsOpen ? "" : " is-collapsed"}`}
+        aria-label="Разделы истории Империи"
+      >
         {historyQuickLinks.map((item) => (
           <a className="history-tab" href={`#${item.id}`} key={item.id}>
             {item.label}

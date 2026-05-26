@@ -993,6 +993,10 @@ a {
     inset 0 1px 0 rgba(255, 237, 197, 0.06);
 }
 
+.history-tabs-toggle {
+  display: none;
+}
+
 .history-section-progress-rail {
   display: none;
 }
@@ -1320,7 +1324,7 @@ a {
 .history-codex-index {
   color: #d2a463;
   font-family: var(--main-font-nav);
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 800;
   letter-spacing: 0.12em;
   padding-top: 2px;
@@ -1911,6 +1915,7 @@ a {
   justify-content: space-between;
   gap: 12px;
   flex-wrap: wrap;
+  margin-top: 12px;
   margin-bottom: 18px;
 }
 
@@ -3114,6 +3119,32 @@ img {
     border-right: 0;
   }
 
+  .history-tabs-toggle {
+    display: inline-flex;
+    position: sticky;
+    top: 72px;
+    z-index: 13;
+    margin: 0 0 8px;
+    padding: 10px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(194, 149, 78, 0.36);
+    background:
+      linear-gradient(180deg, rgba(31, 48, 43, 0.94) 0%, rgba(14, 21, 20, 0.94) 100%);
+    color: #e7dbbf;
+    font-family: var(--main-font-nav);
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    box-shadow:
+      inset 0 1px 0 rgba(227, 193, 129, 0.08),
+      0 12px 28px rgba(0, 0, 0, 0.18);
+  }
+
+  .history-tabs.is-collapsed {
+    display: none;
+  }
+
   .history-tab {
     padding: 12px 18px;
     font-size: 17px;
@@ -3566,12 +3597,12 @@ img {
   }
 
   .history-codex-list li {
-    grid-template-columns: 44px minmax(0, 1fr);
+    grid-template-columns: 52px minmax(0, 1fr);
     gap: 8px;
   }
 
   .history-codex-index {
-    font-size: 14px;
+    font-size: 18px;
   }
 
   .mission-card .news-meta {
