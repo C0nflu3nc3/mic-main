@@ -3839,4 +3839,13 @@ img {
     0 14px 32px rgba(0, 0, 0, 0.2),
     inset 0 1px 0 rgba(255, 239, 200, 0.06);
 }
+
+@media (max-width: 576px) {
+  .bonus-image {
+    width: 100%;
+    height: auto;
+    object-fit: initial;
+    background: transparent;
+  }
+}
 \n
