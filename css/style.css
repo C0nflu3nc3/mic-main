@@ -3122,7 +3122,7 @@ img {
   .history-tabs-toggle {
     display: flex;
     position: fixed;
-    top: 88px;
+    top: 162px;
     right: 10px;
     left: auto;
     z-index: 13;
@@ -3181,7 +3181,7 @@ img {
   }
 
   .history-card-subtitle {
-    font-size: 19px;
+    font-size: 22px;
   }
 
   .history-portrait-image {
@@ -3803,12 +3803,14 @@ img {
 
 .bonus-intro-card {
   margin-bottom: 14px;
+  min-height: 0;
+  padding: 16px 20px;
 }
 
 .bonus-intro-card p {
   margin-bottom: 0;
-  font-size: clamp(22px, 2.2vw, 36px);
-  line-height: 1.38;
+  font-size: clamp(18px, 1.8vw, 26px);
+  line-height: 1.32;
 }
 
 .bonus-list {
