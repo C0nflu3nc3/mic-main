@@ -3122,7 +3122,7 @@ img {
   .history-tabs-toggle {
     display: flex;
     position: fixed;
-    top: 72px;
+    top: 88px;
     right: 10px;
     left: auto;
     z-index: 13;
