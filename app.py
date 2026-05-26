@@ -991,7 +991,7 @@ def bonus_page():
         return redirect_response
 
     return render_react_page(
-        "placeholder",
+        "bonus",
         "Бонусная система",
         user=user,
         active_section="bonus",

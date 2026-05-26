@@ -1134,7 +1134,7 @@ a {
 }
 
 .history-card-subtitle {
-  font-size: 15px;
+  font-size: 18px;
   font-weight: 700;
   line-height: 1.35;
   color: rgba(231, 219, 196, 0.86);
@@ -1309,7 +1309,7 @@ a {
   gap: 14px;
   padding: 14px 0;
   border-bottom: 1px solid rgba(194, 149, 78, 0.16);
-  align-items: start;
+  align-items: center;
   width: 100%;
   max-width: none;
   margin-left: 0;
@@ -1324,10 +1324,10 @@ a {
 .history-codex-index {
   color: #d2a463;
   font-family: var(--main-font-nav);
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 800;
   letter-spacing: 0.12em;
-  padding-top: 2px;
+  padding-top: 0;
 }
 
 .history-codex-text {
@@ -3124,21 +3124,35 @@ img {
     position: sticky;
     top: 72px;
     z-index: 13;
-    margin: 0 0 8px;
-    padding: 10px 14px;
+    margin: 0 -4px 8px auto;
+    width: 34px;
+    height: 34px;
+    padding: 0;
     border-radius: 999px;
     border: 1px solid rgba(194, 149, 78, 0.36);
     background:
       linear-gradient(180deg, rgba(31, 48, 43, 0.94) 0%, rgba(14, 21, 20, 0.94) 100%);
-    color: #e7dbbf;
-    font-family: var(--main-font-nav);
-    font-size: 14px;
-    font-weight: 800;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
+    color: transparent;
+    font-size: 0;
+    line-height: 0;
+    overflow: hidden;
     box-shadow:
       inset 0 1px 0 rgba(227, 193, 129, 0.08),
       0 12px 28px rgba(0, 0, 0, 0.18);
+  }
+
+  .history-tabs-toggle::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-right: 2px solid #e7dbbf;
+    border-bottom: 2px solid #e7dbbf;
+    transform: rotate(45deg) translateY(-1px);
+    transition: transform 180ms ease;
+  }
+
+  .history-tabs-toggle.is-collapsed::before {
+    transform: rotate(-135deg) translateY(1px);
   }
 
   .history-tabs.is-collapsed {
@@ -3165,7 +3179,7 @@ img {
   }
 
   .history-card-subtitle {
-    font-size: 17px;
+    font-size: 19px;
   }
 
   .history-portrait-image {
@@ -3602,7 +3616,7 @@ img {
   }
 
   .history-codex-index {
-    font-size: 18px;
+    font-size: 20px;
   }
 
   .mission-card .news-meta {
@@ -3753,5 +3767,57 @@ img {
   .news-image {
     max-height: 260px;
   }
+}
+
+.bonus-page {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.bonus-layout {
+  display: grid;
+  gap: 20px;
+}
+
+.bonus-card {
+  justify-items: stretch;
+  text-align: left;
+  padding: 24px;
+  border-radius: 24px;
+}
+
+.bonus-card h3 {
+  margin: 0 0 8px;
+  text-align: left;
+  font-size: clamp(26px, 2.2vw, 34px);
+}
+
+.bonus-card p {
+  margin: 0 0 10px;
+  max-width: none;
+  color: rgba(236, 227, 207, 0.9);
+  line-height: 1.62;
+}
+
+.bonus-list {
+  margin: 0 0 12px;
+  padding-left: 20px;
+  color: rgba(236, 227, 207, 0.92);
+}
+
+.bonus-list li {
+  margin-bottom: 6px;
+  line-height: 1.58;
+}
+
+.bonus-image {
+  width: 100%;
+  height: auto;
+  margin-top: 10px;
+  border-radius: 14px;
+  border: 1px solid rgba(194, 149, 78, 0.28);
+  box-shadow:
+    0 14px 32px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 239, 200, 0.06);
 }
 \n

@@ -3,6 +3,7 @@
 import { FlashMessages, Header } from "./shared";
 import { HomePage, LeaderboardPage, LoginPage, NewsPage, SuggestedNewsPage } from "./pages-main";
 import { HistoryPage } from "./history-page.jsx";
+import { BonusPage } from "./bonus-page.jsx";
 import { ApprovePage, MissionsPage, PlaceholderPage, StudiosPage, TeamsPage } from "./pages-secondary";
 
 function App({ bootstrapData }) {
@@ -24,6 +25,8 @@ function App({ bootstrapData }) {
         return <StudiosPage {...bootstrapData} />;
       case "history":
         return <HistoryPage />;
+      case "bonus":
+        return <BonusPage />;
       case "leaderboard":
         return <LeaderboardPage {...bootstrapData} />;
       case "news":

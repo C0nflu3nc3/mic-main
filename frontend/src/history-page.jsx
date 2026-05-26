@@ -195,9 +195,10 @@ export function HistoryPage() {
 
       <button
         type="button"
-        className="btn history-tabs-toggle"
+        className={`btn history-tabs-toggle${isTabsOpen ? "" : " is-collapsed"}`}
         aria-expanded={isTabsOpen}
         aria-controls="history-tabs-nav"
+        aria-label={isTabsOpen ? "Скрыть разделы" : "Показать разделы"}
         onClick={() => setIsTabsOpen((value) => !value)}
       >
         {isTabsOpen ? "Скрыть разделы" : "Показать разделы"}
