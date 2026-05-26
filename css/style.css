@@ -860,6 +860,7 @@ a {
 .missions-page .mission-info,
 .missions-page .mission-teams,
 .missions-page .mission-limit-note,
+.missions-page .mission-exclusive-note,
 .missions-page .mission-status-note,
 .missions-page .mission-actions,
 .approve-page .mission-info,
@@ -1925,6 +1926,26 @@ a {
   color: var(--main-text-soft);
 }
 
+.mission-exclusive-note {
+  margin-bottom: 14px;
+  padding: 10px 14px;
+  border: 1px solid rgba(191, 73, 73, 0.55);
+  border-radius: 14px;
+  background: rgba(65, 17, 17, 0.44);
+  color: rgba(255, 205, 205, 0.95);
+}
+
+.mission-card-exclusive {
+  border-color: rgba(191, 73, 73, 0.62) !important;
+  box-shadow:
+    0 24px 56px rgba(0, 0, 0, 0.22),
+    0 0 0 1px rgba(191, 73, 73, 0.32),
+    inset 0 1px 0 rgba(255, 201, 201, 0.08) !important;
+  background:
+    radial-gradient(circle at top center, rgba(128, 24, 24, 0.22) 0%, transparent 36%),
+    linear-gradient(180deg, rgba(28, 12, 12, 0.97) 0%, rgba(16, 8, 8, 0.95) 100%) !important;
+}
+
 .mission-card .news-content {
   font-family: var(--main-font-story);
   font-weight: 500;
@@ -2877,6 +2898,7 @@ img {
   .approve-page .mission-info,
   .missions-page .mission-teams,
   .missions-page .mission-limit-note,
+  .missions-page .mission-exclusive-note,
   .approve-page .approve-actions,
   .missions-page .mission-actions,
   .studios-page .studio-card-actions {

@@ -34,6 +34,7 @@ from api.functions import (
     get_scoreboard,
     get_teams_for_select,
     ensure_news_comment_columns,
+    ensure_mission_columns,
     ensure_news_media_columns,
     ensure_studios_table,
     reject_mission,
@@ -722,6 +723,7 @@ def missions_page():
 
     conn = get_connection()
     try:
+        ensure_mission_columns(conn)
         if current_team_id is None:
             current_team_id = get_current_team_id_by_user_id(conn, int(user["id"]))
             user["team_id"] = current_team_id
@@ -754,14 +756,29 @@ def add_mission_page():
     title = request.form.get("title", "").strip()
     description = request.form.get("description", "").strip()
     reward = request.form.get("reward", "").strip()
+    is_exclusive = request.form.get("is_exclusive") == "1"
+    max_accepted_count_raw = request.form.get("max_accepted_count", "").strip()
+    max_accepted_count = int(max_accepted_count_raw) if max_accepted_count_raw.isdigit() else 3
 
     if not title or not description or not reward.isdigit() or int(reward) <= 0:
         flash("\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u043a\u043e\u0440\u0440\u0435\u043a\u0442\u043d\u044b\u0435 \u0434\u0430\u043d\u043d\u044b\u0435 \u0437\u0430\u0434\u0430\u043d\u0438\u044f \u0438 \u043d\u0430\u0433\u0440\u0430\u0434\u044b")
         return redirect(url_for("missions_page"))
+    if max_accepted_count <= 0:
+        flash("Укажите корректный лимит откликов")
+        return redirect(url_for("missions_page"))
 
     conn = get_connection()
     try:
-        create_mission(conn, title, description, int(reward), int(user["id"]))
+        ensure_mission_columns(conn)
+        create_mission(
+            conn,
+            title,
+            description,
+            int(reward),
+            int(user["id"]),
+            is_exclusive=is_exclusive,
+            max_accepted_count=max_accepted_count,
+        )
     finally:
         conn.close()
 
@@ -786,6 +803,7 @@ def accept_mission_page():
 
     conn = get_connection()
     try:
+        ensure_mission_columns(conn)
         ok, message = accept_mission(conn, int(mission_id), int(current_team_id))
     finally:
         conn.close()
@@ -1039,6 +1057,7 @@ def approve_confirm_page():
 
     conn = get_connection()
     try:
+        ensure_mission_columns(conn)
         ok, message = approve_mission(conn, int(assignment_id), int(user["id"]))
     finally:
         conn.close()

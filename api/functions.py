@@ -564,13 +564,52 @@ def delete_news_comment(conn, comment_id, current_user_id, can_manage_all=False)
     return True, "Комментарий удалён"
 
 
-def create_mission(conn, title, description, reward, user_id):
+def ensure_mission_columns(conn):
+    schema_changed = False
+    with conn.cursor() as cursor:
+        cursor.execute("SHOW COLUMNS FROM Mission LIKE 'is_exclusive'")
+        if cursor.fetchone() is None:
+            cursor.execute(
+                """
+                ALTER TABLE Mission
+                ADD COLUMN is_exclusive tinyint(1) NOT NULL DEFAULT 0 AFTER reward
+                """
+            )
+            schema_changed = True
+
+        cursor.execute("SHOW COLUMNS FROM Mission LIKE 'max_accepted_count'")
+        if cursor.fetchone() is None:
+            cursor.execute(
+                """
+                ALTER TABLE Mission
+                ADD COLUMN max_accepted_count int NOT NULL DEFAULT 3 AFTER is_exclusive
+                """
+            )
+            schema_changed = True
+
+        cursor.execute("SHOW COLUMNS FROM Mission LIKE 'is_closed'")
+        if cursor.fetchone() is None:
+            cursor.execute(
+                """
+                ALTER TABLE Mission
+                ADD COLUMN is_closed tinyint(1) NOT NULL DEFAULT 0 AFTER max_accepted_count
+                """
+            )
+            schema_changed = True
+
+    if schema_changed:
+        conn.commit()
+
+
+def create_mission(conn, title, description, reward, user_id, is_exclusive=False, max_accepted_count=3):
+    normalized_limit = max(1, int(max_accepted_count or 1))
+    exclusive_flag = 1 if bool(is_exclusive) else 0
     with conn.cursor() as cursor:
         sql = """
-            INSERT INTO Mission (title, description, reward, user_id, created_at)
-            VALUES (%s, %s, %s, %s, NOW())
+            INSERT INTO Mission (title, description, reward, is_exclusive, max_accepted_count, is_closed, user_id, created_at)
+            VALUES (%s, %s, %s, %s, %s, 0, %s, NOW())
         """
-        cursor.execute(sql, (title, description, reward, user_id))
+        cursor.execute(sql, (title, description, reward, exclusive_flag, normalized_limit, user_id))
     conn.commit()
 
 
@@ -582,6 +621,9 @@ def get_missions(conn, current_team_id=None):
                 Mission.title,
                 Mission.description,
                 Mission.reward,
+                COALESCE(Mission.is_exclusive, 0) AS is_exclusive,
+                GREATEST(COALESCE(Mission.max_accepted_count, 3), 1) AS max_accepted_count,
+                COALESCE(Mission.is_closed, 0) AS is_closed,
                 Mission.created_at,
                 users.login AS author_name
             FROM Mission
@@ -622,6 +664,9 @@ def get_missions(conn, current_team_id=None):
         mission_assignments = assignments_by_mission.get(mission_id, [])
         mission["accepted_count"] = len(mission_assignments)
         mission["accepted_teams"] = [item["team_name"] for item in mission_assignments]
+        mission["is_exclusive"] = bool(int(mission.get("is_exclusive") or 0))
+        mission["max_accepted_count"] = max(1, int(mission.get("max_accepted_count") or 3))
+        mission["is_closed"] = bool(int(mission.get("is_closed") or 0))
         mission["user_has_taken"] = any(
             int(item["team_id"]) == int(current_team_id)
             for item in mission_assignments
@@ -634,10 +679,21 @@ def get_missions(conn, current_team_id=None):
 
 def accept_mission(conn, mission_id, team_id):
     with conn.cursor() as cursor:
-        mission_sql = "SELECT id FROM Mission WHERE id = %s LIMIT 1"
+        mission_sql = """
+            SELECT
+                id,
+                COALESCE(is_closed, 0) AS is_closed,
+                GREATEST(COALESCE(max_accepted_count, 3), 1) AS max_accepted_count
+            FROM Mission
+            WHERE id = %s
+            LIMIT 1
+        """
         cursor.execute(mission_sql, (mission_id,))
-        if cursor.fetchone() is None:
+        mission_row = cursor.fetchone()
+        if mission_row is None:
             return False, "Задание не найдено"
+        if int(mission_row.get("is_closed") or 0) == 1:
+            return False, "Задание уже закрыто"
 
         same_day_sql = """
             SELECT id
@@ -661,8 +717,9 @@ def accept_mission(conn, mission_id, team_id):
         """
         cursor.execute(mission_count_sql, (mission_id,))
         mission_count = int(cursor.fetchone()["total"] or 0)
-        if mission_count >= 3:
-            return False, "На это задание уже откликнулись 3 отряда"
+        mission_limit = max(1, int(mission_row.get("max_accepted_count") or 3))
+        if mission_count >= mission_limit:
+            return False, f"На это задание уже откликнулись {mission_limit} отряда"
 
         team_count_sql = """
             SELECT COUNT(*) AS total
@@ -754,8 +811,11 @@ def approve_mission(conn, assignment_id, admin_user_id):
             SELECT
                 Mission_team.id,
                 Mission_team.team_id,
+                Mission_team.mission_id,
                 Mission.title,
-                Mission.reward
+                Mission.reward,
+                COALESCE(Mission.is_exclusive, 0) AS is_exclusive,
+                GREATEST(COALESCE(Mission.max_accepted_count, 3), 1) AS max_accepted_count
             FROM Mission_team
             JOIN Mission ON Mission.id = Mission_team.mission_id
             WHERE Mission_team.id = %s AND Mission_team.status = 'accepted'
@@ -768,6 +828,7 @@ def approve_mission(conn, assignment_id, admin_user_id):
 
         reward = int(row["reward"] or 0)
         team_id = int(row["team_id"])
+        mission_id = int(row["mission_id"])
         mission_title = row["title"]
 
         operation_sql = """
@@ -785,6 +846,18 @@ def approve_mission(conn, assignment_id, admin_user_id):
             WHERE id = %s
         """
         cursor.execute(update_sql, (admin_user_id, assignment_id))
+
+        if int(row.get("is_exclusive") or 0) == 1:
+            approved_count_sql = """
+                SELECT COUNT(*) AS total
+                FROM Mission_team
+                WHERE mission_id = %s AND status = 'approved'
+            """
+            cursor.execute(approved_count_sql, (mission_id,))
+            approved_count = int(cursor.fetchone()["total"] or 0)
+            max_accepted_count = max(1, int(row.get("max_accepted_count") or 1))
+            if approved_count >= max_accepted_count:
+                cursor.execute("UPDATE Mission SET is_closed = 1 WHERE id = %s", (mission_id,))
 
     conn.commit()
     return True, "Выполнение задания подтверждено"

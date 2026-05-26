@@ -3,7 +3,7 @@
 export function MissionsPage({ is_admin = false, can_take_missions = false, current_team_mission_count = 0, missions = [] }) {
   return (
     <div className="section-page">
-      <Hero title="Миссии за валюту" description="Легион может взять до 3 заданий одновременно. На одно задание могут откликнуться не более 3 легионов." />
+      <Hero title="Миссии за валюту" description="Легион может взять до 3 заданий одновременно. Лимит откликов на задание задаётся администратором." />
       {is_admin ? (
         <section className="placeholder-card mission-form-card">
           <h3>Добавить задание</h3>
@@ -11,6 +11,8 @@ export function MissionsPage({ is_admin = false, can_take_missions = false, curr
             <div className="mb-3"><label className="form-label" htmlFor="mission-title">Название задания</label><input className="form-control" id="mission-title" name="title" type="text" required /></div>
             <div className="mb-3"><label className="form-label" htmlFor="mission-description">Текст задания</label><textarea className="form-control" id="mission-description" name="description" rows="5" required /></div>
             <div className="mb-3"><label className="form-label" htmlFor="mission-reward">Награда</label><input className="form-control" id="mission-reward" name="reward" type="number" min="1" step="1" required /></div>
+            <div className="mb-3 form-check"><input className="form-check-input" id="mission-exclusive" name="is_exclusive" type="checkbox" value="1" /><label className="form-check-label" htmlFor="mission-exclusive">Эксклюзивное задание</label></div>
+            <div className="mb-3"><label className="form-label" htmlFor="mission-max-accepted">Лимит откликов</label><input className="form-control" id="mission-max-accepted" name="max_accepted_count" type="number" min="1" step="1" defaultValue="3" required /></div>
             <button type="submit" className="btn btn-primary">Опубликовать задание</button>
           </form>
         </section>
@@ -19,18 +21,22 @@ export function MissionsPage({ is_admin = false, can_take_missions = false, curr
       )}
       <div className="news-list">
         {missions.map((mission) => (
-          <article className="placeholder-card mission-card" key={mission.id}>
+          <article className={`placeholder-card mission-card${mission.is_exclusive ? " mission-card-exclusive" : ""}`} key={mission.id}>
             <div className="news-meta"><span>{mission.author_name}</span><span>{formatDateTime(mission.created_at)}</span></div>
             <h3>{mission.title}</h3>
             <p className="news-content">{mission.description}</p>
-            <div className="mission-info"><span>Награда: {mission.reward} GRZ</span><span>Откликнулось легионов: {mission.accepted_count} / 3</span></div>
+            <div className="mission-info"><span>Награда: {mission.reward} GRZ</span><span>Откликнулось легионов: {mission.accepted_count} / {mission.max_accepted_count || 3}</span></div>
+            {mission.is_exclusive ? <div className="mission-exclusive-note">Эксклюзивное задание: после подтверждения всех откликнувшихся автоматически закроется.</div> : null}
+            {mission.is_closed ? <div className="mission-status-note">Задание закрыто и больше недоступно.</div> : null}
             {mission.accepted_teams && mission.accepted_teams.length ? <div className="mission-teams">Приняли задание: {mission.accepted_teams.join(", ")}</div> : null}
             {is_admin ? (
               <div className="mission-actions mission-admin-actions"><form method="POST" action="/missions/delete" onSubmit={(event) => { if (!window.confirm("Вы уверены?")) { event.preventDefault(); } }}><input type="hidden" name="mission_id" value={mission.id} /><button type="submit" className="btn btn-outline-light">Удалить миссию</button></form></div>
             ) : can_take_missions ? (
-              mission.user_has_taken ? (
+              mission.is_closed ? (
+                <button type="button" className="btn btn-secondary" disabled>Задание закрыто</button>
+              ) : mission.user_has_taken ? (
                 <div className="mission-actions"><div className="mission-status-note">Задание уже выбрано вашим Легионом</div><form method="POST" action="/missions/cancel"><input type="hidden" name="mission_id" value={mission.id} /><button type="submit" className="btn btn-outline-light">Отказаться от задания</button></form></div>
-              ) : mission.accepted_count >= 3 ? (
+              ) : mission.accepted_count >= (mission.max_accepted_count || 3) ? (
                 <button type="button" className="btn btn-secondary" disabled>Лимит легионов достигнут</button>
               ) : current_team_mission_count >= 3 ? (
                 <button type="button" className="btn btn-secondary" disabled>Легион уже взял 3 задания</button>
