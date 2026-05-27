@@ -415,45 +415,215 @@ a {
 }
 
 .auth-page {
+  --auth-gold: #d9b36a;
+  --auth-gold-soft: rgba(217, 179, 106, 0.36);
   min-height: calc(100vh - 130px);
-  gap: 80px;
-  padding: 26px 12px;
-  background: radial-gradient(circle at top, #263529 0%, #121d18 55%, #07100d 100%);
-  border-radius: 28px;
+  max-width: 1680px;
+  gap: 28px;
+  margin: 0 auto;
+  padding: 56px 42px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 34px;
+  background:
+    radial-gradient(ellipse at 24% 0%, rgba(49, 121, 95, 0.48) 0%, rgba(14, 34, 30, 0) 46%),
+    radial-gradient(ellipse at 68% 24%, rgba(186, 149, 72, 0.11) 0%, transparent 42%),
+    linear-gradient(90deg, #07110f 0%, #07110f 25%, #081913 43%, #06120f 62%, #050d0d 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(217, 179, 106, 0.22),
+    0 28px 70px rgba(0, 0, 0, 0.42);
+}
+
+.auth-page::before,
+.auth-page::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+.auth-page::before {
+  inset: 22px;
+  border: 1px solid rgba(217, 179, 106, 0.18);
+  border-radius: 24px;
+}
+
+.auth-page::after {
+  inset: 0;
+  background:
+    radial-gradient(circle at 26px 26px, transparent 0 10px, rgba(217, 179, 106, 0.42) 10px 11px, transparent 11px),
+    radial-gradient(circle at calc(100% - 26px) 26px, transparent 0 10px, rgba(217, 179, 106, 0.42) 10px 11px, transparent 11px),
+    radial-gradient(circle at 26px calc(100% - 26px), transparent 0 10px, rgba(217, 179, 106, 0.42) 10px 11px, transparent 11px),
+    radial-gradient(circle at calc(100% - 26px) calc(100% - 26px), transparent 0 10px, rgba(217, 179, 106, 0.42) 10px 11px, transparent 11px);
+  opacity: 0.75;
+}
+
+.auth-page > * {
+  position: relative;
+  z-index: 1;
 }
 
 .logo-panel {
-  width: min(100%, 360px);
-  height: 420px;
+  width: min(100%, 640px);
+  min-height: 640px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: rgba(5, 16, 13, 0.72);
-  border: 1px solid rgba(197, 160, 83, 0.22);
-  border-radius: 28px;
-  box-shadow: 0 0 35px rgba(0, 0, 0, 0.35);
+  gap: 22px;
+  position: relative;
+  border-radius: 32px;
+  background:
+    radial-gradient(circle at center, rgba(16, 53, 44, 0.34) 0%, rgba(8, 22, 19, 0.16) 54%, rgba(7, 16, 15, 0) 78%);
+}
+
+.logo-orbit {
+  position: absolute;
+  width: min(86%, 540px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 1px solid rgba(217, 179, 106, 0.2);
+  box-shadow:
+    inset 0 0 60px rgba(33, 94, 74, 0.24),
+    0 0 80px rgba(24, 88, 67, 0.22);
+}
+
+.logo-orbit::before,
+.logo-orbit::after {
+  content: "";
+  position: absolute;
+  inset: 9%;
+  border-radius: 50%;
+  border: 1px solid rgba(217, 179, 106, 0.13);
+}
+
+.logo-orbit::after {
+  inset: 20%;
+  border-color: rgba(217, 179, 106, 0.1);
 }
 
 .login-card {
-  padding: 42px 34px;
-  background: rgba(5, 16, 13, 0.85);
-  border: 1px solid rgba(197, 160, 83, 0.25);
-  border-radius: 28px;
+  padding: 58px 56px 44px;
+  background:
+    radial-gradient(circle at top, rgba(54, 88, 74, 0.24) 0%, rgba(18, 37, 31, 0) 36%),
+    linear-gradient(180deg, rgba(6, 19, 18, 0.92) 0%, rgba(5, 13, 13, 0.94) 100%);
+  border: 1px solid rgba(217, 179, 106, 0.62);
+  border-radius: 52px;
   box-shadow:
-    0 20px 50px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(227, 193, 129, 0.06);
+    0 22px 56px rgba(0, 0, 0, 0.42),
+    inset 0 0 0 1px rgba(217, 179, 106, 0.08);
   color: var(--main-bg-white);
+  position: relative;
+}
+
+.login-card h1 {
+  margin-bottom: 10px;
+  font-size: clamp(52px, 4.9vw, 72px);
+  color: #efd39a;
+  line-height: 0.96;
+  letter-spacing: 0.015em;
+}
+
+.login-card-divider {
+  width: min(100%, 360px);
+  height: 14px;
+  margin: 0 auto 26px;
+  background:
+    radial-gradient(circle at center, rgba(239, 211, 154, 1) 0 3px, transparent 4px),
+    linear-gradient(90deg, transparent 0%, rgba(217, 179, 106, 0.62) 28%, rgba(217, 179, 106, 0.62) 72%, transparent 100%);
+  opacity: 0.92;
+}
+
+.login-card-divider-top {
+  margin-bottom: 20px;
+}
+
+.login-card-divider-bottom {
+  margin: 18px auto 0;
 }
 
 .logo-panel .login-logo {
-  width: 290px;
-  max-width: 85%;
+  width: min(88%, 430px);
   height: auto;
   object-fit: contain;
-  padding: 22px;
-  border-radius: 24px;
-  background: rgba(0, 0, 0, 0.18);
-  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.28));
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 18px 36px rgba(0, 0, 0, 0.42));
+}
+
+.login-brand-motto {
+  margin: 8px 0 0;
+  text-align: center;
+  font-size: 28px;
+  letter-spacing: 0.22em;
+  color: rgba(217, 179, 106, 0.74);
+  text-transform: uppercase;
+}
+
+.auth-page .form-label {
+  font-size: 40px;
+  color: rgba(229, 201, 144, 0.95);
+  margin-bottom: 10px;
+}
+
+.auth-page .login-field {
+  position: relative;
+}
+
+.auth-page .login-field::after {
+  position: absolute;
+  right: 22px;
+  top: 60px;
+  font-size: 34px;
+  color: rgba(217, 179, 106, 0.34);
+  line-height: 1;
+  pointer-events: none;
+}
+
+.auth-page .login-field-user::after {
+  content: "\1F464";
+}
+
+.auth-page .login-field-pass::after {
+  content: "\1F512";
+}
+
+.auth-page .form-control {
+  min-height: 86px;
+  border-radius: 20px;
+  border: 1px solid rgba(217, 179, 106, 0.48);
+  background: rgba(5, 13, 12, 0.86);
+  color: #f6edd9;
+  font-size: 36px;
+  padding: 14px 72px 14px 24px;
+}
+
+.auth-page .form-control::placeholder {
+  color: rgba(227, 208, 170, 0.42);
+}
+
+.auth-page .form-control:focus {
+  border-color: rgba(237, 199, 117, 0.72);
+  box-shadow: 0 0 0 3px rgba(217, 179, 106, 0.18);
+  background: rgba(6, 16, 14, 0.92);
+}
+
+.auth-page .btn-primary {
+  min-height: 96px;
+  border-radius: 22px;
+  border: 1px solid rgba(255, 230, 173, 0.6);
+  background: linear-gradient(180deg, #e7c57a 0%, #bf8f49 100%);
+  color: #12100a;
+  font-size: 46px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
+}
+
+.auth-page .btn-primary:hover,
+.auth-page .btn-primary:focus {
+  background: linear-gradient(180deg, #f1d28d 0%, #c99852 100%);
+  color: #12100a;
 }
 
 .table-responsive {
@@ -2602,27 +2772,71 @@ img {
 
   .auth-page {
     min-height: auto;
-    gap: 18px;
-    padding: 16px 8px;
+    gap: 14px;
+    padding: 20px 10px;
     border-radius: 22px;
   }
 
   .logo-panel {
-    width: min(100%, 360px);
+    width: min(100%, 420px);
     height: auto;
-    min-height: 260px;
-    padding: 16px;
+    min-height: 360px;
+    padding: 18px;
     border-radius: 22px;
   }
 
   .logo-panel .login-logo {
-    width: min(260px, 100%);
-    padding: 14px;
+    width: min(290px, 92%);
+    padding: 0;
     border-radius: 18px;
   }
 
+  .logo-orbit {
+    width: min(90%, 360px);
+  }
+
+  .login-brand-motto {
+    font-size: 16px;
+    letter-spacing: 0.11em;
+  }
+
   .login-card {
-    padding: 24px 18px;
+    padding: 28px 18px 24px;
+    border-radius: 28px;
+  }
+
+  .login-card h1 {
+    font-size: clamp(32px, 9.4vw, 48px);
+    margin-bottom: 8px;
+  }
+
+  .login-card-divider {
+    width: min(100%, 250px);
+    margin-bottom: 18px;
+  }
+
+  .auth-page .form-label {
+    font-size: 24px;
+    margin-bottom: 8px;
+  }
+
+  .auth-page .form-control {
+    min-height: 56px;
+    font-size: 22px;
+    padding: 10px 48px 10px 14px;
+    border-radius: 14px;
+  }
+
+  .auth-page .login-field::after {
+    top: 41px;
+    right: 14px;
+    font-size: 20px;
+  }
+
+  .auth-page .btn-primary {
+    min-height: 62px;
+    font-size: 28px;
+    border-radius: 14px;
   }
 
   .placeholder-hero {
@@ -3576,8 +3790,31 @@ img {
   }
 
   .logo-panel {
-    min-height: 220px;
-    padding: 12px;
+    min-height: 290px;
+    padding: 10px;
+  }
+
+  .logo-panel .login-logo {
+    width: min(250px, 90%);
+  }
+
+  .login-brand-motto {
+    font-size: 13px;
+    letter-spacing: 0.08em;
+  }
+
+  .auth-page .form-label {
+    font-size: 20px;
+  }
+
+  .auth-page .form-control {
+    min-height: 52px;
+    font-size: 19px;
+  }
+
+  .auth-page .btn-primary {
+    min-height: 58px;
+    font-size: 24px;
   }
 
   .bank-page .bank-table-card {

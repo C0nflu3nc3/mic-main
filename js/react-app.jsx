@@ -150,8 +150,9 @@ function LoginPage({ messages }) {
             <div className="row header white"></div>
 
             <div className="row justify-content-center align-items-center login-layout auth-page">
-                <div className="col-11 col-sm-9 col-md-5 col-lg-4 d-flex justify-content-center">
+                <div className="col-11 col-sm-9 col-md-5 col-lg-5 d-flex justify-content-center login-brand-col">
                     <div className="logo-panel">
+                        <span className="logo-orbit" aria-hidden="true" />
                         <img
                             src="/static/logo_login.png"
                             title="logo"
@@ -160,19 +161,23 @@ function LoginPage({ messages }) {
                             height="220"
                             className="img-fluid login-logo"
                         />
+                        <p className="login-brand-motto">{"\u0415\u0414\u0418\u041d\u0421\u0422\u0412\u041e \u2022 \u0421\u0422\u0420\u0410\u0422\u0415\u0413\u0418\u042f \u2022 \u041f\u041e\u0411\u0415\u0414\u0410"}</p>
                     </div>
                 </div>
 
-                <div className="col-11 col-sm-10 col-md-7 col-lg-5">
+                <div className="col-11 col-sm-10 col-md-7 col-lg-5 login-form-col">
                     <form action="/signin" method="post" className="login-card">
+                        <div className="login-card-divider login-card-divider-top" aria-hidden="true" />
+                        <div className="login-card-divider" aria-hidden="true" />
                         <h1 className="text-center">Авторизация</h1>
+                        <div className="login-card-divider" aria-hidden="true" />
 
-                        <div className="form-outline mb-4 text-start">
+                        <div className="form-outline mb-4 text-start login-field login-field-user">
                             <label className="form-label" htmlFor="login">Логин</label>
                             <input type="text" name="login" id="login" className="form-control" placeholder="Введите свой логин" />
                         </div>
 
-                        <div className="form-outline mb-4 text-start">
+                        <div className="form-outline mb-4 text-start login-field login-field-pass">
                             <label className="form-label" htmlFor="password">Пароль</label>
                             <input type="password" name="password" id="password" className="form-control" placeholder="Введите пароль" />
                         </div>
@@ -180,6 +185,7 @@ function LoginPage({ messages }) {
                         <LoginMessages messages={messages} />
 
                         <button type="submit" className="btn btn-primary w-100 mb-4">Войти</button>
+                        <div className="login-card-divider login-card-divider-bottom" aria-hidden="true" />
                     </form>
                 </div>
             </div>
@@ -364,7 +370,7 @@ function NewsEditBlock({ item, summaryLabel = "Редактировать нов
                     </div>
 
                     <button type="submit" className="btn btn-primary">Сохранить изменения</button>
-                </form>
+                    </form>
             </div>
         </details>
     );
@@ -417,7 +423,7 @@ function NewsCommentItem({ comment, newsId, currentUserId, canManageNews }) {
                     <input type="hidden" name="parent_comment_id" value={comment.id} />
                     <textarea className="form-control mb-2" name="comment" rows="3" placeholder={"\u041d\u0430\u043f\u0438\u0448\u0438\u0442\u0435 \u043e\u0442\u0432\u0435\u0442"} required />
                     <button type="submit" className="btn btn-outline-light">{"\u041e\u0442\u043f\u0440\u0430\u0432\u0438\u0442\u044c \u043e\u0442\u0432\u0435\u0442"}</button>
-                </form>
+                    </form>
             </div>
         </details>
                 {canDelete ? (
@@ -519,7 +525,7 @@ function NewsPage({ news_items = [], can_manage_news = false, can_suggest_news =
                             <form method="POST" action="/news/comment" className="news-comment-form" id={`news-comment-form-${item.id}`}>
                                 <input type="hidden" name="news_id" value={item.id} />
                                 <textarea className="form-control mb-2" name="comment" rows="3" placeholder="Напишите комментарий" required />
-                            </form>
+                    </form>
 
                             <div className="news-card-actions">
                                 <button type="submit" form={`news-comment-form-${item.id}`} className="btn btn-outline-light">
@@ -574,11 +580,11 @@ function SuggestedNewsPage({ suggested_news_items = [] }) {
                             <form method="POST" action="/news/publish">
                                 <input type="hidden" name="news_id" value={item.id} />
                                 <button type="submit" className="btn btn-primary">Опубликовать</button>
-                            </form>
+                    </form>
                             <form method="POST" action="/news/reject">
                                 <input type="hidden" name="news_id" value={item.id} />
                                 <button type="submit" className="btn btn-outline-light">Отклонить</button>
-                            </form>
+                    </form>
                             <NewsEditBlock item={item} summaryLabel="Подредактировать" redirectTo="/news/suggestions" />
                         </div>
                     </article>
@@ -656,7 +662,7 @@ function MissionsPage({ is_admin = false, can_take_missions = false, current_tea
                                 <form method="POST" action="/missions/delete" onSubmit={(event) => { if (!window.confirm("\u0412\u044b \u0443\u0432\u0435\u0440\u0435\u043d\u044b?")) { event.preventDefault(); } }}>
                                     <input type="hidden" name="mission_id" value={mission.id} />
                                     <button type="submit" className="btn btn-outline-light">Удалить миссию</button>
-                                </form>
+                    </form>
                             </div>
                         ) : can_take_missions ? (
                             mission.user_has_taken ? (
@@ -665,7 +671,7 @@ function MissionsPage({ is_admin = false, can_take_missions = false, current_tea
                                     <form method="POST" action="/missions/cancel">
                                         <input type="hidden" name="mission_id" value={mission.id} />
                                         <button type="submit" className="btn btn-outline-light">Отказаться от задания</button>
-                                    </form>
+                    </form>
                                 </div>
                             ) : mission.accepted_count >= 3 ? (
                                 <button type="button" className="btn btn-secondary" disabled>Лимит легионов достигнут</button>
@@ -676,7 +682,7 @@ function MissionsPage({ is_admin = false, can_take_missions = false, current_tea
                                     <form method="POST" action="/missions/accept">
                                         <input type="hidden" name="mission_id" value={mission.id} />
                                         <button type="submit" className="btn btn-primary">Принять задание</button>
-                                    </form>
+                    </form>
                                 </div>
                             )
                         ) : (
@@ -831,7 +837,7 @@ function BankOperations({ is_admin = false, current_team_id = null, current_plt 
                             </div>
                         </div>
                     </div>
-                </form>
+                    </form>
             </div>
 
             <div className="events-panel bank-operations-panel">
@@ -899,11 +905,11 @@ function ApprovePage({ approve_items = [] }) {
                             <form method="POST" action="/approve/confirm">
                                 <input type="hidden" name="assignment_id" value={item.id} />
                                 <button type="submit" className="btn btn-primary">Подтвердить выполнение</button>
-                            </form>
+                    </form>
                             <form method="POST" action="/approve/reject">
                                 <input type="hidden" name="assignment_id" value={item.id} />
                                 <button type="submit" className="btn btn-outline-light">Отклонить выполнение</button>
-                            </form>
+                    </form>
                         </div>
                     </article>
                 ))}
@@ -946,7 +952,7 @@ function StudiosPage({ studios_items = [], can_manage_studios = false }) {
                                     <div className="form-text text-light">Картинка необязательна. Если нужна, лучше одно изображение на студию.</div>
                                 </div>
                                 <button type="submit" className="btn btn-primary">Добавить студию</button>
-                            </form>
+                    </form>
                         </div>
                     </details>
                 </section>
@@ -966,7 +972,7 @@ function StudiosPage({ studios_items = [], can_manage_studios = false }) {
                                 <form method="POST" action="/studios/delete" onSubmit={(event) => { if (!window.confirm("Вы уверены, что хотите удалить эту студию?")) { event.preventDefault(); } }}>
                                     <input type="hidden" name="studio_id" value={item.id} />
                                     <button type="submit" className="btn btn-outline-light">Удалить студию</button>
-                                </form>
+                    </form>
                             </div>
                         ) : null}
                     </article>

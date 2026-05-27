@@ -6,22 +6,26 @@ export function LoginPage({ messages }) {
       <div className="row header white"></div>
 
       <div className="row justify-content-center align-items-center login-layout auth-page">
-        <div className="col-11 col-sm-9 col-md-5 col-lg-4 d-flex justify-content-center">
+        <div className="col-11 col-sm-9 col-md-5 col-lg-5 d-flex justify-content-center login-brand-col">
           <div className="logo-panel">
+            <span className="logo-orbit" aria-hidden="true" />
             <img src="/static/logo_login.png" title="logo" alt="logo" width="220" height="220" className="img-fluid login-logo" />
+            <p className="login-brand-motto">ЕДИНСТВО • СТРАТЕГИЯ • ПОБЕДА</p>
           </div>
         </div>
 
-        <div className="col-11 col-sm-10 col-md-7 col-lg-5">
+        <div className="col-11 col-sm-10 col-md-7 col-lg-5 login-form-col">
           <form action="/signin" method="post" className="login-card">
+            <div className="login-card-divider login-card-divider-top" aria-hidden="true" />
             <h1 className="text-center">Авторизация</h1>
+            <div className="login-card-divider" aria-hidden="true" />
 
-            <div className="form-outline mb-4 text-start">
+            <div className="form-outline mb-4 text-start login-field login-field-user">
               <label className="form-label" htmlFor="login">Логин</label>
               <input type="text" name="login" id="login" className="form-control" placeholder="Введите свой логин" />
             </div>
 
-            <div className="form-outline mb-4 text-start">
+            <div className="form-outline mb-4 text-start login-field login-field-pass">
               <label className="form-label" htmlFor="password">Пароль</label>
               <input type="password" name="password" id="password" className="form-control" placeholder="Введите пароль" />
             </div>
@@ -29,6 +33,7 @@ export function LoginPage({ messages }) {
             <LoginMessages messages={messages} />
 
             <button type="submit" className="btn btn-primary w-100 mb-4">Войти</button>
+            <div className="login-card-divider login-card-divider-bottom" aria-hidden="true" />
           </form>
         </div>
       </div>
