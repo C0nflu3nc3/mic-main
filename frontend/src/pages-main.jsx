@@ -5,13 +5,15 @@ export function LoginPage({ messages }) {
     <div className="container-fluid text-center">
       <div className="row header white"></div>
 
-      <div className="row justify-content-center align-items-center login-layout">
-        <div className="col-10 col-sm-8 col-md-5 col-lg-4 text-center">
-          <img src="/static/logo_login.png" title="logo" alt="logo" width="220" height="220" className="img-fluid login-logo" />
+      <div className="row justify-content-center align-items-center login-layout auth-page">
+        <div className="col-11 col-sm-9 col-md-5 col-lg-4 d-flex justify-content-center">
+          <div className="logo-panel">
+            <img src="/static/logo_login.png" title="logo" alt="logo" width="220" height="220" className="img-fluid login-logo" />
+          </div>
         </div>
 
-        <div className="col-11 col-sm-10 col-md-7 col-lg-4">
-          <form action="/signin" method="post">
+        <div className="col-11 col-sm-10 col-md-7 col-lg-5">
+          <form action="/signin" method="post" className="login-card">
             <h1 className="text-center">Авторизация</h1>
 
             <div className="form-outline mb-4 text-start">
