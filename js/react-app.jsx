@@ -152,7 +152,7 @@ function LoginPage({ messages }) {
             <div className="row justify-content-center align-items-center login-layout">
                 <div className="col-10 col-sm-8 col-md-5 col-lg-4 text-center">
                     <img
-                        src="/static/logo.png"
+                        src="/static/logo_login.png"
                         title="logo"
                         alt="logo"
                         width="220"

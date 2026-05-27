@@ -7,7 +7,7 @@ export function LoginPage({ messages }) {
 
       <div className="row justify-content-center align-items-center login-layout">
         <div className="col-10 col-sm-8 col-md-5 col-lg-4 text-center">
-          <img src="/static/logo.png" title="logo" alt="logo" width="220" height="220" className="img-fluid login-logo" />
+          <img src="/static/logo_login.png" title="logo" alt="logo" width="220" height="220" className="img-fluid login-logo" />
         </div>
 
         <div className="col-11 col-sm-10 col-md-7 col-lg-4">
