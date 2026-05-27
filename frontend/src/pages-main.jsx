@@ -3,14 +3,11 @@
 export function LoginPage({ messages }) {
   return (
     <div className="container-fluid text-center">
-      <div className="row header white"></div>
-
       <div className="row justify-content-center align-items-center login-layout auth-page">
         <div className="col-11 col-sm-9 col-md-5 col-lg-5 d-flex justify-content-center login-brand-col">
           <div className="logo-panel">
             <span className="logo-orbit" aria-hidden="true" />
             <img src="/static/logo_login.png" title="logo" alt="logo" width="220" height="220" className="img-fluid login-logo" />
-            <p className="login-brand-motto">ЕДИНСТВО • СТРАТЕГИЯ • ПОБЕДА</p>
           </div>
         </div>
 

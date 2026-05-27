@@ -147,7 +147,7 @@ function Header({ user, activeSection, pendingNewsCount = 0 }) {
 function LoginPage({ messages }) {
     return (
         <div className="container-fluid text-center">
-            <div className="row header white"></div>
+
 
             <div className="row justify-content-center align-items-center login-layout auth-page">
                 <div className="col-11 col-sm-9 col-md-5 col-lg-5 d-flex justify-content-center login-brand-col">
@@ -161,14 +161,12 @@ function LoginPage({ messages }) {
                             height="220"
                             className="img-fluid login-logo"
                         />
-                        <p className="login-brand-motto">{"\u0415\u0414\u0418\u041d\u0421\u0422\u0412\u041e \u2022 \u0421\u0422\u0420\u0410\u0422\u0415\u0413\u0418\u042f \u2022 \u041f\u041e\u0411\u0415\u0414\u0410"}</p>
                     </div>
                 </div>
 
                 <div className="col-11 col-sm-10 col-md-7 col-lg-5 login-form-col">
                     <form action="/signin" method="post" className="login-card">
                         <div className="login-card-divider login-card-divider-top" aria-hidden="true" />
-                        <div className="login-card-divider" aria-hidden="true" />
                         <h1 className="text-center">Авторизация</h1>
                         <div className="login-card-divider" aria-hidden="true" />
 
