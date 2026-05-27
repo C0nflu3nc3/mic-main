@@ -336,7 +336,7 @@ def uploaded_files(filename):
 
 @app.route("/favicon.ico")
 def favicon():
-    return send_from_directory("static", "favicon.ico")
+    return send_from_directory("static", "2.png", mimetype="image/png")
 
 
 @app.route("/favicon_old.ico")
