@@ -42,17 +42,7 @@
 body {
   min-height: 100vh;
   margin: 0;
-  background-image:
-    radial-gradient(circle at 50% -16%, rgba(214, 174, 100, 0.14) 0%, rgba(214, 174, 100, 0.05) 26%, transparent 56%),
-    linear-gradient(90deg, #11161f 0%, #182238 20%, #203457 50%, #182238 80%, #11161f 100%),
-    repeating-linear-gradient(
-      90deg,
-      rgba(255, 255, 255, 0.022) 0px,
-      rgba(255, 255, 255, 0.022) 1px,
-      rgba(255, 255, 255, 0) 1px,
-      rgba(255, 255, 255, 0) 34px
-    ),
-    linear-gradient(180deg, #0a1018 0%, #121d2f 46%, #0f1828 100%);
+  background: radial-gradient(circle at top, #162018 0%, #0e1412 45%, #080d0b 100%);
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -3027,17 +3017,7 @@ img {
   body {
     background-attachment: scroll;
     font-size: 17px;
-    background-image:
-      radial-gradient(circle at 50% -14%, rgba(214, 174, 100, 0.13) 0%, rgba(214, 174, 100, 0.04) 24%, transparent 54%),
-      linear-gradient(90deg, #11161f 0%, #1a2743 24%, #203457 50%, #1a2743 76%, #11161f 100%),
-      repeating-linear-gradient(
-        90deg,
-        rgba(255, 255, 255, 0.018) 0px,
-        rgba(255, 255, 255, 0.018) 1px,
-        rgba(255, 255, 255, 0) 1px,
-        rgba(255, 255, 255, 0) 30px
-      ),
-      linear-gradient(180deg, #0a1018 0%, #132033 44%, #101a2a 100%);
+    background: radial-gradient(circle at top, #162018 0%, #0e1412 45%, #080d0b 100%);
   }
 
   body::before {
