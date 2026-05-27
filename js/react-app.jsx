@@ -938,7 +938,7 @@ function StudiosPage({ studios_items = [], can_manage_studios = false }) {
         <div className="section-page studios-page ceremonial-page">
             <Hero
                 title="Студии"
-                description="Здесь собраны студии Империи. Администратор может добавлять новые студии, а сами карточки удобно просматривать на телефоне и компьютере."
+                description="Здесь собраны студии Империи."
             />
             {can_manage_studios ? (
                 <section className="placeholder-card news-form-card news-suggest-card studios-form-card">
