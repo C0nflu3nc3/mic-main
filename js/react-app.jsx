@@ -1,4 +1,4 @@
-﻿const HistoryPage = window.HistoryPage;
+const HistoryPage = window.HistoryPage;
 
 const bootstrap = window.__BOOTSTRAP__ || {};
 
@@ -208,7 +208,7 @@ function HomePage() {
         },
         {
             href: "/missions",
-            title: "Миссии за валюту",
+            title: "Доска заказов",
             text: "Здесь легионы выбирают задания, видят лимиты по контрактам и отправляют выполнение на подтверждение.",
         },
     ];
@@ -597,7 +597,7 @@ function MissionsPage({ is_admin = false, can_take_missions = false, current_tea
     return (
         <div className="section-page missions-page ceremonial-page">
             <Hero
-                title="Миссии за валюту"
+                title="Доска заказов"
                 description="Легион может взять до 3 заданий одновременно. На одно задание могут откликнуться не более 3 легионов."
             />
 

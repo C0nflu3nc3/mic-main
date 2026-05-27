@@ -3,7 +3,7 @@ import { Hero, formatDate, formatDateTime, uploadedPath } from "./shared";
 export function MissionsPage({ is_admin = false, can_take_missions = false, current_team_mission_count = 0, missions = [] }) {
   return (
     <div className="section-page missions-page ceremonial-page">
-      <Hero title="Миссии за валюту" description="Легион может взять до 3 заданий одновременно. Лимит откликов на задание задаётся администратором." />
+      <Hero title="Доска заказов" description="Легион может взять до 3 заданий одновременно. Лимит откликов на задание задаётся администратором." />
       {is_admin ? (
         <section className="placeholder-card mission-form-card">
           <h3>Добавить задание</h3>
