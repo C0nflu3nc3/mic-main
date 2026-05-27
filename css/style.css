@@ -2902,6 +2902,13 @@ img {
     align-items: center;
   }
 
+  .missions-page > .mission-limit-note {
+    max-width: 92%;
+    margin: 0 auto 16px;
+    padding: 0 24px;
+    text-align: center;
+  }
+
   .history-page .history-card-kicker {
     display: none;
   }
@@ -2924,27 +2931,39 @@ img {
     z-index: 2;
   }
 
-  .history-page #legions .history-grid-3 {
+  .mobile-chain-stack {
     position: relative;
     isolation: isolate;
   }
 
-  .history-page #legions .history-grid-3::before {
+  .mobile-chain-stack::before,
+  .mobile-chain-stack::after {
     content: "";
     position: absolute;
-    inset: 0;
+    top: 6px;
+    bottom: 6px;
+    width: 16px;
     pointer-events: none;
     z-index: 0;
+    opacity: 0.96;
     background:
-      linear-gradient(180deg, rgba(48, 55, 53, 0.9) 0%, rgba(17, 21, 20, 0.98) 100%) 14px 0 / 2px 24px repeat-y,
-      linear-gradient(180deg, rgba(48, 55, 53, 0.9) 0%, rgba(17, 21, 20, 0.98) 100%) calc(100% - 14px) 0 / 2px 24px repeat-y,
-      radial-gradient(ellipse 58% 36% at 50% 50%, transparent 42%, rgba(52, 59, 57, 0.98) 56%, rgba(12, 16, 15, 0.98) 70%, transparent 74%) 9px 0 / 12px 24px repeat-y,
-      radial-gradient(ellipse 58% 36% at 50% 50%, transparent 42%, rgba(52, 59, 57, 0.98) 56%, rgba(12, 16, 15, 0.98) 70%, transparent 74%) calc(100% - 21px) 0 / 12px 24px repeat-y;
-    opacity: 0.88;
-    filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.06)) drop-shadow(0 2px 5px rgba(0, 0, 0, 0.28));
+      linear-gradient(180deg, rgba(198, 208, 201, 0.95) 0%, rgba(86, 93, 89, 0.98) 44%, rgba(18, 22, 20, 0.98) 100%) center / 2px 24px repeat-y,
+      radial-gradient(ellipse 62% 40% at 50% 50%, transparent 40%, rgba(177, 188, 181, 0.98) 53%, rgba(58, 65, 61, 0.98) 64%, rgba(14, 18, 16, 0.98) 73%, transparent 77%) center / 14px 24px repeat-y;
+    filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.12)) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.35));
   }
 
-  .history-page #legions .history-grid-3 .history-legion-card {
+  .mobile-chain-stack::before {
+    left: 8px;
+  }
+
+  .mobile-chain-stack::after {
+    right: 8px;
+  }
+
+  .mobile-chain-stack > .placeholder-card,
+  .mobile-chain-stack > .history-card,
+  .mobile-chain-stack > .mission-card,
+  .mobile-chain-stack > .bonus-card {
     position: relative;
     z-index: 1;
   }

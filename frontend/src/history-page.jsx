@@ -259,7 +259,7 @@ export function HistoryPage() {
           description="Сводка по двенадцати легионам и их покровителям."
           mobileProgress={getSectionProgress(progress, 1, sectionCount)}
         />
-        <div className="history-grid history-grid-3">
+        <div className="history-grid history-grid-3 mobile-chain-stack">
           {historyLegions.map((legion) => (
             <article className="placeholder-card history-card history-legion-card" key={legion.title}>
               <h3>{legion.title}</h3>

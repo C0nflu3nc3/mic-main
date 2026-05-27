@@ -1,4 +1,4 @@
-﻿import { Hero } from "./shared";
+import { Hero } from "./shared";
 
 function BonusRichText({ text }) {
   const parts = String(text || "").split(/(\*\*[^*]+\*\*)/g);
@@ -28,7 +28,7 @@ export function BonusPage() {
       <section className="placeholder-card bonus-card bonus-intro-card">
           <p><BonusRichText text="**Если вам не ясны или не понятны какие либо моменты или правила бонусной системы, вы всегда можете обратиться к своим Архонтам, старшим Архонтам или же в электронные правила на вашем телефоне.**" /></p>
       </section>
-      <div className="bonus-layout">
+      <div className="bonus-layout mobile-chain-stack">
         <section className="placeholder-card bonus-card">
           <h3>Главная цель</h3>
           <p><BonusRichText text="Задача каждого легиона — набрать как можно больше **очков влияния** к концу смены. Тот, у кого их будет больше всех - станет лучшим легионом смены! Очки можно получить:" /></p>
