@@ -2924,6 +2924,31 @@ img {
     z-index: 2;
   }
 
+  .history-page #legions .history-grid-3 {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .history-page #legions .history-grid-3::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background:
+      linear-gradient(180deg, rgba(48, 55, 53, 0.9) 0%, rgba(17, 21, 20, 0.98) 100%) 14px 0 / 2px 24px repeat-y,
+      linear-gradient(180deg, rgba(48, 55, 53, 0.9) 0%, rgba(17, 21, 20, 0.98) 100%) calc(100% - 14px) 0 / 2px 24px repeat-y,
+      radial-gradient(ellipse 58% 36% at 50% 50%, transparent 42%, rgba(52, 59, 57, 0.98) 56%, rgba(12, 16, 15, 0.98) 70%, transparent 74%) 9px 0 / 12px 24px repeat-y,
+      radial-gradient(ellipse 58% 36% at 50% 50%, transparent 42%, rgba(52, 59, 57, 0.98) 56%, rgba(12, 16, 15, 0.98) 70%, transparent 74%) calc(100% - 21px) 0 / 12px 24px repeat-y;
+    opacity: 0.88;
+    filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.06)) drop-shadow(0 2px 5px rgba(0, 0, 0, 0.28));
+  }
+
+  .history-page #legions .history-grid-3 .history-legion-card {
+    position: relative;
+    z-index: 1;
+  }
+
   .history-section-head {
     width: 100%;
     padding-left: 0;
