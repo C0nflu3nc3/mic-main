@@ -204,16 +204,22 @@ function HomePage() {
     const cards = [
         {
             href: "/leaderboard",
+            icon: "🏆",
+            variant: "leaderboard",
             title: "Таблица лидеров",
             text: "Здесь отображаются две таблицы: дуэльный зачет и общий рейтинг легионов.",
         },
         {
             href: "/news",
+            icon: "📜",
+            variant: "news",
             title: "Новости",
             text: "Здесь публикуются новости с изображениями и видео, а пользователи добавляют комментарии.",
         },
         {
             href: "/missions",
+            icon: "✦",
+            variant: "missions",
             title: "Доска заказов",
             text: "Здесь легионы выбирают задания, видят лимиты по контрактам и отправляют выполнение на подтверждение.",
         },
@@ -226,14 +232,18 @@ function HomePage() {
                 description="Здесь отображаются основные разделы системы: таблица лидеров, новости и миссии за валюту."
             />
 
-            <div className="placeholder-grid">
-                {cards.map((card) => (
-                    <section className="placeholder-card" key={card.href}>
-                        <a className="placeholder-card-link" href={card.href}>{card.title}</a>
-                        <p>{card.text}</p>
-                    </section>
-                ))}
-            </div>
+                <div className="placeholder-grid">
+                    {cards.map((card) => (
+                        <section className={`placeholder-card home-feature-card home-feature-${card.variant}`} key={card.href}>
+                            <span className="home-feature-medallion" aria-hidden="true">
+                                <span className="home-feature-glyph">{card.icon}</span>
+                            </span>
+                            <a className="placeholder-card-link home-feature-link" href={card.href}>{card.title}</a>
+                            <span className="home-feature-divider" aria-hidden="true" />
+                            <p>{card.text}</p>
+                        </section>
+                    ))}
+                </div>
         </div>
     );
 }

@@ -40,9 +40,9 @@ export function LoginPage({ messages }) {
 
 export function HomePage() {
   const cards = [
-    { href: "/leaderboard", title: "Таблица лидеров", text: "Здесь отображаются две таблицы: дуэльный зачет и общий рейтинг легионов." },
-    { href: "/news", title: "Новости", text: "Здесь публикуются новости с изображениями и видео, а пользователи добавляют комментарии." },
-    { href: "/missions", title: "Доска заказов", text: "Здесь легионы выбирают задания, видят лимиты по контрактам и отправляют выполнение на подтверждение." }
+    { href: "/leaderboard", title: "Таблица лидеров", icon: "🏆", variant: "leaderboard", text: "Здесь отображаются две таблицы: дуэльный зачет и общий рейтинг легионов." },
+    { href: "/news", title: "Новости", icon: "📜", variant: "news", text: "Здесь публикуются новости с изображениями и видео, а пользователи добавляют комментарии." },
+    { href: "/missions", title: "Доска заказов", icon: "✦", variant: "missions", text: "Здесь легионы выбирают задания, видят лимиты по контрактам и отправляют выполнение на подтверждение." }
   ];
 
   return (
@@ -50,8 +50,12 @@ export function HomePage() {
       <Hero title="Главная страница" description="Здесь отображаются основные разделы системы: таблица лидеров, новости и миссии за валюту." />
       <div className="placeholder-grid">
         {cards.map((card) => (
-          <section className="placeholder-card" key={card.href}>
-            <a className="placeholder-card-link" href={card.href}>{card.title}</a>
+          <section className={`placeholder-card home-feature-card home-feature-${card.variant}`} key={card.href}>
+            <span className="home-feature-medallion" aria-hidden="true">
+              <span className="home-feature-glyph">{card.icon}</span>
+            </span>
+            <a className="placeholder-card-link home-feature-link" href={card.href}>{card.title}</a>
+            <span className="home-feature-divider" aria-hidden="true" />
             <p>{card.text}</p>
           </section>
         ))}
