@@ -19,7 +19,7 @@ export function MissionsPage({ is_admin = false, can_take_missions = false, curr
       ) : (
         <div className="mission-limit-note">{can_take_missions ? <>Активных заданий у Легиона: {current_team_mission_count} / 3</> : <>Журналисты могут только просматривать задания и не могут их принимать.</>}</div>
       )}
-      <div className="news-list mobile-chain-stack">
+      <div className="news-list">
         {missions.map((mission) => (
           <article className={`placeholder-card mission-card${mission.is_exclusive ? " mission-card-exclusive" : ""}`} key={mission.id}>
             <div className="news-meta"><span>{mission.author_name}</span><span>{formatDateTime(mission.created_at)}</span></div>

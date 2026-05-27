@@ -227,7 +227,7 @@ export function HistoryPage() {
           description="Краткое введение в историю создания Империи."
           mobileProgress={getSectionProgress(progress, 0, sectionCount)}
         />
-        <div className="history-grid history-grid-2 history-grid-desktop-tight mobile-chain-stack">
+        <div className="history-grid history-grid-2 history-grid-desktop-tight">
           <article className="placeholder-card history-card history-lead-card">
             <div className="history-card-kicker">{historyLore.empire.kicker}</div>
             <h3>{historyLore.empire.title}</h3>
@@ -259,7 +259,7 @@ export function HistoryPage() {
           description="Сводка по двенадцати легионам и их покровителям."
           mobileProgress={getSectionProgress(progress, 1, sectionCount)}
         />
-        <div className="history-grid history-grid-3 mobile-chain-stack">
+        <div className="history-grid history-grid-3">
           {historyLegions.map((legion) => (
             <article className="placeholder-card history-card history-legion-card" key={legion.title}>
               <h3>{legion.title}</h3>
@@ -277,7 +277,7 @@ export function HistoryPage() {
           description="Главные фигуры, на которых держится порядок Империи."
           mobileProgress={getSectionProgress(progress, 2, sectionCount)}
         />
-        <div className="history-grid history-grid-3 mobile-chain-stack">
+        <div className="history-grid history-grid-3">
           {historyArchons.map((archon) => (
             <HistoryCard
               key={archon.title}
@@ -321,7 +321,7 @@ export function HistoryPage() {
           description="Механизмы и силы, на которых держится устройство Империи."
           mobileProgress={getSectionProgress(progress, 4, sectionCount)}
         />
-        <div className="history-grid history-grid-2 mobile-chain-stack">
+        <div className="history-grid history-grid-2">
           {historyArtifacts.map((artifact) => (
             <article className="placeholder-card history-card history-artifact-card" key={artifact.id}>
               <h3>{artifact.title}</h3>
