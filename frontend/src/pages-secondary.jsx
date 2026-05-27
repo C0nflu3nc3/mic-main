@@ -199,7 +199,7 @@ export function StudiosPage({ studios_items = [], can_manage_studios = false }) 
     <div className="section-page studios-page ceremonial-page">
       <Hero
         title="Студии"
-        description="Здесь собраны студии Империи. Администратор может добавлять новые студии, а сами карточки удобно просматривать на телефоне и компьютере."
+        description="Здесь собраны студии Империи."
       />
       {can_manage_studios ? <StudiosCreateForm /> : null}
       <div className="news-list">
