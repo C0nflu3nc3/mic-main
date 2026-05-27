@@ -132,7 +132,11 @@ function AnthemCard() {
           {historyAnthem.map((part, index) => (
             <section className="history-anthem-stanza" key={`${part.title}-${index}`}>
               <h4>{part.title}</h4>
-              {part.lines.map((line, lineIndex) => <p key={`${part.title}-${index}-${lineIndex}`}>{line}</p>)}
+              {part.lines.map((line, lineIndex) => (
+                <p key={`${part.title}-${index}-${lineIndex}`}>
+                  {line === "Им-пе-ри-я" ? <strong>{line}</strong> : line}
+                </p>
+              ))}
             </section>
           ))}
         </div>
