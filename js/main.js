@@ -1,4 +1,6 @@
 function initMainUi() {
+    document.body.classList.remove("mobile-menu-open");
+
     const menuCollapseElement = document.getElementById("mainMenuCollapse");
     const menuToggleButton = document.getElementById("menuToggleButton");
     const sourceSelect = document.getElementById("userSRC");
@@ -87,8 +89,10 @@ function initMainUi() {
         const desktopMenuQuery = window.matchMedia("(min-width: 993px)");
         const menuLinks = menuCollapseElement.querySelectorAll(".nav-link");
         const setMenuState = function (isOpen) {
+            const showMobileOverlay = isOpen && !desktopMenuQuery.matches;
             menuCollapseElement.classList.toggle("is-open", isOpen);
             menuToggleButton.setAttribute("aria-expanded", isOpen ? "true" : "false");
+            document.body.classList.toggle("mobile-menu-open", showMobileOverlay);
         };
 
         const syncMenuState = function () {

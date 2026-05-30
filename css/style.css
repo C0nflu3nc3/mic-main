@@ -4756,4 +4756,31 @@ img {
     font-size: 10px;
   }
 }
-\n
+
+@media (max-width: 992px) {
+  body.mobile-menu-open {
+    overflow: hidden;
+  }
+
+  body.mobile-menu-open::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(7, 11, 11, 0.58);
+    backdrop-filter: blur(9px);
+    -webkit-backdrop-filter: blur(9px);
+    z-index: 980;
+    pointer-events: auto;
+  }
+
+  body.mobile-menu-open #header .header-topbar {
+    position: relative;
+    z-index: 981;
+  }
+
+  body.mobile-menu-open #header .menu-toolbar,
+  body.mobile-menu-open #header .menu-collapse {
+    position: relative;
+    z-index: 982;
+  }
+}
