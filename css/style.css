@@ -4766,9 +4766,7 @@ img {
     content: "";
     position: fixed;
     inset: 0;
-    background: rgba(7, 11, 11, 0.58);
-    backdrop-filter: blur(9px);
-    -webkit-backdrop-filter: blur(9px);
+    background: #07130f;
     z-index: 980;
     pointer-events: auto;
   }

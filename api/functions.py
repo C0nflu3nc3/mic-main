@@ -411,6 +411,34 @@ def reject_news(conn, news_id):
     return deleted
 
 
+def delete_news(conn, news_id):
+    with conn.cursor() as cursor:
+        cursor.execute(
+            """
+            DELETE FROM News_comment
+            WHERE news_id = %s
+            """,
+            (news_id,),
+        )
+        cursor.execute(
+            """
+            DELETE FROM News_media
+            WHERE news_id = %s
+            """,
+            (news_id,),
+        )
+        cursor.execute(
+            """
+            DELETE FROM News
+            WHERE id = %s
+            """,
+            (news_id,),
+        )
+        deleted = cursor.rowcount > 0
+    conn.commit()
+    return deleted
+
+
 def add_news_comment(conn, news_id, user_id, comment, parent_comment_id=None):
     with conn.cursor() as cursor:
         check_sql = "SELECT id FROM News WHERE id = %s AND COALESCE(is_published, 1) = 1 LIMIT 1"

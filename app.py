@@ -14,6 +14,7 @@ from api.functions import (
     accept_mission,
     approve_mission,
     count_pending_news,
+    delete_news,
     delete_news_comment,
     delete_studio,
     cancel_mission,
@@ -646,6 +647,35 @@ def reject_news_page():
 
     flash("\u041d\u043e\u0432\u043e\u0441\u0442\u044c \u043e\u0442\u043a\u043b\u043e\u043d\u0435\u043d\u0430" if ok else "\u041d\u043e\u0432\u043e\u0441\u0442\u044c \u043d\u0435 \u043e\u0442\u043a\u043b\u043e\u043d\u0435\u043d\u0430")
     return redirect(url_for("suggested_news_page"))
+
+
+@app.route("/news/delete", methods=["POST"])
+def delete_news_page():
+    user, redirect_response = require_user()
+    if redirect_response:
+        return redirect_response
+    if not can_manage_news(user):
+        return redirect(url_for("news_page"))
+
+    news_id = request.form.get("news_id", "").strip()
+    if not news_id.isdigit():
+        flash("\u041d\u043e\u0432\u043e\u0441\u0442\u044c \u043d\u0435 \u0443\u0434\u0430\u043b\u0435\u043d\u0430")
+        return redirect(get_news_redirect_url())
+
+    conn = get_connection()
+    redirect_url = url_for("news_page")
+    try:
+        ensure_news_comment_columns(conn)
+        ensure_news_media_columns(conn)
+        news_item = get_news_for_update(conn, int(news_id))
+        if news_item is not None:
+            redirect_url = get_news_redirect_url(news_item)
+        ok = delete_news(conn, int(news_id))
+    finally:
+        conn.close()
+
+    flash("\u041d\u043e\u0432\u043e\u0441\u0442\u044c \u0443\u0434\u0430\u043b\u0435\u043d\u0430" if ok else "\u041d\u043e\u0432\u043e\u0441\u0442\u044c \u043d\u0435 \u0443\u0434\u0430\u043b\u0435\u043d\u0430")
+    return redirect(redirect_url)
 
 
 @app.route("/news/comment", methods=["POST"])

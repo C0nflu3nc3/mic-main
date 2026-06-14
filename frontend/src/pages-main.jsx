@@ -161,6 +161,24 @@ function NewsEditBlock({ item, summaryLabel = "Редактировать нов
   );
 }
 
+function NewsDeleteForm({ newsId, redirectTo = "" }) {
+  return (
+    <form
+      method="POST"
+      action="/news/delete"
+      onSubmit={(event) => {
+        if (!window.confirm("Удалить новость?")) {
+          event.preventDefault();
+        }
+      }}
+    >
+      <input type="hidden" name="news_id" value={newsId} />
+      {redirectTo ? <input type="hidden" name="redirect_to" value={redirectTo} /> : null}
+      <button type="submit" className="btn btn-outline-light">Удалить новость</button>
+    </form>
+  );
+}
+
 function SuggestedNewsForm() {
   return (
     <section className="placeholder-card news-form-card news-suggest-card">
@@ -283,6 +301,7 @@ export function NewsPage({
               </form>
               <div className="news-card-actions">
                 <button type="submit" form={`news-comment-form-${item.id}`} className="btn btn-outline-light">Отправить комментарий</button>
+                {can_manage_news ? <NewsDeleteForm newsId={item.id} /> : null}
                 {can_manage_news ? <NewsEditBlock item={item} /> : null}
               </div>
             </div>
@@ -322,6 +341,7 @@ export function SuggestedNewsPage({ suggested_news_items = [] }) {
                 <input type="hidden" name="news_id" value={item.id} />
                 <button type="submit" className="btn btn-primary">Опубликовать</button>
               </form>
+              <NewsDeleteForm newsId={item.id} redirectTo="/news/suggestions" />
               <form method="POST" action="/news/reject">
                 <input type="hidden" name="news_id" value={item.id} />
                 <button type="submit" className="btn btn-outline-light">Отклонить</button>
