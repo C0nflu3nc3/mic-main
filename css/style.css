@@ -1048,7 +1048,7 @@ a {
 .approve-page .mission-card .news-meta,
 .studios-page .studio-card .news-meta {
   width: 100%;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 16px;
   flex-wrap: wrap;
 }
@@ -1801,6 +1801,22 @@ a {
   max-width: 34ch;
   margin-left: auto;
   margin-right: auto;
+}
+
+.studios-page .studio-card {
+  justify-items: stretch;
+  text-align: left;
+}
+
+.studios-page .studio-card h3,
+.studios-page .studio-card .news-content {
+  text-align: left;
+}
+
+.studios-page .studio-card p {
+  max-width: none;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .studios-page .studio-card h3,
@@ -2990,6 +3006,84 @@ img {
     align-items: flex-start;
   }
 
+  .studios-page .studio-card .news-meta {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: nowrap;
+  }
+
+  .studios-page .studio-card .news-meta span {
+    white-space: nowrap;
+  }
+
+  .studios-page .studio-card .news-meta span:first-child {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .studios-page .studio-card .news-meta span:last-child {
+    flex-shrink: 0;
+    margin-left: auto;
+    text-align: right;
+    font-size: 12px;
+  }
+
+  .studios-page .news-list {
+    gap: 16px;
+  }
+
+  .studios-page .studio-card {
+    gap: 12px;
+  }
+
+  .studios-page .studio-card h3 {
+    font-size: clamp(24px, 7.6vw, 32px);
+    line-height: 1.06;
+  }
+
+  .studios-page .studio-card .news-content {
+    font-size: 16px;
+    line-height: 1.58;
+  }
+
+  .studios-page .studio-card .news-image,
+  .studios-page .studio-card .news-video {
+    margin-top: 2px;
+    border-radius: 14px;
+    max-height: 280px;
+  }
+
+  .studios-page .studio-card .news-suggestion-status {
+    margin-bottom: 2px;
+    justify-self: start;
+  }
+
+  .studios-page .studio-card-actions {
+    display: grid;
+    gap: 10px;
+    justify-content: stretch;
+    text-align: left;
+  }
+
+  .studios-page .studio-card-actions .news-edit-action,
+  .studios-page .studio-card-actions form {
+    width: 100%;
+    margin: 0;
+  }
+
+  .studios-page .studio-card-actions .news-edit-action {
+    margin-left: 0;
+  }
+
+  .studios-page .studio-card-actions .news-edit-summary,
+  .studios-page .studio-card-actions .btn {
+    min-height: 46px;
+    justify-content: center;
+  }
+
   .mission-card .news-meta {
     flex-direction: row;
     align-items: flex-start;
@@ -3847,6 +3941,41 @@ img {
 
   .placeholder-hero h1 {
     font-size: 24px;
+  }
+
+  .studios-page .news-list {
+    gap: 14px;
+  }
+
+  .studios-page .studio-card {
+    gap: 10px;
+  }
+
+  .studios-page .studio-card h3 {
+    font-size: clamp(22px, 8vw, 28px);
+  }
+
+  .studios-page .studio-card .news-meta {
+    gap: 6px;
+  }
+
+  .studios-page .studio-card .news-meta span {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .studios-page .studio-card .news-meta span:last-child {
+    font-size: 11px;
+  }
+
+  .studios-page .studio-card .news-content {
+    font-size: 15px;
+    line-height: 1.52;
+  }
+
+  .studios-page .studio-card .news-image,
+  .studios-page .studio-card .news-video {
+    max-height: 240px;
   }
 
   .bank-page > h3,

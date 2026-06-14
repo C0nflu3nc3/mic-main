@@ -241,7 +241,9 @@ function StudioCard({ item, canManageStudios }) {
         <span>{item.author_name}</span>
         <span>{formatDateTime(item.created_at)}</span>
       </div>
-      <div className="news-suggestion-status">{audienceLabels[item.audience] || audienceLabels.all}</div>
+      {canManageStudios ? (
+        <div className="news-suggestion-status">{audienceLabels[item.audience] || audienceLabels.all}</div>
+      ) : null}
       <h3>{item.title}</h3>
       {item.image_path ? <img className="news-image studio-image" src={uploadedPath(item.image_path)} alt={item.title} loading="lazy" decoding="async" /> : null}
       <p className="news-content">{item.description}</p>

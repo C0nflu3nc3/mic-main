@@ -1040,7 +1040,9 @@ function StudiosPage({ studios_items = [], can_manage_studios = false }) {
                             <span>{item.author_name}</span>
                             <span>{formatDateTime(item.created_at)}</span>
                         </div>
-                        <div className="news-suggestion-status">{audienceLabels[item.audience] || audienceLabels.all}</div>
+                        {can_manage_studios ? (
+                            <div className="news-suggestion-status">{audienceLabels[item.audience] || audienceLabels.all}</div>
+                        ) : null}
                         <h3>{item.title}</h3>
                         {item.image_path ? <img className="news-image studio-image" src={uploadedPath(item.image_path)} alt={item.title} loading="lazy" decoding="async" /> : null}
                         <p className="news-content">{item.description}</p>
