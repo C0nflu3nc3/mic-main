@@ -249,7 +249,32 @@ function HomePage() {
     );
 }
 
-function LeaderboardTable({ title, rows }) {
+function LeaderboardEditBlock({ tableName, rows }) {
+    return (
+        <details className="news-edit-block is-collapsed">
+            <summary className="news-edit-summary">Редактировать таблицу</summary>
+            <div className="news-edit-body">
+                {rows.map((row, index) => (
+                    <form method="POST" action="/leaderboard/update" className="news-edit-form" key={`${tableName}-${row.user_id}-${index}`}>
+                        <input type="hidden" name="table_name" value={tableName} />
+                        <input type="hidden" name="user_id" value={row.user_id} />
+                        <div className="mb-3">
+                            <label className="form-label" htmlFor={`${tableName}-name-${row.user_id}`}>Название</label>
+                            <input className="form-control" id={`${tableName}-name-${row.user_id}`} name="name" type="text" defaultValue={row.Name} required />
+                        </div>
+                        <div className="mb-3">
+                            <label className="form-label" htmlFor={`${tableName}-score-${row.user_id}`}>Очки</label>
+                            <input className="form-control" id={`${tableName}-score-${row.user_id}`} name="score" type="number" defaultValue={row.Scores} required />
+                        </div>
+                        <button type="submit" className="btn btn-primary">Сохранить строку</button>
+                    </form>
+                ))}
+            </div>
+        </details>
+    );
+}
+
+function LeaderboardTable({ title, rows, tableName, canManageLeaderboards }) {
     return (
         <section className="leaderboard-panel">
             <h3 className="leaderboard-title">{title}</h3>
@@ -272,12 +297,13 @@ function LeaderboardTable({ title, rows }) {
                         </tbody>
                     </table>
                 </div>
+                {canManageLeaderboards ? <LeaderboardEditBlock tableName={tableName} rows={rows} /> : null}
             </div>
         </section>
     );
 }
 
-function LeaderboardPage({ overall_leaderboard = [], duel_leaderboard = [] }) {
+function LeaderboardPage({ overall_leaderboard = [], duel_leaderboard = [], can_manage_leaderboards = false }) {
     return (
         <div className="section-page leaderboard-page ceremonial-page">
             <Hero
@@ -287,8 +313,8 @@ function LeaderboardPage({ overall_leaderboard = [], duel_leaderboard = [] }) {
             />
 
             <div className="leaderboard-grid">
-                <LeaderboardTable title="Очки влияния" rows={overall_leaderboard} />
-                <LeaderboardTable title="Турнирные очки" rows={duel_leaderboard} />
+                <LeaderboardTable title="Очки влияния" rows={overall_leaderboard} tableName="Overall_leader" canManageLeaderboards={can_manage_leaderboards} />
+                <LeaderboardTable title="Турнирные очки" rows={duel_leaderboard} tableName="Duel_leader" canManageLeaderboards={can_manage_leaderboards} />
             </div>
         </div>
     );
@@ -957,6 +983,17 @@ function ApprovePage({ approve_items = [] }) {
 }
 
 function StudiosPage({ studios_items = [], can_manage_studios = false }) {
+    const audienceOptions = [
+        { value: "middle", label: "Средние (ID 6-9)" },
+        { value: "senior", label: "Старшие (ID 10-13)" },
+        { value: "all", label: "Для всех" },
+    ];
+    const audienceLabels = {
+        middle: "Для средних",
+        senior: "Для старших",
+        all: "Для всех",
+    };
+
     return (
         <div className="section-page studios-page ceremonial-page">
             <Hero
@@ -982,6 +1019,14 @@ function StudiosPage({ studios_items = [], can_manage_studios = false }) {
                                     <input className="form-control" id="studio-image" name="image" type="file" accept=".png,.jpg,.jpeg,.gif,.webp" />
                                     <div className="form-text text-light">Картинка необязательна. Если нужна, лучше одно изображение на студию.</div>
                                 </div>
+                                <div className="mb-3">
+                                    <label className="form-label" htmlFor="studio-audience">Показывать группе</label>
+                                    <select className="form-control" id="studio-audience" name="audience" defaultValue="all">
+                                        {audienceOptions.map((option) => (
+                                            <option key={option.value} value={option.value}>{option.label}</option>
+                                        ))}
+                                    </select>
+                                </div>
                                 <button type="submit" className="btn btn-primary">Добавить студию</button>
                     </form>
                         </div>
@@ -995,11 +1040,51 @@ function StudiosPage({ studios_items = [], can_manage_studios = false }) {
                             <span>{item.author_name}</span>
                             <span>{formatDateTime(item.created_at)}</span>
                         </div>
+                        <div className="news-suggestion-status">{audienceLabels[item.audience] || audienceLabels.all}</div>
                         <h3>{item.title}</h3>
                         {item.image_path ? <img className="news-image studio-image" src={uploadedPath(item.image_path)} alt={item.title} loading="lazy" decoding="async" /> : null}
                         <p className="news-content">{item.description}</p>
                         {can_manage_studios ? (
                             <div className="news-card-actions studio-card-actions">
+                                <details className="news-edit-block news-edit-action is-collapsed">
+                                    <summary className="news-edit-summary">Редактировать студию</summary>
+                                    <div className="news-edit-body">
+                                        <form method="POST" action="/studios/update" encType="multipart/form-data" className="news-edit-form">
+                                            <input type="hidden" name="studio_id" value={item.id} />
+                                            <div className="mb-3">
+                                                <label className="form-label" htmlFor={`studio-edit-title-${item.id}`}>Название студии</label>
+                                                <input className="form-control" id={`studio-edit-title-${item.id}`} name="title" type="text" defaultValue={item.title} required />
+                                            </div>
+                                            <div className="mb-3">
+                                                <label className="form-label" htmlFor={`studio-edit-description-${item.id}`}>Описание студии</label>
+                                                <textarea className="form-control" id={`studio-edit-description-${item.id}`} name="description" rows="5" defaultValue={item.description} required />
+                                            </div>
+                                            <div className="mb-3">
+                                                <label className="form-label" htmlFor={`studio-edit-audience-${item.id}`}>Показывать группе</label>
+                                                <select className="form-control" id={`studio-edit-audience-${item.id}`} name="audience" defaultValue={item.audience || "all"}>
+                                                    {audienceOptions.map((option) => (
+                                                        <option key={option.value} value={option.value}>{option.label}</option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                            {item.image_path ? (
+                                                <div className="mb-3">
+                                                    <div className="form-label">Текущее изображение</div>
+                                                    <img className="news-edit-media-preview" src={uploadedPath(item.image_path)} alt={item.title} loading="lazy" decoding="async" />
+                                                    <label className="news-edit-remove">
+                                                        <input type="checkbox" name="remove_image" value="1" />
+                                                        <span>Убрать изображение</span>
+                                                    </label>
+                                                </div>
+                                            ) : null}
+                                            <div className="mb-3">
+                                                <label className="form-label" htmlFor={`studio-edit-image-${item.id}`}>Новое изображение</label>
+                                                <input className="form-control" id={`studio-edit-image-${item.id}`} name="image" type="file" accept=".png,.jpg,.jpeg,.gif,.webp" />
+                                            </div>
+                                            <button type="submit" className="btn btn-primary">Сохранить изменения</button>
+                                        </form>
+                                    </div>
+                                </details>
                                 <form method="POST" action="/studios/delete" onSubmit={(event) => { if (!window.confirm("Вы уверены, что хотите удалить эту студию?")) { event.preventDefault(); } }}>
                                     <input type="hidden" name="studio_id" value={item.id} />
                                     <button type="submit" className="btn btn-outline-light">Удалить студию</button>

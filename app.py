@@ -40,7 +40,9 @@ from api.functions import (
     ensure_news_media_columns,
     ensure_studios_table,
     reject_mission,
+    update_leaderboard_entry,
     update_news,
+    update_studio,
 )
 from helper.connect import get_connection
 from helper.logout import logout_user
@@ -194,6 +196,10 @@ def can_suggest_news(user):
 
 
 def can_manage_studios(user):
+    return bool(user["isadmin"])
+
+
+def can_manage_leaderboards(user):
     return bool(user["isadmin"])
 
 
@@ -422,10 +428,51 @@ def leaderboard_page():
         "leaderboard",
         "Таблица лидеров",
         user=user,
+        can_manage_leaderboards=can_manage_leaderboards(user),
         active_section="home",
         overall_leaderboard=overall_leaderboard,
         duel_leaderboard=duel_leaderboard,
     )
+
+
+@app.route("/leaderboard/update", methods=["POST"])
+def update_leaderboard_page():
+    user, redirect_response = require_user()
+    if redirect_response:
+        return redirect_response
+    if not can_manage_leaderboards(user):
+        return redirect(url_for("leaderboard_page"))
+
+    table_name = request.form.get("table_name", "").strip()
+    user_id = request.form.get("user_id", "").strip()
+    name = request.form.get("name", "").strip()
+    score_raw = request.form.get("score", "").strip()
+
+    if not user_id.isdigit() or not name or not score_raw:
+        flash("\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u043e\u0431\u043d\u043e\u0432\u0438\u0442\u044c \u0441\u0442\u0440\u043e\u043a\u0443 \u0442\u0430\u0431\u043b\u0438\u0446\u044b")
+        return redirect(url_for("leaderboard_page"))
+
+    try:
+        score = int(score_raw)
+    except ValueError:
+        flash("\u041e\u0447\u043a\u0438 \u0434\u043e\u043b\u0436\u043d\u044b \u0431\u044b\u0442\u044c \u0446\u0435\u043b\u044b\u043c \u0447\u0438\u0441\u043b\u043e\u043c")
+        return redirect(url_for("leaderboard_page"))
+
+    conn = get_connection()
+    try:
+        updated = update_leaderboard_entry(conn, table_name, int(user_id), name, score)
+    except ValueError:
+        flash("\u041d\u0435\u0432\u0435\u0440\u043d\u0430\u044f \u0442\u0430\u0431\u043b\u0438\u0446\u0430")
+        return redirect(url_for("leaderboard_page"))
+    finally:
+        conn.close()
+
+    flash(
+        "\u0421\u0442\u0440\u043e\u043a\u0430 \u0442\u0430\u0431\u043b\u0438\u0446\u044b \u043e\u0431\u043d\u043e\u0432\u043b\u0435\u043d\u0430"
+        if updated
+        else "\u0421\u0442\u0440\u043e\u043a\u0430 \u0442\u0430\u0431\u043b\u0438\u0446\u044b \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u0430"
+    )
+    return redirect(url_for("leaderboard_page"))
 
 
 @app.route("/news", methods=["GET"])
@@ -1003,7 +1050,7 @@ def studios_page():
     conn = get_connection()
     try:
         ensure_studios_table(conn)
-        studios_items = get_studios(conn)
+        studios_items = get_studios(conn, int(user["id"]), can_manage_studios(user))
     finally:
         conn.close()
 
@@ -1027,10 +1074,15 @@ def add_studio_page():
 
     title = request.form.get("title", "").strip()
     description = request.form.get("description", "").strip()
+    audience = request.form.get("audience", "all").strip()
     image_file = request.files.get("image")
+    allowed_audiences = {"all", "middle", "senior"}
 
     if not title or not description:
         flash("\u0417\u0430\u043f\u043e\u043b\u043d\u0438\u0442\u0435 \u043d\u0430\u0437\u0432\u0430\u043d\u0438\u0435 \u0438 \u043e\u043f\u0438\u0441\u0430\u043d\u0438\u0435 \u0441\u0442\u0443\u0434\u0438\u0438")
+        return redirect(url_for("studios_page"))
+    if audience not in allowed_audiences:
+        flash("\u041d\u0435\u0432\u0435\u0440\u043d\u043e \u0432\u044b\u0431\u0440\u0430\u043d\u0430 \u0430\u0443\u0434\u0438\u0442\u043e\u0440\u0438\u044f \u0441\u0442\u0443\u0434\u0438\u0438")
         return redirect(url_for("studios_page"))
 
     image_path = save_studio_image(image_file)
@@ -1038,11 +1090,68 @@ def add_studio_page():
     conn = get_connection()
     try:
         ensure_studios_table(conn)
-        add_studio(conn, int(user["id"]), title, description, image_path)
+        add_studio(conn, int(user["id"]), title, description, image_path, audience)
     finally:
         conn.close()
 
     flash("\u0421\u0442\u0443\u0434\u0438\u044f \u0434\u043e\u0431\u0430\u0432\u043b\u0435\u043d\u0430")
+    return redirect(url_for("studios_page"))
+
+
+@app.route("/studios/update", methods=["POST"])
+def update_studio_page():
+    user, redirect_response = require_user()
+    if redirect_response:
+        return redirect_response
+    if not can_manage_studios(user):
+        return redirect(url_for("studios_page"))
+
+    studio_id = request.form.get("studio_id", "").strip()
+    title = request.form.get("title", "").strip()
+    description = request.form.get("description", "").strip()
+    audience = request.form.get("audience", "all").strip()
+    remove_image = request.form.get("remove_image") == "1"
+    image_file = request.files.get("image")
+    allowed_audiences = {"all", "middle", "senior"}
+
+    if not studio_id.isdigit() or not title or not description:
+        flash("\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u043e\u0431\u043d\u043e\u0432\u0438\u0442\u044c \u0441\u0442\u0443\u0434\u0438\u044e")
+        return redirect(url_for("studios_page"))
+    if audience not in allowed_audiences:
+        flash("\u041d\u0435\u0432\u0435\u0440\u043d\u043e \u0432\u044b\u0431\u0440\u0430\u043d\u0430 \u0430\u0443\u0434\u0438\u0442\u043e\u0440\u0438\u044f \u0441\u0442\u0443\u0434\u0438\u0438")
+        return redirect(url_for("studios_page"))
+
+    new_image_path = save_studio_image(image_file)
+    conn = get_connection()
+    studio_item = None
+    old_image_path = None
+    final_image_path = None
+    updated = False
+    try:
+        ensure_studios_table(conn)
+        studio_item = get_studio(conn, int(studio_id))
+        if studio_item is not None:
+            old_image_path = studio_item.get("image_path")
+            final_image_path = None if remove_image else old_image_path
+            if new_image_path:
+                final_image_path = new_image_path
+
+            updated = update_studio(conn, int(studio_id), title, description, final_image_path, audience)
+    finally:
+        conn.close()
+
+    if studio_item is None:
+        if new_image_path:
+            delete_uploaded_paths([new_image_path])
+        flash("\u0421\u0442\u0443\u0434\u0438\u044f \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u0430")
+    elif updated:
+        if old_image_path and old_image_path != final_image_path:
+            delete_uploaded_paths([old_image_path])
+        flash("\u0421\u0442\u0443\u0434\u0438\u044f \u043e\u0431\u043d\u043e\u0432\u043b\u0435\u043d\u0430")
+    else:
+        if new_image_path:
+            delete_uploaded_paths([new_image_path])
+        flash("\u0421\u0442\u0443\u0434\u0438\u044e \u043d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u043e\u0431\u043d\u043e\u0432\u0438\u0442\u044c")
     return redirect(url_for("studios_page"))
 
 

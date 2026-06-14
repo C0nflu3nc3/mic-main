@@ -48,7 +48,7 @@ def get_leaderboard_table(conn, table_name):
 
     with conn.cursor() as cursor:
         sql = f"""
-            SELECT leaderboard.name AS Name, leaderboard.score AS Scores
+            SELECT leaderboard.user_id, leaderboard.name AS Name, leaderboard.score AS Scores
             FROM {table_name} AS leaderboard
             JOIN users ON users.id = leaderboard.user_id
             WHERE users.isAdmin = b'0' AND users.isJournalist = b'0'
@@ -56,6 +56,24 @@ def get_leaderboard_table(conn, table_name):
         """
         cursor.execute(sql)
         return cursor.fetchall()
+
+
+def update_leaderboard_entry(conn, table_name, user_id, name, score):
+    allowed_tables = {"Overall_leader", "Duel_leader"}
+    if table_name not in allowed_tables:
+        raise ValueError("Unsupported leaderboard table")
+
+    with conn.cursor() as cursor:
+        sql = f"""
+            UPDATE {table_name}
+            SET name = %s,
+                score = %s
+            WHERE user_id = %s
+        """
+        cursor.execute(sql, (name, score, user_id))
+        updated = cursor.rowcount > 0
+    conn.commit()
+    return updated
 
 
 def get_news(conn, publication_status=1):
@@ -512,6 +530,7 @@ def ensure_studios_table(conn):
                     title varchar(255) NOT NULL,
                     description text NOT NULL,
                     image_path varchar(255) DEFAULT NULL,
+                    audience varchar(20) NOT NULL DEFAULT 'all',
                     user_id int NOT NULL,
                     created_at datetime NOT NULL,
                     PRIMARY KEY (id),
@@ -527,7 +546,8 @@ def ensure_studios_table(conn):
                 "title": "ALTER TABLE Studios ADD COLUMN title varchar(255) NOT NULL AFTER id",
                 "description": "ALTER TABLE Studios ADD COLUMN description text NOT NULL AFTER title",
                 "image_path": "ALTER TABLE Studios ADD COLUMN image_path varchar(255) DEFAULT NULL AFTER description",
-                "user_id": "ALTER TABLE Studios ADD COLUMN user_id int NOT NULL AFTER image_path",
+                "audience": "ALTER TABLE Studios ADD COLUMN audience varchar(20) NOT NULL DEFAULT 'all' AFTER image_path",
+                "user_id": "ALTER TABLE Studios ADD COLUMN user_id int NOT NULL AFTER audience",
                 "created_at": "ALTER TABLE Studios ADD COLUMN created_at datetime NOT NULL AFTER user_id",
             }
             for column_name, alter_sql in required_columns.items():
@@ -541,22 +561,34 @@ def ensure_studios_table(conn):
     mark_schema_ready("studios")
 
 
-def get_studios(conn):
+def get_studios(conn, viewer_user_id=None, can_manage_all=False):
     with conn.cursor() as cursor:
-        cursor.execute(
-            """
+        sql = """
             SELECT
                 Studios.id,
                 Studios.title,
                 Studios.description,
                 Studios.image_path,
+                Studios.audience,
                 Studios.created_at,
                 users.login AS author_name
             FROM Studios
             JOIN users ON users.id = Studios.user_id
-            ORDER BY Studios.created_at DESC, Studios.id DESC
-            """
-        )
+        """
+        params = ()
+
+        if not can_manage_all:
+            audience_filters = ["Studios.audience = 'all'"]
+            if viewer_user_id is not None:
+                viewer_id = int(viewer_user_id)
+                if 6 <= viewer_id <= 9:
+                    audience_filters.append("Studios.audience = 'middle'")
+                elif 10 <= viewer_id <= 13:
+                    audience_filters.append("Studios.audience = 'senior'")
+            sql += f" WHERE ({' OR '.join(audience_filters)})"
+
+        sql += " ORDER BY Studios.created_at DESC, Studios.id DESC"
+        cursor.execute(sql, params)
         return cursor.fetchall()
 
 
@@ -569,6 +601,7 @@ def get_studio(conn, studio_id):
                 Studios.title,
                 Studios.description,
                 Studios.image_path,
+                Studios.audience,
                 Studios.created_at,
                 users.login AS author_name
             FROM Studios
@@ -581,17 +614,35 @@ def get_studio(conn, studio_id):
         return cursor.fetchone()
 
 
-def add_studio(conn, user_id, title, description, image_path):
+def add_studio(conn, user_id, title, description, image_path, audience="all"):
     with conn.cursor() as cursor:
         cursor.execute(
             """
-            INSERT INTO Studios (title, description, image_path, user_id, created_at)
-            VALUES (%s, %s, %s, %s, NOW())
+            INSERT INTO Studios (title, description, image_path, audience, user_id, created_at)
+            VALUES (%s, %s, %s, %s, %s, NOW())
             """,
-            (title, description, image_path, user_id),
+            (title, description, image_path, audience, user_id),
         )
     conn.commit()
     return True
+
+
+def update_studio(conn, studio_id, title, description, image_path, audience):
+    with conn.cursor() as cursor:
+        cursor.execute(
+            """
+            UPDATE Studios
+            SET title = %s,
+                description = %s,
+                image_path = %s,
+                audience = %s
+            WHERE id = %s
+            """,
+            (title, description, image_path, audience, studio_id),
+        )
+        updated = cursor.rowcount > 0
+    conn.commit()
+    return updated
 
 
 def delete_studio(conn, studio_id):

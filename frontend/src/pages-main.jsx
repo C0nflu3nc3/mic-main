@@ -64,7 +64,32 @@ export function HomePage() {
   );
 }
 
-function LeaderboardTable({ title, rows }) {
+function LeaderboardEditBlock({ tableName, rows }) {
+  return (
+    <details className="news-edit-block is-collapsed">
+      <summary className="news-edit-summary">Редактировать таблицу</summary>
+      <div className="news-edit-body">
+        {rows.map((row, index) => (
+          <form method="POST" action="/leaderboard/update" className="news-edit-form" key={`${tableName}-${row.user_id}-${index}`}>
+            <input type="hidden" name="table_name" value={tableName} />
+            <input type="hidden" name="user_id" value={row.user_id} />
+            <div className="mb-3">
+              <label className="form-label" htmlFor={`${tableName}-name-${row.user_id}`}>Название</label>
+              <input className="form-control" id={`${tableName}-name-${row.user_id}`} name="name" type="text" defaultValue={row.Name} required />
+            </div>
+            <div className="mb-3">
+              <label className="form-label" htmlFor={`${tableName}-score-${row.user_id}`}>Очки</label>
+              <input className="form-control" id={`${tableName}-score-${row.user_id}`} name="score" type="number" defaultValue={row.Scores} required />
+            </div>
+            <button type="submit" className="btn btn-primary">Сохранить строку</button>
+          </form>
+        ))}
+      </div>
+    </details>
+  );
+}
+
+function LeaderboardTable({ title, rows, tableName, canManageLeaderboards }) {
   return (
     <section className="leaderboard-panel">
       <h3 className="leaderboard-title">{title}</h3>
@@ -81,18 +106,19 @@ function LeaderboardTable({ title, rows }) {
             </tbody>
           </table>
         </div>
+        {canManageLeaderboards ? <LeaderboardEditBlock tableName={tableName} rows={rows} /> : null}
       </div>
     </section>
   );
 }
 
-export function LeaderboardPage({ overall_leaderboard = [], duel_leaderboard = [] }) {
+export function LeaderboardPage({ overall_leaderboard = [], duel_leaderboard = [], can_manage_leaderboards = false }) {
   return (
     <div className="section-page leaderboard-page ceremonial-page">
       <Hero title="Таблица лидеров" description="Здесь отображаются отдельные таблицы общего рейтинга и дуэльных очков." extraClass="leaderboard-hero" />
       <div className="leaderboard-grid">
-        <LeaderboardTable title="Очки влияния" rows={overall_leaderboard} />
-        <LeaderboardTable title="Турнирные очки" rows={duel_leaderboard} />
+        <LeaderboardTable title="Очки влияния" rows={overall_leaderboard} tableName="Overall_leader" canManageLeaderboards={can_manage_leaderboards} />
+        <LeaderboardTable title="Турнирные очки" rows={duel_leaderboard} tableName="Duel_leader" canManageLeaderboards={can_manage_leaderboards} />
       </div>
     </div>
   );

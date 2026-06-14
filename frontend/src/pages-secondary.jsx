@@ -137,6 +137,12 @@ export function ApprovePage({ approve_items = [] }) {
 }
 
 function StudiosCreateForm() {
+  const audienceOptions = [
+    { value: "middle", label: "Средние (ID 6-9)" },
+    { value: "senior", label: "Старшие (ID 10-13)" },
+    { value: "all", label: "Для всех" }
+  ];
+
   return (
     <section className="placeholder-card news-form-card news-suggest-card studios-form-card">
       <details className="news-edit-block news-suggest-block is-collapsed studios-create-block">
@@ -156,6 +162,14 @@ function StudiosCreateForm() {
               <input className="form-control" id="studio-image" name="image" type="file" accept=".png,.jpg,.jpeg,.gif,.webp" />
               <div className="form-text text-light">Картинка необязательна. Если нужна, лучше одно изображение на студию.</div>
             </div>
+            <div className="mb-3">
+              <label className="form-label" htmlFor="studio-audience">Показывать группе</label>
+              <select className="form-control" id="studio-audience" name="audience" defaultValue="all">
+                {audienceOptions.map((option) => (
+                  <option key={option.value} value={option.value}>{option.label}</option>
+                ))}
+              </select>
+            </div>
             <button type="submit" className="btn btn-primary">Добавить студию</button>
           </form>
         </div>
@@ -164,18 +178,76 @@ function StudiosCreateForm() {
   );
 }
 
+function StudioEditBlock({ item }) {
+  const audienceOptions = [
+    { value: "middle", label: "Средние (ID 6-9)" },
+    { value: "senior", label: "Старшие (ID 10-13)" },
+    { value: "all", label: "Для всех" }
+  ];
+
+  return (
+    <details className="news-edit-block news-edit-action is-collapsed">
+      <summary className="news-edit-summary">Редактировать студию</summary>
+      <div className="news-edit-body">
+        <form method="POST" action="/studios/update" encType="multipart/form-data" className="news-edit-form">
+          <input type="hidden" name="studio_id" value={item.id} />
+          <div className="mb-3">
+            <label className="form-label" htmlFor={`studio-edit-title-${item.id}`}>Название студии</label>
+            <input className="form-control" id={`studio-edit-title-${item.id}`} name="title" type="text" defaultValue={item.title} required />
+          </div>
+          <div className="mb-3">
+            <label className="form-label" htmlFor={`studio-edit-description-${item.id}`}>Описание студии</label>
+            <textarea className="form-control" id={`studio-edit-description-${item.id}`} name="description" rows="5" defaultValue={item.description} required />
+          </div>
+          <div className="mb-3">
+            <label className="form-label" htmlFor={`studio-edit-audience-${item.id}`}>Показывать группе</label>
+            <select className="form-control" id={`studio-edit-audience-${item.id}`} name="audience" defaultValue={item.audience || "all"}>
+              {audienceOptions.map((option) => (
+                <option key={option.value} value={option.value}>{option.label}</option>
+              ))}
+            </select>
+          </div>
+          {item.image_path ? (
+            <div className="mb-3">
+              <div className="form-label">Текущее изображение</div>
+              <img className="news-edit-media-preview" src={uploadedPath(item.image_path)} alt={item.title} loading="lazy" decoding="async" />
+              <label className="news-edit-remove">
+                <input type="checkbox" name="remove_image" value="1" />
+                <span>Убрать изображение</span>
+              </label>
+            </div>
+          ) : null}
+          <div className="mb-3">
+            <label className="form-label" htmlFor={`studio-edit-image-${item.id}`}>Новое изображение</label>
+            <input className="form-control" id={`studio-edit-image-${item.id}`} name="image" type="file" accept=".png,.jpg,.jpeg,.gif,.webp" />
+          </div>
+          <button type="submit" className="btn btn-primary">Сохранить изменения</button>
+        </form>
+      </div>
+    </details>
+  );
+}
+
 function StudioCard({ item, canManageStudios }) {
+  const audienceLabels = {
+    middle: "Для средних",
+    senior: "Для старших",
+    all: "Для всех"
+  };
+
   return (
     <article className="placeholder-card news-card studio-card">
       <div className="news-meta">
         <span>{item.author_name}</span>
         <span>{formatDateTime(item.created_at)}</span>
       </div>
+      <div className="news-suggestion-status">{audienceLabels[item.audience] || audienceLabels.all}</div>
       <h3>{item.title}</h3>
       {item.image_path ? <img className="news-image studio-image" src={uploadedPath(item.image_path)} alt={item.title} loading="lazy" decoding="async" /> : null}
       <p className="news-content">{item.description}</p>
       {canManageStudios ? (
         <div className="news-card-actions studio-card-actions">
+          <StudioEditBlock item={item} />
           <form
             method="POST"
             action="/studios/delete"
