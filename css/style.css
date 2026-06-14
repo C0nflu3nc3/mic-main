@@ -1819,6 +1819,13 @@ a {
   margin-right: 0;
 }
 
+@media (min-width: 769px) {
+  .studios-page .studio-card .news-content {
+    width: 100%;
+    max-width: none;
+  }
+}
+
 .studios-page .studio-card h3,
 .studios-page .placeholder-card:not(.studio-card):not(.news-form-card) h3 {
   font-family: var(--main-font-display);
