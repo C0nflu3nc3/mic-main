@@ -1,5 +1,6 @@
 import os
 import time
+from functools import lru_cache
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -8,10 +9,15 @@ import pymysql
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 ENV_FILE = BASE_DIR / ".env"
+_ENV_LOADED = False
 
 
 def load_env_file(env_file=ENV_FILE):
+    global _ENV_LOADED
+    if _ENV_LOADED:
+        return
     if not env_file.exists():
+        _ENV_LOADED = True
         return
 
     for raw_line in env_file.read_text(encoding="utf-8").splitlines():
@@ -24,7 +30,10 @@ def load_env_file(env_file=ENV_FILE):
         value = value.strip().strip('"').strip("'")
         os.environ.setdefault(key, value)
 
+    _ENV_LOADED = True
 
+
+@lru_cache(maxsize=1)
 def get_db_config():
     load_env_file()
     database_url = os.getenv("DATABASE_URL") or os.getenv("MYSQL_URL")

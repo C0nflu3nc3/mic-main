@@ -2,6 +2,7 @@
 import os
 import shutil
 from datetime import date, datetime
+from functools import lru_cache
 
 from flask import Flask, flash, get_flashed_messages, redirect, render_template, request, send_from_directory, session, url_for
 from werkzeug.utils import secure_filename
@@ -60,6 +61,7 @@ app.config["UPLOAD_ROOT"] = persistent_upload_root
 app.config["UPLOAD_FOLDER"] = os.path.join(persistent_upload_root, "news")
 app.config["STUDIOS_UPLOAD_FOLDER"] = os.path.join(persistent_upload_root, "studios")
 app.config["LEGACY_UPLOAD_FOLDER"] = legacy_upload_folder
+app.config["SEND_FILE_MAX_AGE_DEFAULT"] = int(os.getenv("SEND_FILE_MAX_AGE_DEFAULT", "86400"))
 app.config["MAX_CONTENT_LENGTH"] = 100 * 1024 * 1024
 
 ALLOWED_IMAGE_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
@@ -103,6 +105,7 @@ def serialize_for_react(value):
 FRONTEND_MANIFEST_PATH = os.path.join(app.static_folder, "frontend", ".vite", "manifest.json")
 
 
+@lru_cache(maxsize=1)
 def get_frontend_assets():
     if not os.path.exists(FRONTEND_MANIFEST_PATH):
         return None
@@ -123,6 +126,28 @@ def get_frontend_assets():
         "js": f"frontend/{entry['file']}",
         "css": [f"frontend/{css_file}" for css_file in entry.get("css", [])],
     }
+
+
+def resolve_upload_storage_path(public_path):
+    if not public_path or not public_path.startswith("uploads/"):
+        return None
+
+    relative_path = public_path[len("uploads/"):].replace("/", os.sep)
+    upload_root = os.path.abspath(app.config["UPLOAD_ROOT"])
+    absolute_path = os.path.abspath(os.path.join(upload_root, relative_path))
+    if absolute_path != upload_root and not absolute_path.startswith(upload_root + os.sep):
+        return None
+    return absolute_path
+
+
+def delete_uploaded_paths(paths):
+    for public_path in {path for path in paths if path}:
+        absolute_path = resolve_upload_storage_path(public_path)
+        if absolute_path and os.path.isfile(absolute_path):
+            try:
+                os.remove(absolute_path)
+            except OSError:
+                continue
 
 
 def render_react_page(page, page_title, user=None, active_section=None, **page_data):
@@ -485,15 +510,20 @@ def add_news_page():
         flash(media_error)
         return redirect(url_for("news_page"))
 
+    saved_media_paths = [item["media_path"] for item in media_items]
     image_path = next((item["media_path"] for item in media_items if item["media_type"] == "image"), None)
     video_path = next((item["media_path"] for item in media_items if item["media_type"] == "video"), None)
 
     conn = get_connection()
+    created = False
     try:
         ensure_news_media_columns(conn)
         add_news(conn, int(user["id"]), title, content, image_path, video_path, media_items, is_published=1)
+        created = True
     finally:
         conn.close()
+        if not created:
+            delete_uploaded_paths(saved_media_paths)
 
     flash("\u041d\u043e\u0432\u043e\u0441\u0442\u044c \u0434\u043e\u0431\u0430\u0432\u043b\u0435\u043d\u0430")
     return redirect(url_for("news_page"))
@@ -520,15 +550,20 @@ def suggest_news_page():
         flash(media_error)
         return redirect(url_for("news_page"))
 
+    saved_media_paths = [item["media_path"] for item in media_items]
     image_path = next((item["media_path"] for item in media_items if item["media_type"] == "image"), None)
     video_path = next((item["media_path"] for item in media_items if item["media_type"] == "video"), None)
 
     conn = get_connection()
+    created = False
     try:
         ensure_news_media_columns(conn)
         add_news(conn, int(user["id"]), title, content, image_path, video_path, media_items, is_published=0)
+        created = True
     finally:
         conn.close()
+        if not created:
+            delete_uploaded_paths(saved_media_paths)
 
     flash("\u041d\u043e\u0432\u043e\u0441\u0442\u044c \u043e\u0442\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u0430 \u043d\u0430 \u0440\u0430\u0441\u0441\u043c\u043e\u0442\u0440\u0435\u043d\u0438\u0435")
     return redirect(url_for("news_page"))
@@ -572,15 +607,20 @@ def update_news_page():
         flash(media_error)
         return redirect(get_news_redirect_url())
 
+    new_media_paths = [item["media_path"] for item in new_media_items]
     conn = get_connection()
     redirect_url = url_for("news_page")
+    removed_paths = []
+    update_succeeded = False
     try:
         ensure_news_media_columns(conn)
         news_item = get_news_for_update(conn, int(news_id))
         if news_item is None:
+            delete_uploaded_paths(new_media_paths)
             flash("\u041d\u043e\u0432\u043e\u0441\u0442\u044c \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u0430")
             return redirect(redirect_url)
         if int(news_item.get("is_published") or 0) == 0 and not can_review_suggested_news(user):
+            delete_uploaded_paths(new_media_paths)
             return redirect(redirect_url)
 
         redirect_url = get_news_redirect_url(news_item)
@@ -590,12 +630,24 @@ def update_news_page():
             new_media_items,
         )
         if final_media_error:
+            delete_uploaded_paths(new_media_paths)
             flash(final_media_error)
             return redirect(redirect_url)
 
+        final_media_paths = {item["media_path"] for item in final_media}
+        removed_paths = [
+            item["media_path"]
+            for item in news_item["media"]
+            if item.get("media_path") and item["media_path"] not in final_media_paths
+        ]
         update_news(conn, int(news_id), title, content, final_media)
+        update_succeeded = True
     finally:
         conn.close()
+        if update_succeeded:
+            delete_uploaded_paths(removed_paths)
+        else:
+            delete_uploaded_paths(new_media_paths)
 
     flash("\u041d\u043e\u0432\u043e\u0441\u0442\u044c \u043e\u0431\u043d\u043e\u0432\u043b\u0435\u043d\u0430")
     return redirect(redirect_url)
@@ -639,12 +691,18 @@ def reject_news_page():
         return redirect(url_for("suggested_news_page"))
 
     conn = get_connection()
+    deleted_paths = []
     try:
         ensure_news_media_columns(conn)
+        news_item = get_news_for_update(conn, int(news_id))
+        if news_item is not None:
+            deleted_paths = [item["media_path"] for item in news_item.get("media", []) if item.get("media_path")]
         ok = reject_news(conn, int(news_id))
     finally:
         conn.close()
 
+    if ok:
+        delete_uploaded_paths(deleted_paths)
     flash("\u041d\u043e\u0432\u043e\u0441\u0442\u044c \u043e\u0442\u043a\u043b\u043e\u043d\u0435\u043d\u0430" if ok else "\u041d\u043e\u0432\u043e\u0441\u0442\u044c \u043d\u0435 \u043e\u0442\u043a\u043b\u043e\u043d\u0435\u043d\u0430")
     return redirect(url_for("suggested_news_page"))
 
@@ -664,16 +722,20 @@ def delete_news_page():
 
     conn = get_connection()
     redirect_url = url_for("news_page")
+    deleted_paths = []
     try:
         ensure_news_comment_columns(conn)
         ensure_news_media_columns(conn)
         news_item = get_news_for_update(conn, int(news_id))
         if news_item is not None:
             redirect_url = get_news_redirect_url(news_item)
+            deleted_paths = [item["media_path"] for item in news_item.get("media", []) if item.get("media_path")]
         ok = delete_news(conn, int(news_id))
     finally:
         conn.close()
 
+    if ok:
+        delete_uploaded_paths(deleted_paths)
     flash("\u041d\u043e\u0432\u043e\u0441\u0442\u044c \u0443\u0434\u0430\u043b\u0435\u043d\u0430" if ok else "\u041d\u043e\u0432\u043e\u0441\u0442\u044c \u043d\u0435 \u0443\u0434\u0430\u043b\u0435\u043d\u0430")
     return redirect(redirect_url)
 
@@ -1175,4 +1237,8 @@ def api_add_operation():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000, debug=True)
+    app.run(
+        host="0.0.0.0",
+        port=int(os.getenv("PORT", "8000")),
+        debug=os.getenv("FLASK_DEBUG") == "1",
+    )

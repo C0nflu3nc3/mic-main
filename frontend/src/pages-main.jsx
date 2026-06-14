@@ -7,7 +7,7 @@ export function LoginPage({ messages }) {
         <div className="col-11 col-sm-9 col-md-5 col-lg-5 d-flex justify-content-center login-brand-col">
           <div className="logo-panel">
             <span className="logo-orbit" aria-hidden="true" />
-            <img src="/static/logo_login.png" title="logo" alt="logo" width="220" height="220" className="img-fluid login-logo" />
+            <img src="/static/logo_login.png" title="logo" alt="logo" width="220" height="220" className="img-fluid login-logo" decoding="async" />
           </div>
         </div>
 
@@ -109,7 +109,7 @@ function NewsMedia({ media, title }) {
           Ваш браузер не поддерживает встроенное видео.
         </video>
       ) : (
-        <img className="news-image" src={uploadedPath(item.media_path)} alt={title} key={`${item.media_path}-${index}`} />
+        <img className="news-image" src={uploadedPath(item.media_path)} alt={title} loading="lazy" decoding="async" key={`${item.media_path}-${index}`} />
       ))}
     </div>
   );
@@ -140,7 +140,7 @@ function NewsEditBlock({ item, summaryLabel = "Редактировать нов
                     {media.media_type === "video" ? (
                       <video className="news-edit-media-preview" controls preload="metadata"><source src={uploadedPath(media.media_path)} /></video>
                     ) : (
-                      <img className="news-edit-media-preview" src={uploadedPath(media.media_path)} alt={item.title} />
+                      <img className="news-edit-media-preview" src={uploadedPath(media.media_path)} alt={item.title} loading="lazy" decoding="async" />
                     )}
                     <span className="news-edit-media-meta">{media.media_type === "video" ? "Видео" : "Изображение"}</span>
                     <span className="news-edit-remove"><input type="checkbox" name="remove_media_ids" value={media.id} /><span>Убрать из новости</span></span>

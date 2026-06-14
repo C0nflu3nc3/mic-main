@@ -172,7 +172,7 @@ function StudioCard({ item, canManageStudios }) {
         <span>{formatDateTime(item.created_at)}</span>
       </div>
       <h3>{item.title}</h3>
-      {item.image_path ? <img className="news-image studio-image" src={uploadedPath(item.image_path)} alt={item.title} /> : null}
+      {item.image_path ? <img className="news-image studio-image" src={uploadedPath(item.image_path)} alt={item.title} loading="lazy" decoding="async" /> : null}
       <p className="news-content">{item.description}</p>
       {canManageStudios ? (
         <div className="news-card-actions studio-card-actions">

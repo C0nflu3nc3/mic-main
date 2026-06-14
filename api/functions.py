@@ -1,4 +1,19 @@
 from helper.connect import bit_to_int
+from threading import Lock
+
+
+_SCHEMA_READY = set()
+_SCHEMA_LOCK = Lock()
+
+
+def is_schema_ready(schema_name):
+    with _SCHEMA_LOCK:
+        return schema_name in _SCHEMA_READY
+
+
+def mark_schema_ready(schema_name):
+    with _SCHEMA_LOCK:
+        _SCHEMA_READY.add(schema_name)
 
 
 def get_plt(conn, team_id):
@@ -69,7 +84,13 @@ def get_news(conn, publication_status=1):
         cursor.execute(sql.format(where_clause=where_clause), params)
         news_rows = cursor.fetchall()
 
-        media_sql = """
+        if not news_rows:
+            return []
+
+        news_ids = [int(row["id"]) for row in news_rows]
+        placeholders = ", ".join(["%s"] * len(news_ids))
+
+        media_sql = f"""
             SELECT
                 News_media.id,
                 News_media.news_id,
@@ -77,12 +98,13 @@ def get_news(conn, publication_status=1):
                 News_media.media_type,
                 News_media.sort_order
             FROM News_media
-            ORDER BY News_media.sort_order ASC, News_media.id ASC
+            WHERE News_media.news_id IN ({placeholders})
+            ORDER BY News_media.news_id ASC, News_media.sort_order ASC, News_media.id ASC
         """
-        cursor.execute(media_sql)
+        cursor.execute(media_sql, news_ids)
         media_rows = cursor.fetchall()
 
-        comment_sql = """
+        comment_sql = f"""
             SELECT
                 News_comment.id,
                 News_comment.news_id,
@@ -93,9 +115,10 @@ def get_news(conn, publication_status=1):
                 users.login AS author_name
             FROM News_comment
             JOIN users ON users.id = News_comment.user_id
-            ORDER BY News_comment.created_at ASC, News_comment.id ASC
+            WHERE News_comment.news_id IN ({placeholders})
+            ORDER BY News_comment.news_id ASC, News_comment.created_at ASC, News_comment.id ASC
         """
-        cursor.execute(comment_sql)
+        cursor.execute(comment_sql, news_ids)
         comments = cursor.fetchall()
 
     comments_by_news = {}
@@ -156,6 +179,9 @@ def get_news(conn, publication_status=1):
 
 
 def ensure_news_media_columns(conn):
+    if is_schema_ready("news_media"):
+        return
+
     schema_changed = False
     with conn.cursor() as cursor:
         cursor.execute("SHOW COLUMNS FROM News LIKE 'is_published'")
@@ -235,9 +261,13 @@ def ensure_news_media_columns(conn):
             schema_changed = True
     if schema_changed:
         conn.commit()
+    mark_schema_ready("news_media")
 
 
 def ensure_news_comment_columns(conn):
+    if is_schema_ready("news_comment"):
+        return
+
     schema_changed = False
     with conn.cursor() as cursor:
         cursor.execute("SHOW COLUMNS FROM News_comment LIKE 'parent_comment_id'")
@@ -261,6 +291,7 @@ def ensure_news_comment_columns(conn):
             schema_changed = True
     if schema_changed:
         conn.commit()
+    mark_schema_ready("news_comment")
 
 
 def add_news(conn, user_id, title, content, image_path, video_path, media_items=None, is_published=1):
@@ -467,6 +498,9 @@ def add_news_comment(conn, news_id, user_id, comment, parent_comment_id=None):
 
 
 def ensure_studios_table(conn):
+    if is_schema_ready("studios"):
+        return
+
     schema_changed = False
     with conn.cursor() as cursor:
         cursor.execute("SHOW TABLES LIKE 'Studios'")
@@ -504,6 +538,7 @@ def ensure_studios_table(conn):
 
     if schema_changed:
         conn.commit()
+    mark_schema_ready("studios")
 
 
 def get_studios(conn):
@@ -593,6 +628,9 @@ def delete_news_comment(conn, comment_id, current_user_id, can_manage_all=False)
 
 
 def ensure_mission_columns(conn):
+    if is_schema_ready("mission"):
+        return
+
     schema_changed = False
     with conn.cursor() as cursor:
         cursor.execute("SHOW COLUMNS FROM Mission LIKE 'is_exclusive'")
@@ -627,6 +665,7 @@ def ensure_mission_columns(conn):
 
     if schema_changed:
         conn.commit()
+    mark_schema_ready("mission")
 
 
 def create_mission(conn, title, description, reward, user_id, is_exclusive=False, max_accepted_count=3):

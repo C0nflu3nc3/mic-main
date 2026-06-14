@@ -160,6 +160,7 @@ function LoginPage({ messages }) {
                             width="220"
                             height="220"
                             className="img-fluid login-logo"
+                            decoding="async"
                         />
                     </div>
                 </div>
@@ -311,6 +312,8 @@ function NewsMedia({ media, title }) {
                         className="news-image"
                         src={uploadedPath(item.media_path)}
                         alt={title}
+                        loading="lazy"
+                        decoding="async"
                         key={`${item.media_path}-${index}`}
                     />
                 )
@@ -349,7 +352,7 @@ function NewsEditBlock({ item, summaryLabel = "Редактировать нов
                                                 <source src={uploadedPath(media.media_path)} />
                                             </video>
                                         ) : (
-                                            <img className="news-edit-media-preview" src={uploadedPath(media.media_path)} alt={item.title} />
+                                            <img className="news-edit-media-preview" src={uploadedPath(media.media_path)} alt={item.title} loading="lazy" decoding="async" />
                                         )}
                                         <span className="news-edit-media-meta">
                                             {media.media_type === "video" ? "Видео" : "Изображение"}
@@ -993,7 +996,7 @@ function StudiosPage({ studios_items = [], can_manage_studios = false }) {
                             <span>{formatDateTime(item.created_at)}</span>
                         </div>
                         <h3>{item.title}</h3>
-                        {item.image_path ? <img className="news-image studio-image" src={uploadedPath(item.image_path)} alt={item.title} /> : null}
+                        {item.image_path ? <img className="news-image studio-image" src={uploadedPath(item.image_path)} alt={item.title} loading="lazy" decoding="async" /> : null}
                         <p className="news-content">{item.description}</p>
                         {can_manage_studios ? (
                             <div className="news-card-actions studio-card-actions">
