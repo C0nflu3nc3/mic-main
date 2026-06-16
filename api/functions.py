@@ -4,6 +4,10 @@ from threading import Lock
 
 _SCHEMA_READY = set()
 _SCHEMA_LOCK = Lock()
+_LEADERBOARD_TABLES = {
+    "Overall_leader": "Overall_leader",
+    "Duel_leader": "Duel_leader",
+}
 
 
 def is_schema_ready(schema_name):
@@ -14,6 +18,13 @@ def is_schema_ready(schema_name):
 def mark_schema_ready(schema_name):
     with _SCHEMA_LOCK:
         _SCHEMA_READY.add(schema_name)
+
+
+def get_leaderboard_table_name(table_name):
+    normalized = _LEADERBOARD_TABLES.get(table_name)
+    if normalized is None:
+        raise ValueError("Unsupported leaderboard table")
+    return normalized
 
 
 def get_plt(conn, team_id):
@@ -42,14 +53,12 @@ def get_scoreboard(conn):
 
 
 def get_leaderboard_table(conn, table_name):
-    allowed_tables = {"Overall_leader", "Duel_leader"}
-    if table_name not in allowed_tables:
-        raise ValueError("Unsupported leaderboard table")
+    normalized_table_name = get_leaderboard_table_name(table_name)
 
     with conn.cursor() as cursor:
         sql = f"""
             SELECT leaderboard.user_id, leaderboard.name AS Name, leaderboard.score AS Scores
-            FROM {table_name} AS leaderboard
+            FROM {normalized_table_name} AS leaderboard
             JOIN users ON users.id = leaderboard.user_id
             WHERE users.isAdmin = b'0' AND users.isJournalist = b'0'
             ORDER BY leaderboard.score DESC, leaderboard.name ASC
@@ -59,13 +68,11 @@ def get_leaderboard_table(conn, table_name):
 
 
 def update_leaderboard_entry(conn, table_name, user_id, name, score):
-    allowed_tables = {"Overall_leader", "Duel_leader"}
-    if table_name not in allowed_tables:
-        raise ValueError("Unsupported leaderboard table")
+    normalized_table_name = get_leaderboard_table_name(table_name)
 
     with conn.cursor() as cursor:
         sql = f"""
-            UPDATE {table_name}
+            UPDATE {normalized_table_name}
             SET name = %s,
                 score = %s
             WHERE user_id = %s
@@ -551,7 +558,7 @@ def ensure_studios_table(conn):
                 "created_at": "ALTER TABLE Studios ADD COLUMN created_at datetime NOT NULL AFTER user_id",
             }
             for column_name, alter_sql in required_columns.items():
-                cursor.execute(f"SHOW COLUMNS FROM Studios LIKE '{column_name}'")
+                cursor.execute("SHOW COLUMNS FROM Studios LIKE %s", (column_name,))
                 if cursor.fetchone() is None:
                     cursor.execute(alter_sql)
                     schema_changed = True

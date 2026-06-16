@@ -263,6 +263,19 @@ a {
     0 10px 22px rgba(0, 0, 0, 0.22);
 }
 
+.nav-link-form {
+  margin: 0;
+}
+
+.nav-link-button {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  text-align: inherit;
+  font: inherit;
+}
+
 .section-nav .nav-link.has-badge {
   position: relative;
   padding-right: clamp(30px, 2vw, 38px);
@@ -365,7 +378,8 @@ a {
   opacity: 0.72;
 }
 
-#user-controls .nav-link[href="/logout"] {
+#user-controls .nav-link[href="/logout"],
+#user-controls .nav-link-button {
   font-family: var(--main-font-nav);
   color: #f0d49a;
   font-weight: 700;
@@ -375,7 +389,9 @@ a {
 }
 
 #user-controls .nav-link[href="/logout"]:hover,
-#user-controls .nav-link[href="/logout"]:focus {
+#user-controls .nav-link[href="/logout"]:focus,
+#user-controls .nav-link-button:hover,
+#user-controls .nav-link-button:focus {
   color: #17110b;
   border-color: rgba(226, 184, 110, 0.78);
   background:
@@ -4689,7 +4705,8 @@ img {
     border-radius: 12px;
   }
 
-  #user-controls .nav-link[href="/logout"] {
+  #user-controls .nav-link[href="/logout"],
+  #user-controls .nav-link-button {
     font-size: 15px;
   }
 

@@ -146,21 +146,21 @@ function StudiosCreateForm() {
   return (
     <section className="placeholder-card news-form-card news-suggest-card studios-form-card">
       <details className="news-edit-block news-suggest-block is-collapsed studios-create-block">
-        <summary className="news-edit-summary">Добавить студию</summary>
+        <summary className="news-edit-summary">Добавить кафедру</summary>
         <div className="news-edit-body">
           <form method="POST" action="/studios/add" encType="multipart/form-data" className="news-edit-form">
             <div className="mb-3">
-              <label className="form-label" htmlFor="studio-title">Название студии</label>
+              <label className="form-label" htmlFor="studio-title">Название кафедры</label>
               <input className="form-control" id="studio-title" name="title" type="text" required />
             </div>
             <div className="mb-3">
-              <label className="form-label" htmlFor="studio-description">Описание студии</label>
+              <label className="form-label" htmlFor="studio-description">Описание кафедры</label>
               <textarea className="form-control" id="studio-description" name="description" rows="5" required />
             </div>
             <div className="mb-3">
               <label className="form-label" htmlFor="studio-image">Изображение</label>
               <input className="form-control" id="studio-image" name="image" type="file" accept=".png,.jpg,.jpeg,.gif,.webp" />
-              <div className="form-text text-light">Картинка необязательна. Если нужна, лучше одно изображение на студию.</div>
+              <div className="form-text text-light">Картинка необязательна. Если нужна, лучше одно изображение на кафедру.</div>
             </div>
             <div className="mb-3">
               <label className="form-label" htmlFor="studio-audience">Показывать группе</label>
@@ -170,7 +170,7 @@ function StudiosCreateForm() {
                 ))}
               </select>
             </div>
-            <button type="submit" className="btn btn-primary">Добавить студию</button>
+            <button type="submit" className="btn btn-primary">Добавить кафедру</button>
           </form>
         </div>
       </details>
@@ -187,16 +187,16 @@ function StudioEditBlock({ item }) {
 
   return (
     <details className="news-edit-block news-edit-action is-collapsed">
-      <summary className="news-edit-summary">Редактировать студию</summary>
+      <summary className="news-edit-summary">Редактировать кафедру</summary>
       <div className="news-edit-body">
         <form method="POST" action="/studios/update" encType="multipart/form-data" className="news-edit-form">
           <input type="hidden" name="studio_id" value={item.id} />
           <div className="mb-3">
-            <label className="form-label" htmlFor={`studio-edit-title-${item.id}`}>Название студии</label>
+            <label className="form-label" htmlFor={`studio-edit-title-${item.id}`}>Название кафедры</label>
             <input className="form-control" id={`studio-edit-title-${item.id}`} name="title" type="text" defaultValue={item.title} required />
           </div>
           <div className="mb-3">
-            <label className="form-label" htmlFor={`studio-edit-description-${item.id}`}>Описание студии</label>
+            <label className="form-label" htmlFor={`studio-edit-description-${item.id}`}>Описание кафедры</label>
             <textarea className="form-control" id={`studio-edit-description-${item.id}`} name="description" rows="5" defaultValue={item.description} required />
           </div>
           <div className="mb-3">
@@ -254,13 +254,13 @@ function StudioCard({ item, canManageStudios }) {
             method="POST"
             action="/studios/delete"
             onSubmit={(event) => {
-              if (!window.confirm("Вы уверены, что хотите удалить эту студию?")) {
+              if (!window.confirm("Вы уверены, что хотите удалить эту кафедру?")) {
                 event.preventDefault();
               }
             }}
           >
             <input type="hidden" name="studio_id" value={item.id} />
-            <button type="submit" className="btn btn-outline-light">Удалить студию</button>
+            <button type="submit" className="btn btn-outline-light">Удалить кафедру</button>
           </form>
         </div>
       ) : null}
@@ -272,8 +272,8 @@ export function StudiosPage({ studios_items = [], can_manage_studios = false }) 
   return (
     <div className="section-page studios-page ceremonial-page">
       <Hero
-        title="Студии"
-        description="Здесь собраны студии Империи."
+        title="Кафедры"
+        description="Здесь собраны кафедры Империи."
       />
       {can_manage_studios ? <StudiosCreateForm /> : null}
       <div className="news-list">
@@ -282,8 +282,8 @@ export function StudiosPage({ studios_items = [], can_manage_studios = false }) 
         ))}
         {!studios_items.length ? (
           <section className="placeholder-card">
-            <h3>Студий пока нет</h3>
-            <p>Добавленные администратором студии появятся здесь.</p>
+            <h3>Кафедр пока нет</h3>
+            <p>Добавленные администратором кафедры появятся здесь.</p>
           </section>
         ) : null}
       </div>

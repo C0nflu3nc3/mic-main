@@ -74,7 +74,7 @@ export function Header({ user, activeSection, pendingNewsCount = 0 }) {
   const isAdmin = Boolean(user.isadmin);
   const menuItems = [
     { key: "home", href: "/home", label: "\u0413\u043b\u0430\u0432\u043d\u0430\u044f" },
-    { key: "studios", href: "/studios", label: "\u0421\u0442\u0443\u0434\u0438\u0438" },
+    { key: "studios", href: "/studios", label: "\u041a\u0430\u0444\u0435\u0434\u0440\u044b" },
     { key: "history", href: "/history", label: "\u0418\u0441\u0442\u043e\u0440\u0438\u044f \u0438 \u043a\u043e\u0434\u0435\u043a\u0441" },
     { key: "bonus", href: "/bonus", label: "\u0411\u043e\u043d\u0443\u0441\u043d\u0430\u044f \u0441\u0438\u0441\u0442\u0435\u043c\u0430" },
     { key: "bank", href: "/teams", label: "\u0411\u0430\u043d\u043a" }
@@ -114,7 +114,9 @@ export function Header({ user, activeSection, pendingNewsCount = 0 }) {
                 </li>
               ))}
               <li className="nav-item menu-extra-item">
-                <a className="nav-link" href="/logout">{"\u0412\u044b\u0445\u043e\u0434"}</a>
+                <form method="POST" action="/logout" className="nav-link-form">
+                  <button type="submit" className="nav-link nav-link-button">{"\u0412\u044b\u0445\u043e\u0434"}</button>
+                </form>
               </li>
             </ul>
             <ul className="nav menu-account-controls" id="user-controls">
@@ -122,7 +124,9 @@ export function Header({ user, activeSection, pendingNewsCount = 0 }) {
                 <div className="user-status-panel">{user.view}</div>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="/logout">{"\u0412\u044b\u0445\u043e\u0434"}</a>
+                <form method="POST" action="/logout" className="nav-link-form">
+                  <button type="submit" className="nav-link nav-link-button">{"\u0412\u044b\u0445\u043e\u0434"}</button>
+                </form>
               </li>
             </ul>
           </div>

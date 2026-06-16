@@ -1,4 +1,4 @@
-const HistoryPage = window.HistoryPage;
+﻿const HistoryPage = window.HistoryPage;
 
 const bootstrap = window.__BOOTSTRAP__ || {};
 
@@ -85,15 +85,15 @@ function Header({ user, activeSection, pendingNewsCount = 0 }) {
 
     const isAdmin = Boolean(user.isadmin);
     const menuItems = [
-        { key: "home", href: "/home", label: "Главная" },
-        { key: "studios", href: "/studios", label: "Студии" },
-        { key: "history", href: "/history", label: "История и кодекс" },
-        { key: "bonus", href: "/bonus", label: "Бонусная система" },
-        { key: "bank", href: "/teams", label: "Банк" },
+        { key: "home", href: "/home", label: "Р“Р»Р°РІРЅР°СЏ" },
+        { key: "studios", href: "/studios", label: "РљР°С„РµРґСЂС‹" },
+        { key: "history", href: "/history", label: "РСЃС‚РѕСЂРёСЏ Рё РєРѕРґРµРєСЃ" },
+        { key: "bonus", href: "/bonus", label: "Р‘РѕРЅСѓСЃРЅР°СЏ СЃРёСЃС‚РµРјР°" },
+        { key: "bank", href: "/teams", label: "Р‘Р°РЅРє" },
     ];
 
     if (isAdmin) {
-        menuItems.push({ key: "approve", href: "/approve", label: "Подтверждение" });
+        menuItems.push({ key: "approve", href: "/approve", label: "РџРѕРґС‚РІРµСЂР¶РґРµРЅРёРµ" });
     }
 
     return (
@@ -108,7 +108,7 @@ function Header({ user, activeSection, pendingNewsCount = 0 }) {
                             aria-expanded="false"
                             aria-controls="mainMenuCollapse"
                         >
-                            Меню
+                            РњРµРЅСЋ
                         </button>
                     </div>
 
@@ -126,7 +126,9 @@ function Header({ user, activeSection, pendingNewsCount = 0 }) {
                                 </li>
                             ))}
                             <li className="nav-item menu-extra-item">
-                                <a className="nav-link" href="/logout">Выход</a>
+                                <form method="POST" action="/logout" className="nav-link-form">
+                                    <button type="submit" className="nav-link nav-link-button">Р’С‹С…РѕРґ</button>
+                                </form>
                             </li>
                         </ul>
                         <ul className="nav menu-account-controls" id="user-controls">
@@ -134,7 +136,9 @@ function Header({ user, activeSection, pendingNewsCount = 0 }) {
                                 <div className="user-status-panel">{user.view}</div>
                             </li>
                             <li className="nav-item">
-                                <a className="nav-link" href="/logout">Выход</a>
+                                <form method="POST" action="/logout" className="nav-link-form">
+                                    <button type="submit" className="nav-link nav-link-button">Р’С‹С…РѕРґ</button>
+                                </form>
                             </li>
                         </ul>
                     </div>
@@ -168,22 +172,22 @@ function LoginPage({ messages }) {
                 <div className="col-11 col-sm-10 col-md-7 col-lg-5 login-form-col">
                     <form action="/signin" method="post" className="login-card">
                         <div className="login-card-divider login-card-divider-top" aria-hidden="true" />
-                        <h1 className="text-center">Авторизация</h1>
+                        <h1 className="text-center">РђРІС‚РѕСЂРёР·Р°С†РёСЏ</h1>
                         <div className="login-card-divider" aria-hidden="true" />
 
                         <div className="form-outline mb-4 text-start login-field login-field-user">
-                            <label className="form-label" htmlFor="login">Логин</label>
-                            <input type="text" name="login" id="login" className="form-control" placeholder="Введите свой логин" />
+                            <label className="form-label" htmlFor="login">Р›РѕРіРёРЅ</label>
+                            <input type="text" name="login" id="login" className="form-control" placeholder="Р’РІРµРґРёС‚Рµ СЃРІРѕР№ Р»РѕРіРёРЅ" />
                         </div>
 
                         <div className="form-outline mb-4 text-start login-field login-field-pass">
-                            <label className="form-label" htmlFor="password">Пароль</label>
-                            <input type="password" name="password" id="password" className="form-control" placeholder="Введите пароль" />
+                            <label className="form-label" htmlFor="password">РџР°СЂРѕР»СЊ</label>
+                            <input type="password" name="password" id="password" className="form-control" placeholder="Р’РІРµРґРёС‚Рµ РїР°СЂРѕР»СЊ" />
                         </div>
 
                         <LoginMessages messages={messages} />
 
-                        <button type="submit" className="btn btn-primary w-100 mb-4">Войти</button>
+                        <button type="submit" className="btn btn-primary w-100 mb-4">Р’РѕР№С‚Рё</button>
                         <div className="login-card-divider login-card-divider-bottom" aria-hidden="true" />
                     </form>
                 </div>
@@ -205,32 +209,32 @@ function HomePage() {
     const cards = [
         {
             href: "/leaderboard",
-            icon: "🏆",
+            icon: "рџЏ†",
             variant: "leaderboard",
-            title: "Таблица лидеров",
-            text: "Здесь отображаются две таблицы: дуэльный зачет и общий рейтинг легионов.",
+            title: "РўР°Р±Р»РёС†Р° Р»РёРґРµСЂРѕРІ",
+            text: "Р—РґРµСЃСЊ РѕС‚РѕР±СЂР°Р¶Р°СЋС‚СЃСЏ РґРІРµ С‚Р°Р±Р»РёС†С‹: РґСѓСЌР»СЊРЅС‹Р№ Р·Р°С‡РµС‚ Рё РѕР±С‰РёР№ СЂРµР№С‚РёРЅРі Р»РµРіРёРѕРЅРѕРІ.",
         },
         {
             href: "/news",
-            icon: "📜",
+            icon: "рџ“њ",
             variant: "news",
-            title: "Новости",
-            text: "Здесь публикуются новости с изображениями и видео, а пользователи добавляют комментарии.",
+            title: "РќРѕРІРѕСЃС‚Рё",
+            text: "Р—РґРµСЃСЊ РїСѓР±Р»РёРєСѓСЋС‚СЃСЏ РЅРѕРІРѕСЃС‚Рё СЃ РёР·РѕР±СЂР°Р¶РµРЅРёСЏРјРё Рё РІРёРґРµРѕ, Р° РїРѕР»СЊР·РѕРІР°С‚РµР»Рё РґРѕР±Р°РІР»СЏСЋС‚ РєРѕРјРјРµРЅС‚Р°СЂРёРё.",
         },
         {
             href: "/missions",
-            icon: "✦",
+            icon: "вњ¦",
             variant: "missions",
-            title: "Доска заказов",
-            text: "Здесь легионы выбирают задания, видят лимиты по контрактам и отправляют выполнение на подтверждение.",
+            title: "Р”РѕСЃРєР° Р·Р°РєР°Р·РѕРІ",
+            text: "Р—РґРµСЃСЊ Р»РµРіРёРѕРЅС‹ РІС‹Р±РёСЂР°СЋС‚ Р·Р°РґР°РЅРёСЏ, РІРёРґСЏС‚ Р»РёРјРёС‚С‹ РїРѕ РєРѕРЅС‚СЂР°РєС‚Р°Рј Рё РѕС‚РїСЂР°РІР»СЏСЋС‚ РІС‹РїРѕР»РЅРµРЅРёРµ РЅР° РїРѕРґС‚РІРµСЂР¶РґРµРЅРёРµ.",
         },
     ];
 
     return (
         <div className="section-page home-page ceremonial-page">
             <Hero
-                title="Главная страница"
-                description="Здесь отображаются основные разделы системы: таблица лидеров, новости и миссии за валюту."
+                title="Р“Р»Р°РІРЅР°СЏ СЃС‚СЂР°РЅРёС†Р°"
+                description="Р—РґРµСЃСЊ РѕС‚РѕР±СЂР°Р¶Р°СЋС‚СЃСЏ РѕСЃРЅРѕРІРЅС‹Рµ СЂР°Р·РґРµР»С‹ СЃРёСЃС‚РµРјС‹: С‚Р°Р±Р»РёС†Р° Р»РёРґРµСЂРѕРІ, РЅРѕРІРѕСЃС‚Рё Рё РјРёСЃСЃРёРё Р·Р° РІР°Р»СЋС‚Сѓ."
             />
 
                 <div className="placeholder-grid">
@@ -252,21 +256,21 @@ function HomePage() {
 function LeaderboardEditBlock({ tableName, rows }) {
     return (
         <details className="news-edit-block is-collapsed">
-            <summary className="news-edit-summary">Редактировать таблицу</summary>
+            <summary className="news-edit-summary">Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ С‚Р°Р±Р»РёС†Сѓ</summary>
             <div className="news-edit-body">
                 {rows.map((row, index) => (
                     <form method="POST" action="/leaderboard/update" className="news-edit-form" key={`${tableName}-${row.user_id}-${index}`}>
                         <input type="hidden" name="table_name" value={tableName} />
                         <input type="hidden" name="user_id" value={row.user_id} />
                         <div className="mb-3">
-                            <label className="form-label" htmlFor={`${tableName}-name-${row.user_id}`}>Название</label>
+                            <label className="form-label" htmlFor={`${tableName}-name-${row.user_id}`}>РќР°Р·РІР°РЅРёРµ</label>
                             <input className="form-control" id={`${tableName}-name-${row.user_id}`} name="name" type="text" defaultValue={row.Name} required />
                         </div>
                         <div className="mb-3">
-                            <label className="form-label" htmlFor={`${tableName}-score-${row.user_id}`}>Очки</label>
+                            <label className="form-label" htmlFor={`${tableName}-score-${row.user_id}`}>РћС‡РєРё</label>
                             <input className="form-control" id={`${tableName}-score-${row.user_id}`} name="score" type="number" defaultValue={row.Scores} required />
                         </div>
-                        <button type="submit" className="btn btn-primary">Сохранить строку</button>
+                        <button type="submit" className="btn btn-primary">РЎРѕС…СЂР°РЅРёС‚СЊ СЃС‚СЂРѕРєСѓ</button>
                     </form>
                 ))}
             </div>
@@ -283,8 +287,8 @@ function LeaderboardTable({ title, rows, tableName, canManageLeaderboards }) {
                     <table className="table elegant-table">
                         <thead>
                             <tr>
-                                <th>ЛЕГИОН</th>
-                                <th>Очки</th>
+                                <th>Р›Р•Р“РРћРќ</th>
+                                <th>РћС‡РєРё</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -307,14 +311,14 @@ function LeaderboardPage({ overall_leaderboard = [], duel_leaderboard = [], can_
     return (
         <div className="section-page leaderboard-page ceremonial-page">
             <Hero
-                title="Таблица лидеров"
-                description="Здесь отображаются отдельные таблицы общего рейтинга и дуэльных очков."
+                title="РўР°Р±Р»РёС†Р° Р»РёРґРµСЂРѕРІ"
+                description="Р—РґРµСЃСЊ РѕС‚РѕР±СЂР°Р¶Р°СЋС‚СЃСЏ РѕС‚РґРµР»СЊРЅС‹Рµ С‚Р°Р±Р»РёС†С‹ РѕР±С‰РµРіРѕ СЂРµР№С‚РёРЅРіР° Рё РґСѓСЌР»СЊРЅС‹С… РѕС‡РєРѕРІ."
                 extraClass="leaderboard-hero"
             />
 
             <div className="leaderboard-grid">
-                <LeaderboardTable title="Очки влияния" rows={overall_leaderboard} tableName="Overall_leader" canManageLeaderboards={can_manage_leaderboards} />
-                <LeaderboardTable title="Турнирные очки" rows={duel_leaderboard} tableName="Duel_leader" canManageLeaderboards={can_manage_leaderboards} />
+                <LeaderboardTable title="РћС‡РєРё РІР»РёСЏРЅРёСЏ" rows={overall_leaderboard} tableName="Overall_leader" canManageLeaderboards={can_manage_leaderboards} />
+                <LeaderboardTable title="РўСѓСЂРЅРёСЂРЅС‹Рµ РѕС‡РєРё" rows={duel_leaderboard} tableName="Duel_leader" canManageLeaderboards={can_manage_leaderboards} />
             </div>
         </div>
     );
@@ -331,7 +335,7 @@ function NewsMedia({ media, title }) {
                 item.media_type === "video" ? (
                     <video className="news-video" controls preload="metadata" key={`${item.media_path}-${index}`}>
                         <source src={uploadedPath(item.media_path)} />
-                        Ваш браузер не поддерживает встроенное видео.
+                        Р’Р°С€ Р±СЂР°СѓР·РµСЂ РЅРµ РїРѕРґРґРµСЂР¶РёРІР°РµС‚ РІСЃС‚СЂРѕРµРЅРЅРѕРµ РІРёРґРµРѕ.
                     </video>
                 ) : (
                     <img
@@ -348,7 +352,7 @@ function NewsMedia({ media, title }) {
     );
 }
 
-function NewsEditBlock({ item, summaryLabel = "Редактировать новость", redirectTo = "" }) {
+function NewsEditBlock({ item, summaryLabel = "Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ РЅРѕРІРѕСЃС‚СЊ", redirectTo = "" }) {
     return (
         <details className="news-edit-block news-edit-action is-collapsed">
             <summary className="news-edit-summary">{summaryLabel}</summary>
@@ -358,18 +362,18 @@ function NewsEditBlock({ item, summaryLabel = "Редактировать нов
                     {redirectTo ? <input type="hidden" name="redirect_to" value={redirectTo} /> : null}
 
                     <div className="mb-3">
-                        <label className="form-label" htmlFor={`edit-title-${item.id}`}>Заголовок</label>
+                        <label className="form-label" htmlFor={`edit-title-${item.id}`}>Р—Р°РіРѕР»РѕРІРѕРє</label>
                         <input className="form-control" id={`edit-title-${item.id}`} name="title" type="text" defaultValue={item.title} required />
                     </div>
 
                     <div className="mb-3">
-                        <label className="form-label" htmlFor={`edit-content-${item.id}`}>Текст новости</label>
+                        <label className="form-label" htmlFor={`edit-content-${item.id}`}>РўРµРєСЃС‚ РЅРѕРІРѕСЃС‚Рё</label>
                         <textarea className="form-control" id={`edit-content-${item.id}`} name="content" rows="5" defaultValue={item.content} required />
                     </div>
 
                     {item.media && item.media.length ? (
                         <div className="mb-3">
-                            <div className="form-label">Текущие медиа</div>
+                            <div className="form-label">РўРµРєСѓС‰РёРµ РјРµРґРёР°</div>
                             <div className="news-edit-existing-media">
                                 {item.media.map((media, index) => (
                                     <label className="news-edit-media-item" key={`${media.media_path}-${index}`}>
@@ -381,11 +385,11 @@ function NewsEditBlock({ item, summaryLabel = "Редактировать нов
                                             <img className="news-edit-media-preview" src={uploadedPath(media.media_path)} alt={item.title} loading="lazy" decoding="async" />
                                         )}
                                         <span className="news-edit-media-meta">
-                                            {media.media_type === "video" ? "Видео" : "Изображение"}
+                                            {media.media_type === "video" ? "Р’РёРґРµРѕ" : "РР·РѕР±СЂР°Р¶РµРЅРёРµ"}
                                         </span>
                                         <span className="news-edit-remove">
                                             <input type="checkbox" name="remove_media_ids" value={media.id} />
-                                            <span>Убрать из новости</span>
+                                            <span>РЈР±СЂР°С‚СЊ РёР· РЅРѕРІРѕСЃС‚Рё</span>
                                         </span>
                                     </label>
                                 ))}
@@ -394,7 +398,7 @@ function NewsEditBlock({ item, summaryLabel = "Редактировать нов
                     ) : null}
 
                     <div className="mb-3">
-                        <label className="form-label" htmlFor={`edit-media-${item.id}`}>Добавить медиа</label>
+                        <label className="form-label" htmlFor={`edit-media-${item.id}`}>Р”РѕР±Р°РІРёС‚СЊ РјРµРґРёР°</label>
                         <input
                             className="form-control"
                             id={`edit-media-${item.id}`}
@@ -403,10 +407,10 @@ function NewsEditBlock({ item, summaryLabel = "Редактировать нов
                             accept=".png,.jpg,.jpeg,.gif,.webp,.mp4,.webm,.ogg,.mov,.m4v"
                             multiple
                         />
-                        <div className="form-text text-light">Всего в новости можно оставить до 3 файлов.</div>
+                        <div className="form-text text-light">Р’СЃРµРіРѕ РІ РЅРѕРІРѕСЃС‚Рё РјРѕР¶РЅРѕ РѕСЃС‚Р°РІРёС‚СЊ РґРѕ 3 С„Р°Р№Р»РѕРІ.</div>
                     </div>
 
-                    <button type="submit" className="btn btn-primary">Сохранить изменения</button>
+                    <button type="submit" className="btn btn-primary">РЎРѕС…СЂР°РЅРёС‚СЊ РёР·РјРµРЅРµРЅРёСЏ</button>
                     </form>
             </div>
         </details>
@@ -419,14 +423,14 @@ function NewsDeleteForm({ newsId, redirectTo = "" }) {
             method="POST"
             action="/news/delete"
             onSubmit={(event) => {
-                if (!window.confirm("Удалить новость?")) {
+                if (!window.confirm("РЈРґР°Р»РёС‚СЊ РЅРѕРІРѕСЃС‚СЊ?")) {
                     event.preventDefault();
                 }
             }}
         >
             <input type="hidden" name="news_id" value={newsId} />
             {redirectTo ? <input type="hidden" name="redirect_to" value={redirectTo} /> : null}
-            <button type="submit" className="btn btn-outline-light">Удалить новость</button>
+            <button type="submit" className="btn btn-outline-light">РЈРґР°Р»РёС‚СЊ РЅРѕРІРѕСЃС‚СЊ</button>
         </form>
     );
 }
@@ -435,23 +439,23 @@ function SuggestedNewsForm() {
     return (
         <section className="placeholder-card news-form-card news-suggest-card">
             <details className="news-edit-block news-suggest-block is-collapsed">
-                <summary className="news-edit-summary">Предложить новость</summary>
+                <summary className="news-edit-summary">РџСЂРµРґР»РѕР¶РёС‚СЊ РЅРѕРІРѕСЃС‚СЊ</summary>
                 <div className="news-edit-body">
                     <form method="POST" action="/news/suggest" encType="multipart/form-data" className="news-edit-form">
                         <div className="mb-3">
-                            <label className="form-label" htmlFor="suggest-title">Заголовок</label>
+                            <label className="form-label" htmlFor="suggest-title">Р—Р°РіРѕР»РѕРІРѕРє</label>
                             <input className="form-control" id="suggest-title" name="title" type="text" required />
                         </div>
                         <div className="mb-3">
-                            <label className="form-label" htmlFor="suggest-content">Текст новости</label>
+                            <label className="form-label" htmlFor="suggest-content">РўРµРєСЃС‚ РЅРѕРІРѕСЃС‚Рё</label>
                             <textarea className="form-control" id="suggest-content" name="content" rows="5" required />
                         </div>
                         <div className="mb-3">
-                            <label className="form-label" htmlFor="suggest-media">Медиафайлы</label>
+                            <label className="form-label" htmlFor="suggest-media">РњРµРґРёР°С„Р°Р№Р»С‹</label>
                             <input className="form-control" id="suggest-media" name="media" type="file" accept=".png,.jpg,.jpeg,.gif,.webp,.mp4,.webm,.ogg,.mov,.m4v" multiple />
-                            <div className="form-text text-light">До 3 файлов: изображения или видео.</div>
+                            <div className="form-text text-light">Р”Рѕ 3 С„Р°Р№Р»РѕРІ: РёР·РѕР±СЂР°Р¶РµРЅРёСЏ РёР»Рё РІРёРґРµРѕ.</div>
                         </div>
-                        <button type="submit" className="btn btn-primary">Отправить на рассмотрение</button>
+                        <button type="submit" className="btn btn-primary">РћС‚РїСЂР°РІРёС‚СЊ РЅР° СЂР°СЃСЃРјРѕС‚СЂРµРЅРёРµ</button>
                     </form>
                 </div>
             </details>
@@ -511,14 +515,14 @@ function NewsPage({ news_items = [], can_manage_news = false, can_suggest_news =
     return (
         <div className="section-page news-page ceremonial-page">
             <Hero
-                title="Новости"
-                description="Здесь публикуются новости проекта, изображения, видео и комментарии пользователей."
+                title="РќРѕРІРѕСЃС‚Рё"
+                description="Р—РґРµСЃСЊ РїСѓР±Р»РёРєСѓСЋС‚СЃСЏ РЅРѕРІРѕСЃС‚Рё РїСЂРѕРµРєС‚Р°, РёР·РѕР±СЂР°Р¶РµРЅРёСЏ, РІРёРґРµРѕ Рё РєРѕРјРјРµРЅС‚Р°СЂРёРё РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№."
             />
 
             {can_manage_news ? (
                 <div className="news-page-actions">
                     <a className="btn btn-outline-light news-suggestions-link" href="/news/suggestions">
-                        Предложенные новости
+                        РџСЂРµРґР»РѕР¶РµРЅРЅС‹Рµ РЅРѕРІРѕСЃС‚Рё
                         {pendingCount ? <span className="news-page-badge">{pendingCount}</span> : null}
                     </a>
                 </div>
@@ -526,22 +530,22 @@ function NewsPage({ news_items = [], can_manage_news = false, can_suggest_news =
 
             {can_manage_news ? (
                 <section className="placeholder-card news-form-card">
-                    <h3>Добавить новость</h3>
+                    <h3>Р”РѕР±Р°РІРёС‚СЊ РЅРѕРІРѕСЃС‚СЊ</h3>
                     <form method="POST" action="/news/add" encType="multipart/form-data">
                         <div className="mb-3">
-                            <label className="form-label" htmlFor="title">Заголовок</label>
+                            <label className="form-label" htmlFor="title">Р—Р°РіРѕР»РѕРІРѕРє</label>
                             <input className="form-control" id="title" name="title" type="text" required />
                         </div>
                         <div className="mb-3">
-                            <label className="form-label" htmlFor="content">Текст новости</label>
+                            <label className="form-label" htmlFor="content">РўРµРєСЃС‚ РЅРѕРІРѕСЃС‚Рё</label>
                             <textarea className="form-control" id="content" name="content" rows="5" required />
                         </div>
                         <div className="mb-3">
-                            <label className="form-label" htmlFor="media">Медиафайлы</label>
+                            <label className="form-label" htmlFor="media">РњРµРґРёР°С„Р°Р№Р»С‹</label>
                             <input className="form-control" id="media" name="media" type="file" accept=".png,.jpg,.jpeg,.gif,.webp,.mp4,.webm,.ogg,.mov,.m4v" multiple />
-                            <div className="form-text text-light">До 3 файлов: изображения или видео.</div>
+                            <div className="form-text text-light">Р”Рѕ 3 С„Р°Р№Р»РѕРІ: РёР·РѕР±СЂР°Р¶РµРЅРёСЏ РёР»Рё РІРёРґРµРѕ.</div>
                         </div>
-                        <button type="submit" className="btn btn-primary">Опубликовать</button>
+                        <button type="submit" className="btn btn-primary">РћРїСѓР±Р»РёРєРѕРІР°С‚СЊ</button>
                     </form>
                 </section>
             ) : can_suggest_news ? <SuggestedNewsForm /> : null}
@@ -566,7 +570,7 @@ function NewsPage({ news_items = [], can_manage_news = false, can_suggest_news =
                         </div>
 
                         <div className="news-comments news-comments-shell">
-                            <h4>Комментарии</h4>
+                            <h4>РљРѕРјРјРµРЅС‚Р°СЂРёРё</h4>
                             {item.comments && item.comments.length ? item.comments.map((comment) => (
                                 <NewsCommentItem
                                     key={comment.id}
@@ -579,12 +583,12 @@ function NewsPage({ news_items = [], can_manage_news = false, can_suggest_news =
 
                             <form method="POST" action="/news/comment" className="news-comment-form" id={`news-comment-form-${item.id}`}>
                                 <input type="hidden" name="news_id" value={item.id} />
-                                <textarea className="form-control mb-2" name="comment" rows="3" placeholder="Напишите комментарий" required />
+                                <textarea className="form-control mb-2" name="comment" rows="3" placeholder="РќР°РїРёС€РёС‚Рµ РєРѕРјРјРµРЅС‚Р°СЂРёР№" required />
                     </form>
 
                             <div className="news-card-actions">
                                 <button type="submit" form={`news-comment-form-${item.id}`} className="btn btn-outline-light">
-                                    Отправить комментарий
+                                    РћС‚РїСЂР°РІРёС‚СЊ РєРѕРјРјРµРЅС‚Р°СЂРёР№
                                 </button>
                                 {can_manage_news ? <NewsDeleteForm newsId={item.id} /> : null}
                                 {can_manage_news ? <NewsEditBlock item={item} /> : null}
@@ -595,8 +599,8 @@ function NewsPage({ news_items = [], can_manage_news = false, can_suggest_news =
 
                 {!news_items.length ? (
                     <section className="placeholder-card">
-                        <h3>Новостей пока нет</h3>
-                        <p>Опубликованные новости отображаются здесь.</p>
+                        <h3>РќРѕРІРѕСЃС‚РµР№ РїРѕРєР° РЅРµС‚</h3>
+                        <p>РћРїСѓР±Р»РёРєРѕРІР°РЅРЅС‹Рµ РЅРѕРІРѕСЃС‚Рё РѕС‚РѕР±СЂР°Р¶Р°СЋС‚СЃСЏ Р·РґРµСЃСЊ.</p>
                     </section>
                 ) : null}
             </div>
@@ -608,8 +612,8 @@ function SuggestedNewsPage({ suggested_news_items = [] }) {
     return (
         <div className="section-page news-page news-suggestions-page ceremonial-page">
             <Hero
-                title="Предложенные новости"
-                description="Здесь администратор просматривает новости на рассмотрении, редактирует их, публикует или отклоняет."
+                title="РџСЂРµРґР»РѕР¶РµРЅРЅС‹Рµ РЅРѕРІРѕСЃС‚Рё"
+                description="Р—РґРµСЃСЊ Р°РґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂ РїСЂРѕСЃРјР°С‚СЂРёРІР°РµС‚ РЅРѕРІРѕСЃС‚Рё РЅР° СЂР°СЃСЃРјРѕС‚СЂРµРЅРёРё, СЂРµРґР°РєС‚РёСЂСѓРµС‚ РёС…, РїСѓР±Р»РёРєСѓРµС‚ РёР»Рё РѕС‚РєР»РѕРЅСЏРµС‚."
             />
 
             <div className="news-list">
@@ -620,7 +624,7 @@ function SuggestedNewsPage({ suggested_news_items = [] }) {
                                 <span>{item.author_name}</span>
                                 <span>{formatDateTime(item.created_at)}</span>
                             </div>
-                            <div className="news-suggestion-status">На рассмотрении</div>
+                            <div className="news-suggestion-status">РќР° СЂР°СЃСЃРјРѕС‚СЂРµРЅРёРё</div>
                             <h3>{item.title}</h3>
                         </div>
                         {item.media && item.media.length ? (
@@ -635,22 +639,22 @@ function SuggestedNewsPage({ suggested_news_items = [] }) {
                         <div className="news-card-actions news-suggestion-actions">
                             <form method="POST" action="/news/publish">
                                 <input type="hidden" name="news_id" value={item.id} />
-                                <button type="submit" className="btn btn-primary">Опубликовать</button>
+                                <button type="submit" className="btn btn-primary">РћРїСѓР±Р»РёРєРѕРІР°С‚СЊ</button>
                     </form>
                             <NewsDeleteForm newsId={item.id} redirectTo="/news/suggestions" />
                             <form method="POST" action="/news/reject">
                                 <input type="hidden" name="news_id" value={item.id} />
-                                <button type="submit" className="btn btn-outline-light">Отклонить</button>
+                                <button type="submit" className="btn btn-outline-light">РћС‚РєР»РѕРЅРёС‚СЊ</button>
                     </form>
-                            <NewsEditBlock item={item} summaryLabel="Подредактировать" redirectTo="/news/suggestions" />
+                            <NewsEditBlock item={item} summaryLabel="РџРѕРґСЂРµРґР°РєС‚РёСЂРѕРІР°С‚СЊ" redirectTo="/news/suggestions" />
                         </div>
                     </article>
                 ))}
 
                 {!suggested_news_items.length ? (
                     <section className="placeholder-card">
-                        <h3>Предложенных новостей нет</h3>
-                        <p>Когда пользователи отправят новости на рассмотрение, они появятся здесь.</p>
+                        <h3>РџСЂРµРґР»РѕР¶РµРЅРЅС‹С… РЅРѕРІРѕСЃС‚РµР№ РЅРµС‚</h3>
+                        <p>РљРѕРіРґР° РїРѕР»СЊР·РѕРІР°С‚РµР»Рё РѕС‚РїСЂР°РІСЏС‚ РЅРѕРІРѕСЃС‚Рё РЅР° СЂР°СЃСЃРјРѕС‚СЂРµРЅРёРµ, РѕРЅРё РїРѕСЏРІСЏС‚СЃСЏ Р·РґРµСЃСЊ.</p>
                     </section>
                 ) : null}
             </div>
@@ -662,35 +666,35 @@ function MissionsPage({ is_admin = false, can_take_missions = false, current_tea
     return (
         <div className="section-page missions-page ceremonial-page">
             <Hero
-                title="Доска заказов"
-                description="Легион может взять до 3 заданий одновременно. На одно задание могут откликнуться не более 3 легионов."
+                title="Р”РѕСЃРєР° Р·Р°РєР°Р·РѕРІ"
+                description="Р›РµРіРёРѕРЅ РјРѕР¶РµС‚ РІР·СЏС‚СЊ РґРѕ 3 Р·Р°РґР°РЅРёР№ РѕРґРЅРѕРІСЂРµРјРµРЅРЅРѕ. РќР° РѕРґРЅРѕ Р·Р°РґР°РЅРёРµ РјРѕРіСѓС‚ РѕС‚РєР»РёРєРЅСѓС‚СЊСЃСЏ РЅРµ Р±РѕР»РµРµ 3 Р»РµРіРёРѕРЅРѕРІ."
             />
 
             {is_admin ? (
                 <section className="placeholder-card mission-form-card">
-                    <h3>Добавить задание</h3>
+                    <h3>Р”РѕР±Р°РІРёС‚СЊ Р·Р°РґР°РЅРёРµ</h3>
                     <form method="POST" action="/missions/add">
                         <div className="mb-3">
-                            <label className="form-label" htmlFor="mission-title">Название задания</label>
+                            <label className="form-label" htmlFor="mission-title">РќР°Р·РІР°РЅРёРµ Р·Р°РґР°РЅРёСЏ</label>
                             <input className="form-control" id="mission-title" name="title" type="text" required />
                         </div>
                         <div className="mb-3">
-                            <label className="form-label" htmlFor="mission-description">Текст задания</label>
+                            <label className="form-label" htmlFor="mission-description">РўРµРєСЃС‚ Р·Р°РґР°РЅРёСЏ</label>
                             <textarea className="form-control" id="mission-description" name="description" rows="5" required />
                         </div>
                         <div className="mb-3">
-                            <label className="form-label" htmlFor="mission-reward">Награда</label>
+                            <label className="form-label" htmlFor="mission-reward">РќР°РіСЂР°РґР°</label>
                             <input className="form-control" id="mission-reward" name="reward" type="number" min="1" step="1" required />
                         </div>
-                        <button type="submit" className="btn btn-primary">Опубликовать задание</button>
+                        <button type="submit" className="btn btn-primary">РћРїСѓР±Р»РёРєРѕРІР°С‚СЊ Р·Р°РґР°РЅРёРµ</button>
                     </form>
                 </section>
             ) : (
                 <div className="mission-limit-note">
                     {can_take_missions ? (
-                        <>Активных заданий у Легиона: {current_team_mission_count} / 3</>
+                        <>РђРєС‚РёРІРЅС‹С… Р·Р°РґР°РЅРёР№ Сѓ Р›РµРіРёРѕРЅР°: {current_team_mission_count} / 3</>
                     ) : (
-                        <>Журналисты могут только просматривать задания и не могут их принимать.</>
+                        <>Р–СѓСЂРЅР°Р»РёСЃС‚С‹ РјРѕРіСѓС‚ С‚РѕР»СЊРєРѕ РїСЂРѕСЃРјР°С‚СЂРёРІР°С‚СЊ Р·Р°РґР°РЅРёСЏ Рё РЅРµ РјРѕРіСѓС‚ РёС… РїСЂРёРЅРёРјР°С‚СЊ.</>
                     )}
                 </div>
             )}
@@ -705,12 +709,12 @@ function MissionsPage({ is_admin = false, can_take_missions = false, current_tea
                         <h3>{mission.title}</h3>
                         <p className="news-content">{mission.description}</p>
                         <div className="mission-info">
-                            <span>Награда: {mission.reward} GRZ</span>
-                            <span>Откликнулось легионов: {mission.accepted_count} / 3</span>
+                            <span>РќР°РіСЂР°РґР°: {mission.reward} GRZ</span>
+                            <span>РћС‚РєР»РёРєРЅСѓР»РѕСЃСЊ Р»РµРіРёРѕРЅРѕРІ: {mission.accepted_count} / 3</span>
                         </div>
                         {mission.accepted_teams && mission.accepted_teams.length ? (
                             <div className="mission-teams">
-                                Приняли задание: {mission.accepted_teams.join(", ")}
+                                РџСЂРёРЅСЏР»Рё Р·Р°РґР°РЅРёРµ: {mission.accepted_teams.join(", ")}
                             </div>
                         ) : null}
 
@@ -718,40 +722,40 @@ function MissionsPage({ is_admin = false, can_take_missions = false, current_tea
                             <div className="mission-actions mission-admin-actions">
                                 <form method="POST" action="/missions/delete" onSubmit={(event) => { if (!window.confirm("\u0412\u044b \u0443\u0432\u0435\u0440\u0435\u043d\u044b?")) { event.preventDefault(); } }}>
                                     <input type="hidden" name="mission_id" value={mission.id} />
-                                    <button type="submit" className="btn btn-outline-light">Удалить миссию</button>
+                                    <button type="submit" className="btn btn-outline-light">РЈРґР°Р»РёС‚СЊ РјРёСЃСЃРёСЋ</button>
                     </form>
                             </div>
                         ) : can_take_missions ? (
                             mission.user_has_taken ? (
                                 <div className="mission-actions">
-                                    <div className="mission-status-note">Задание уже выбрано вашим Легионом</div>
+                                    <div className="mission-status-note">Р—Р°РґР°РЅРёРµ СѓР¶Рµ РІС‹Р±СЂР°РЅРѕ РІР°С€РёРј Р›РµРіРёРѕРЅРѕРј</div>
                                     <form method="POST" action="/missions/cancel">
                                         <input type="hidden" name="mission_id" value={mission.id} />
-                                        <button type="submit" className="btn btn-outline-light">Отказаться от задания</button>
+                                        <button type="submit" className="btn btn-outline-light">РћС‚РєР°Р·Р°С‚СЊСЃСЏ РѕС‚ Р·Р°РґР°РЅРёСЏ</button>
                     </form>
                                 </div>
                             ) : mission.accepted_count >= 3 ? (
-                                <button type="button" className="btn btn-secondary" disabled>Лимит легионов достигнут</button>
+                                <button type="button" className="btn btn-secondary" disabled>Р›РёРјРёС‚ Р»РµРіРёРѕРЅРѕРІ РґРѕСЃС‚РёРіРЅСѓС‚</button>
                             ) : current_team_mission_count >= 3 ? (
-                                <button type="button" className="btn btn-secondary" disabled>Легион уже взял 3 задания</button>
+                                <button type="button" className="btn btn-secondary" disabled>Р›РµРіРёРѕРЅ СѓР¶Рµ РІР·СЏР» 3 Р·Р°РґР°РЅРёСЏ</button>
                             ) : (
                                 <div className="mission-actions">
                                     <form method="POST" action="/missions/accept">
                                         <input type="hidden" name="mission_id" value={mission.id} />
-                                        <button type="submit" className="btn btn-primary">Принять задание</button>
+                                        <button type="submit" className="btn btn-primary">РџСЂРёРЅСЏС‚СЊ Р·Р°РґР°РЅРёРµ</button>
                     </form>
                                 </div>
                             )
                         ) : (
-                            <button type="button" className="btn btn-secondary" disabled>Журналист не может принимать задания</button>
+                            <button type="button" className="btn btn-secondary" disabled>Р–СѓСЂРЅР°Р»РёСЃС‚ РЅРµ РјРѕР¶РµС‚ РїСЂРёРЅРёРјР°С‚СЊ Р·Р°РґР°РЅРёСЏ</button>
                         )}
                     </article>
                 ))}
 
                 {!missions.length ? (
                     <section className="placeholder-card">
-                        <h3>Заданий пока нет</h3>
-                        <p>Добавленные администратором задания отображаются здесь.</p>
+                        <h3>Р—Р°РґР°РЅРёР№ РїРѕРєР° РЅРµС‚</h3>
+                        <p>Р”РѕР±Р°РІР»РµРЅРЅС‹Рµ Р°РґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂРѕРј Р·Р°РґР°РЅРёСЏ РѕС‚РѕР±СЂР°Р¶Р°СЋС‚СЃСЏ Р·РґРµСЃСЊ.</p>
                     </section>
                 ) : null}
             </div>
@@ -764,7 +768,7 @@ function AdminBankView({ scoreboard = [] }) {
         <div className="row content">
             <div className="scoreboard-panel bank-scoreboard-panel">
                 <div className="placeholder-hero section-title-panel bank-scoreboard-hero">
-                    <h1>ГЕРЦЫ ЛЕГИОНОВ</h1>
+                    <h1>Р“Р•Р Р¦Р« Р›Р•Р“РРћРќРћР’</h1>
                 </div>
 
                 <section className="placeholder-card table-card bank-table-card">
@@ -772,15 +776,15 @@ function AdminBankView({ scoreboard = [] }) {
                         <table className="table elegant-table bank-table bank-scoreboard-table">
                             <thead>
                                 <tr>
-                                    <th>ЛЕГИОН</th>
-                                    <th>Итого:</th>
+                                    <th>Р›Р•Р“РРћРќ</th>
+                                    <th>РС‚РѕРіРѕ:</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {scoreboard.map((row, index) => (
                                     <tr key={`${row.Name}-${index}`}>
-                                        <td data-label="Легион">{row.Name}</td>
-                                        <td data-label="Итого">{row.Scores}</td>
+                                        <td data-label="Р›РµРіРёРѕРЅ">{row.Name}</td>
+                                        <td data-label="РС‚РѕРіРѕ">{row.Scores}</td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -796,7 +800,7 @@ function UserBankView({ current_plt }) {
     return (
         <section className="bank-balance-strip">
             <h3>
-                <span className="bank-balance-label">Герцы твоего Легиона:</span>
+                <span className="bank-balance-label">Р“РµСЂС†С‹ С‚РІРѕРµРіРѕ Р›РµРіРёРѕРЅР°:</span>
                 <span className="badge text-bg-success">{current_plt}</span>
             </h3>
         </section>
@@ -820,7 +824,7 @@ function BankOperations({ is_admin = false, current_team_id = null, current_plt 
                     data-bs-toggle="modal"
                     data-bs-target="#exampleModal"
                 >
-                    Отправить герцы легиону
+                    РћС‚РїСЂР°РІРёС‚СЊ РіРµСЂС†С‹ Р»РµРіРёРѕРЅСѓ
                 </button>
             </div>
 
@@ -829,8 +833,8 @@ function BankOperations({ is_admin = false, current_team_id = null, current_plt 
                     <div className="modal-dialog">
                         <div className="modal-content">
                             <div className="modal-header">
-                                <h1 className="modal-title fs-5" id="exampleModalLabel">Форма отправки герцев</h1>
-                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                                <h1 className="modal-title fs-5" id="exampleModalLabel">Р¤РѕСЂРјР° РѕС‚РїСЂР°РІРєРё РіРµСЂС†РµРІ</h1>
+                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Р—Р°РєСЂС‹С‚СЊ"></button>
                             </div>
 
                             <div className="modal-body">
@@ -838,7 +842,7 @@ function BankOperations({ is_admin = false, current_team_id = null, current_plt 
                                     <input name="parent" type="hidden" id="parent" value={current_team_id || ""} />
                                 ) : (
                                     <>
-                                        <label htmlFor="userSRC">Выберите фракцию отправителя:</label>
+                                        <label htmlFor="userSRC">Р’С‹Р±РµСЂРёС‚Рµ С„СЂР°РєС†РёСЋ РѕС‚РїСЂР°РІРёС‚РµР»СЏ:</label>
                                         <select className="form-control" id="userSRC" name="parent" defaultValue={defaultSourceId}>
                                             {teams_for_select.map((team) => (
                                                 <option key={`src-${team.id}`} value={team.id} data-balance={team.balance}>
@@ -849,7 +853,7 @@ function BankOperations({ is_admin = false, current_team_id = null, current_plt 
                                     </>
                                 )}
 
-                                <label htmlFor="usersDST">Выберите легион получателя:</label>
+                                <label htmlFor="usersDST">Р’С‹Р±РµСЂРёС‚Рµ Р»РµРіРёРѕРЅ РїРѕР»СѓС‡Р°С‚РµР»СЏ:</label>
                                 <select className="form-control" id="usersDST" name="user" defaultValue={defaultTargetId}>
                                     {teams_for_select.map((team) => (
                                         <option key={`dst-${team.id}`} value={team.id}>
@@ -858,7 +862,7 @@ function BankOperations({ is_admin = false, current_team_id = null, current_plt 
                                     ))}
                                 </select>
 
-                                <label htmlFor="PLT">Количество GRZ:</label>
+                                <label htmlFor="PLT">РљРѕР»РёС‡РµСЃС‚РІРѕ GRZ:</label>
                                 <input
                                     name="score"
                                     type="number"
@@ -868,28 +872,28 @@ function BankOperations({ is_admin = false, current_team_id = null, current_plt 
                                     defaultValue={defaultScore}
                                     id="PLT"
                                     className="form-control"
-                                    placeholder="цена"
+                                    placeholder="С†РµРЅР°"
                                     disabled={!transferPossible && !is_admin}
                                 />
 
-                                <label htmlFor="comment">Комментарий легиону:</label>
+                                <label htmlFor="comment">РљРѕРјРјРµРЅС‚Р°СЂРёР№ Р»РµРіРёРѕРЅСѓ:</label>
                                 <input
                                     name="comment"
                                     type="text"
                                     className="form-control"
                                     id="comment"
-                                    placeholder="Введите сообщение легиону"
+                                    placeholder="Р’РІРµРґРёС‚Рµ СЃРѕРѕР±С‰РµРЅРёРµ Р»РµРіРёРѕРЅСѓ"
                                 />
 
                                 <div className="form-text" id="transferState">
-                                    {!is_admin && current_plt <= 0 ? "Перевод недоступен: у текущего легиона нулевой баланс." : ""}
+                                    {!is_admin && current_plt <= 0 ? "РџРµСЂРµРІРѕРґ РЅРµРґРѕСЃС‚СѓРїРµРЅ: Сѓ С‚РµРєСѓС‰РµРіРѕ Р»РµРіРёРѕРЅР° РЅСѓР»РµРІРѕР№ Р±Р°Р»Р°РЅСЃ." : ""}
                                 </div>
                             </div>
 
                             <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Р—Р°РєСЂС‹С‚СЊ</button>
                                 <button type="submit" className="btn btn-primary" id="transferSubmit" disabled={!transferPossible && !is_admin}>
-                                    Отправить
+                                    РћС‚РїСЂР°РІРёС‚СЊ
                                 </button>
                             </div>
                         </div>
@@ -898,25 +902,25 @@ function BankOperations({ is_admin = false, current_team_id = null, current_plt 
             </div>
 
             <div className="events-panel bank-operations-panel">
-                <h3 className="events-title">Все события:</h3>
+                <h3 className="events-title">Р’СЃРµ СЃРѕР±С‹С‚РёСЏ:</h3>
                 <section className="placeholder-card table-card bank-table-card">
                     <div className="table-responsive bank-table-responsive">
                         <table className="table elegant-table bank-table bank-operations-table">
                             <thead>
                                 <tr>
-                                    <th>Период:</th>
-                                    <th>Название легиона:</th>
-                                    <th>Герцы:</th>
-                                    <th>Коммент:</th>
+                                    <th>РџРµСЂРёРѕРґ:</th>
+                                    <th>РќР°Р·РІР°РЅРёРµ Р»РµРіРёРѕРЅР°:</th>
+                                    <th>Р“РµСЂС†С‹:</th>
+                                    <th>РљРѕРјРјРµРЅС‚:</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {operations.map((row, index) => (
                                     <tr key={`${row.Name}-${row.Period}-${index}`}>
-                                        <td data-label="Период">{formatDate(row.Period)}</td>
-                                        <td data-label="Легион">{row.Name}</td>
-                                        <td data-label="Герцы">{row.Score}</td>
-                                        <td data-label="Коммент">{row.Comment}</td>
+                                        <td data-label="РџРµСЂРёРѕРґ">{formatDate(row.Period)}</td>
+                                        <td data-label="Р›РµРіРёРѕРЅ">{row.Name}</td>
+                                        <td data-label="Р“РµСЂС†С‹">{row.Score}</td>
+                                        <td data-label="РљРѕРјРјРµРЅС‚">{row.Comment}</td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -941,8 +945,8 @@ function ApprovePage({ approve_items = [] }) {
     return (
         <div className="section-page approve-page ceremonial-page">
             <Hero
-                title="Подтверждение"
-                description="Здесь администратор подтверждает или отклоняет выполнение принятых заданий. После подтверждения награда автоматически начисляется отряду."
+                title="РџРѕРґС‚РІРµСЂР¶РґРµРЅРёРµ"
+                description="Р—РґРµСЃСЊ Р°РґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂ РїРѕРґС‚РІРµСЂР¶РґР°РµС‚ РёР»Рё РѕС‚РєР»РѕРЅСЏРµС‚ РІС‹РїРѕР»РЅРµРЅРёРµ РїСЂРёРЅСЏС‚С‹С… Р·Р°РґР°РЅРёР№. РџРѕСЃР»Рµ РїРѕРґС‚РІРµСЂР¶РґРµРЅРёСЏ РЅР°РіСЂР°РґР° Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё РЅР°С‡РёСЃР»СЏРµС‚СЃСЏ РѕС‚СЂСЏРґСѓ."
             />
 
             <div className="news-list">
@@ -955,17 +959,17 @@ function ApprovePage({ approve_items = [] }) {
                         <h3>{item.title}</h3>
                         <p className="news-content">{item.description}</p>
                         <div className="mission-info">
-                            <span>Отряд: {item.team_name}</span>
-                            <span>Награда: {item.reward} GRZ</span>
+                            <span>РћС‚СЂСЏРґ: {item.team_name}</span>
+                            <span>РќР°РіСЂР°РґР°: {item.reward} GRZ</span>
                         </div>
                         <div className="approve-actions">
                             <form method="POST" action="/approve/confirm">
                                 <input type="hidden" name="assignment_id" value={item.id} />
-                                <button type="submit" className="btn btn-primary">Подтвердить выполнение</button>
+                                <button type="submit" className="btn btn-primary">РџРѕРґС‚РІРµСЂРґРёС‚СЊ РІС‹РїРѕР»РЅРµРЅРёРµ</button>
                     </form>
                             <form method="POST" action="/approve/reject">
                                 <input type="hidden" name="assignment_id" value={item.id} />
-                                <button type="submit" className="btn btn-outline-light">Отклонить выполнение</button>
+                                <button type="submit" className="btn btn-outline-light">РћС‚РєР»РѕРЅРёС‚СЊ РІС‹РїРѕР»РЅРµРЅРёРµ</button>
                     </form>
                         </div>
                     </article>
@@ -973,8 +977,8 @@ function ApprovePage({ approve_items = [] }) {
 
                 {!approve_items.length ? (
                     <section className="placeholder-card">
-                        <h3>Нет заданий на подтверждение</h3>
-                        <p>Принятые задания отображаются в этом списке.</p>
+                        <h3>РќРµС‚ Р·Р°РґР°РЅРёР№ РЅР° РїРѕРґС‚РІРµСЂР¶РґРµРЅРёРµ</h3>
+                        <p>РџСЂРёРЅСЏС‚С‹Рµ Р·Р°РґР°РЅРёСЏ РѕС‚РѕР±СЂР°Р¶Р°СЋС‚СЃСЏ РІ СЌС‚РѕРј СЃРїРёСЃРєРµ.</p>
                     </section>
                 ) : null}
             </div>
@@ -984,50 +988,50 @@ function ApprovePage({ approve_items = [] }) {
 
 function StudiosPage({ studios_items = [], can_manage_studios = false }) {
     const audienceOptions = [
-        { value: "middle", label: "Средние (ID 6-9)" },
-        { value: "senior", label: "Старшие (ID 10-13)" },
-        { value: "all", label: "Для всех" },
+        { value: "middle", label: "РЎСЂРµРґРЅРёРµ (ID 6-9)" },
+        { value: "senior", label: "РЎС‚Р°СЂС€РёРµ (ID 10-13)" },
+        { value: "all", label: "Р”Р»СЏ РІСЃРµС…" },
     ];
     const audienceLabels = {
-        middle: "Для средних",
-        senior: "Для старших",
-        all: "Для всех",
+        middle: "Р”Р»СЏ СЃСЂРµРґРЅРёС…",
+        senior: "Р”Р»СЏ СЃС‚Р°СЂС€РёС…",
+        all: "Р”Р»СЏ РІСЃРµС…",
     };
 
     return (
         <div className="section-page studios-page ceremonial-page">
             <Hero
-                title="Студии"
-                description="Здесь собраны студии Империи."
+                title="РљР°С„РµРґСЂС‹"
+                description="Р—РґРµСЃСЊ СЃРѕР±СЂР°РЅС‹ РєР°С„РµРґСЂС‹ РРјРїРµСЂРёРё."
             />
             {can_manage_studios ? (
                 <section className="placeholder-card news-form-card news-suggest-card studios-form-card">
                     <details className="news-edit-block news-suggest-block is-collapsed studios-create-block">
-                        <summary className="news-edit-summary">Добавить студию</summary>
+                        <summary className="news-edit-summary">Р”РѕР±Р°РІРёС‚СЊ РєР°С„РµРґСЂСѓ</summary>
                         <div className="news-edit-body">
                             <form method="POST" action="/studios/add" encType="multipart/form-data" className="news-edit-form">
                                 <div className="mb-3">
-                                    <label className="form-label" htmlFor="studio-title">Название студии</label>
+                                    <label className="form-label" htmlFor="studio-title">РќР°Р·РІР°РЅРёРµ РєР°С„РµРґСЂС‹</label>
                                     <input className="form-control" id="studio-title" name="title" type="text" required />
                                 </div>
                                 <div className="mb-3">
-                                    <label className="form-label" htmlFor="studio-description">Описание студии</label>
+                                    <label className="form-label" htmlFor="studio-description">РћРїРёСЃР°РЅРёРµ РєР°С„РµРґСЂС‹</label>
                                     <textarea className="form-control" id="studio-description" name="description" rows="5" required />
                                 </div>
                                 <div className="mb-3">
-                                    <label className="form-label" htmlFor="studio-image">Изображение</label>
+                                    <label className="form-label" htmlFor="studio-image">РР·РѕР±СЂР°Р¶РµРЅРёРµ</label>
                                     <input className="form-control" id="studio-image" name="image" type="file" accept=".png,.jpg,.jpeg,.gif,.webp" />
-                                    <div className="form-text text-light">Картинка необязательна. Если нужна, лучше одно изображение на студию.</div>
+                                    <div className="form-text text-light">РљР°СЂС‚РёРЅРєР° РЅРµРѕР±СЏР·Р°С‚РµР»СЊРЅР°. Р•СЃР»Рё РЅСѓР¶РЅР°, Р»СѓС‡С€Рµ РѕРґРЅРѕ РёР·РѕР±СЂР°Р¶РµРЅРёРµ РЅР° РєР°С„РµРґСЂСѓ.</div>
                                 </div>
                                 <div className="mb-3">
-                                    <label className="form-label" htmlFor="studio-audience">Показывать группе</label>
+                                    <label className="form-label" htmlFor="studio-audience">РџРѕРєР°Р·С‹РІР°С‚СЊ РіСЂСѓРїРїРµ</label>
                                     <select className="form-control" id="studio-audience" name="audience" defaultValue="all">
                                         {audienceOptions.map((option) => (
                                             <option key={option.value} value={option.value}>{option.label}</option>
                                         ))}
                                     </select>
                                 </div>
-                                <button type="submit" className="btn btn-primary">Добавить студию</button>
+                                <button type="submit" className="btn btn-primary">Р”РѕР±Р°РІРёС‚СЊ РєР°С„РµРґСЂСѓ</button>
                     </form>
                         </div>
                     </details>
@@ -1049,20 +1053,20 @@ function StudiosPage({ studios_items = [], can_manage_studios = false }) {
                         {can_manage_studios ? (
                             <div className="news-card-actions studio-card-actions">
                                 <details className="news-edit-block news-edit-action is-collapsed">
-                                    <summary className="news-edit-summary">Редактировать студию</summary>
+                                    <summary className="news-edit-summary">Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ РєР°С„РµРґСЂСѓ</summary>
                                     <div className="news-edit-body">
                                         <form method="POST" action="/studios/update" encType="multipart/form-data" className="news-edit-form">
                                             <input type="hidden" name="studio_id" value={item.id} />
                                             <div className="mb-3">
-                                                <label className="form-label" htmlFor={`studio-edit-title-${item.id}`}>Название студии</label>
+                                                <label className="form-label" htmlFor={`studio-edit-title-${item.id}`}>РќР°Р·РІР°РЅРёРµ РєР°С„РµРґСЂС‹</label>
                                                 <input className="form-control" id={`studio-edit-title-${item.id}`} name="title" type="text" defaultValue={item.title} required />
                                             </div>
                                             <div className="mb-3">
-                                                <label className="form-label" htmlFor={`studio-edit-description-${item.id}`}>Описание студии</label>
+                                                <label className="form-label" htmlFor={`studio-edit-description-${item.id}`}>РћРїРёСЃР°РЅРёРµ РєР°С„РµРґСЂС‹</label>
                                                 <textarea className="form-control" id={`studio-edit-description-${item.id}`} name="description" rows="5" defaultValue={item.description} required />
                                             </div>
                                             <div className="mb-3">
-                                                <label className="form-label" htmlFor={`studio-edit-audience-${item.id}`}>Показывать группе</label>
+                                                <label className="form-label" htmlFor={`studio-edit-audience-${item.id}`}>РџРѕРєР°Р·С‹РІР°С‚СЊ РіСЂСѓРїРїРµ</label>
                                                 <select className="form-control" id={`studio-edit-audience-${item.id}`} name="audience" defaultValue={item.audience || "all"}>
                                                     {audienceOptions.map((option) => (
                                                         <option key={option.value} value={option.value}>{option.label}</option>
@@ -1071,25 +1075,25 @@ function StudiosPage({ studios_items = [], can_manage_studios = false }) {
                                             </div>
                                             {item.image_path ? (
                                                 <div className="mb-3">
-                                                    <div className="form-label">Текущее изображение</div>
+                                                    <div className="form-label">РўРµРєСѓС‰РµРµ РёР·РѕР±СЂР°Р¶РµРЅРёРµ</div>
                                                     <img className="news-edit-media-preview" src={uploadedPath(item.image_path)} alt={item.title} loading="lazy" decoding="async" />
                                                     <label className="news-edit-remove">
                                                         <input type="checkbox" name="remove_image" value="1" />
-                                                        <span>Убрать изображение</span>
+                                                        <span>РЈР±СЂР°С‚СЊ РёР·РѕР±СЂР°Р¶РµРЅРёРµ</span>
                                                     </label>
                                                 </div>
                                             ) : null}
                                             <div className="mb-3">
-                                                <label className="form-label" htmlFor={`studio-edit-image-${item.id}`}>Новое изображение</label>
+                                                <label className="form-label" htmlFor={`studio-edit-image-${item.id}`}>РќРѕРІРѕРµ РёР·РѕР±СЂР°Р¶РµРЅРёРµ</label>
                                                 <input className="form-control" id={`studio-edit-image-${item.id}`} name="image" type="file" accept=".png,.jpg,.jpeg,.gif,.webp" />
                                             </div>
-                                            <button type="submit" className="btn btn-primary">Сохранить изменения</button>
+                                            <button type="submit" className="btn btn-primary">РЎРѕС…СЂР°РЅРёС‚СЊ РёР·РјРµРЅРµРЅРёСЏ</button>
                                         </form>
                                     </div>
                                 </details>
-                                <form method="POST" action="/studios/delete" onSubmit={(event) => { if (!window.confirm("Вы уверены, что хотите удалить эту студию?")) { event.preventDefault(); } }}>
+                                <form method="POST" action="/studios/delete" onSubmit={(event) => { if (!window.confirm("Р’С‹ СѓРІРµСЂРµРЅС‹, С‡С‚Рѕ С…РѕС‚РёС‚Рµ СѓРґР°Р»РёС‚СЊ СЌС‚Сѓ РєР°С„РµРґСЂСѓ?")) { event.preventDefault(); } }}>
                                     <input type="hidden" name="studio_id" value={item.id} />
-                                    <button type="submit" className="btn btn-outline-light">Удалить студию</button>
+                                    <button type="submit" className="btn btn-outline-light">РЈРґР°Р»РёС‚СЊ РєР°С„РµРґСЂСѓ</button>
                     </form>
                             </div>
                         ) : null}
@@ -1097,8 +1101,8 @@ function StudiosPage({ studios_items = [], can_manage_studios = false }) {
                 ))}
                 {!studios_items.length ? (
                     <section className="placeholder-card">
-                        <h3>Студий пока нет</h3>
-                        <p>Добавленные администратором студии появятся здесь.</p>
+                        <h3>РљР°С„РµРґСЂ РїРѕРєР° РЅРµС‚</h3>
+                        <p>Р”РѕР±Р°РІР»РµРЅРЅС‹Рµ Р°РґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂРѕРј РєР°С„РµРґСЂС‹ РїРѕСЏРІСЏС‚СЃСЏ Р·РґРµСЃСЊ.</p>
                     </section>
                 ) : null}
             </div>
@@ -1150,7 +1154,7 @@ function AppLayout({ bootstrapData }) {
                 return (
                     <div className="section-page">
                         <section className="placeholder-card">
-                            <h3>Страница не найдена</h3>
+                            <h3>РЎС‚СЂР°РЅРёС†Р° РЅРµ РЅР°Р№РґРµРЅР°</h3>
                         </section>
                     </div>
                 );
@@ -1184,3 +1188,5 @@ window.requestAnimationFrame(function () {
         window.initMainUi();
     }
 });
+
+

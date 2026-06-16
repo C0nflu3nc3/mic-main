@@ -1,10 +1,13 @@
 ﻿import json
 import os
+import secrets
 import shutil
 from datetime import date, datetime
 from functools import lru_cache
+from urllib.parse import urlparse
 
-from flask import Flask, flash, get_flashed_messages, redirect, render_template, request, send_from_directory, session, url_for
+from flask import Flask, abort, flash, get_flashed_messages, redirect, render_template, request, send_from_directory, session, url_for
+from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.utils import secure_filename
 
 from api.add_operation import create_transfer
@@ -49,7 +52,12 @@ from helper.logout import logout_user
 from helper.signin import sign_in_user
 
 app = Flask(__name__, template_folder="pages", static_folder="static")
-app.secret_key = "super_secret_key_change_me"
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
+app.secret_key = (
+    os.getenv("FLASK_SECRET_KEY")
+    or os.getenv("SECRET_KEY")
+    or secrets.token_hex(32)
+)
 
 default_upload_root = os.path.join(app.root_path, "uploads")
 persistent_upload_root = (
@@ -64,10 +72,25 @@ app.config["UPLOAD_FOLDER"] = os.path.join(persistent_upload_root, "news")
 app.config["STUDIOS_UPLOAD_FOLDER"] = os.path.join(persistent_upload_root, "studios")
 app.config["LEGACY_UPLOAD_FOLDER"] = legacy_upload_folder
 app.config["SEND_FILE_MAX_AGE_DEFAULT"] = int(os.getenv("SEND_FILE_MAX_AGE_DEFAULT", "86400"))
-app.config["MAX_CONTENT_LENGTH"] = 100 * 1024 * 1024
+app.config["MAX_CONTENT_LENGTH"] = int(os.getenv("MAX_CONTENT_LENGTH", str(32 * 1024 * 1024)))
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+app.config["SESSION_COOKIE_SECURE"] = os.getenv(
+    "SESSION_COOKIE_SECURE",
+    "0" if os.getenv("FLASK_DEBUG") == "1" else "1",
+) == "1"
 
 ALLOWED_IMAGE_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
 ALLOWED_VIDEO_EXTENSIONS = {"mp4", "webm", "ogg", "mov", "m4v"}
+MAX_LOGIN_LENGTH = 128
+MAX_PASSWORD_LENGTH = 1024
+MAX_TITLE_LENGTH = 255
+MAX_LEADERBOARD_NAME_LENGTH = 255
+MAX_NEWS_CONTENT_LENGTH = 12000
+MAX_COMMENT_LENGTH = 2000
+MAX_MISSION_DESCRIPTION_LENGTH = 8000
+MAX_STUDIO_DESCRIPTION_LENGTH = 8000
+MAX_TRANSFER_COMMENT_LENGTH = 500
 os.makedirs(app.config["UPLOAD_ROOT"], exist_ok=True)
 os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 os.makedirs(app.config["STUDIOS_UPLOAD_FOLDER"], exist_ok=True)
@@ -183,6 +206,66 @@ def require_user():
     return user, None
 
 
+def is_same_origin_source(value):
+    if not value:
+        return False
+
+    parsed_value = urlparse(value)
+    parsed_host = urlparse(request.host_url)
+    return (
+        parsed_value.scheme == parsed_host.scheme
+        and parsed_value.netloc == parsed_host.netloc
+    )
+
+
+@app.before_request
+def protect_state_changing_requests():
+    if request.method in {"GET", "HEAD", "OPTIONS"}:
+        return None
+
+    origin = request.headers.get("Origin")
+    referer = request.headers.get("Referer")
+    if is_same_origin_source(origin) or is_same_origin_source(referer):
+        return None
+
+    abort(403)
+
+
+@app.after_request
+def set_security_headers(response):
+    response.headers.setdefault("X-Content-Type-Options", "nosniff")
+    response.headers.setdefault("X-Frame-Options", "DENY")
+    response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+    response.headers.setdefault("Cross-Origin-Opener-Policy", "same-origin")
+    response.headers.setdefault("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
+    response.headers.setdefault(
+        "Content-Security-Policy",
+        "; ".join(
+            [
+                "default-src 'self'",
+                "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com",
+                "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+                "font-src 'self' https://fonts.gstatic.com data:",
+                "img-src 'self' data: blob:",
+                "media-src 'self' blob:",
+                "connect-src 'self'",
+                "object-src 'none'",
+                "base-uri 'self'",
+                "form-action 'self'",
+                "frame-ancestors 'none'",
+            ]
+        ),
+    )
+    return response
+
+
+@app.errorhandler(413)
+def request_entity_too_large(_error):
+    flash("Файл слишком большой")
+    redirect_target = request.referrer if is_same_origin_source(request.referrer) else url_for("home_page")
+    return redirect(redirect_target)
+
+
 def can_manage_news(user):
     return bool(user["isadmin"]) or bool(user.get("isjournalist"))
 
@@ -207,11 +290,69 @@ def can_take_missions(user):
     return not bool(user["isadmin"]) and not bool(user.get("isjournalist"))
 
 
+def is_text_too_long(value, max_length):
+    return len(value) > max_length
+
+
 def is_allowed_extension(filename, allowed_extensions):
     if not filename or "." not in filename:
         return False
     extension = filename.rsplit(".", 1)[1].lower()
     return extension in allowed_extensions
+
+
+def read_uploaded_file_header(uploaded_file, size=64):
+    stream = getattr(uploaded_file, "stream", None)
+    if stream is None:
+        return b""
+
+    try:
+        current_position = stream.tell()
+    except (AttributeError, OSError):
+        current_position = None
+
+    try:
+        stream.seek(0)
+        return stream.read(size)
+    except (AttributeError, OSError):
+        return b""
+    finally:
+        if current_position is not None:
+            try:
+                stream.seek(current_position)
+            except (AttributeError, OSError):
+                pass
+
+
+def has_allowed_file_signature(uploaded_file, allowed_extensions):
+    filename = getattr(uploaded_file, "filename", "") or ""
+    if "." not in filename:
+        return False
+
+    extension = filename.rsplit(".", 1)[1].lower()
+    if extension not in allowed_extensions:
+        return False
+
+    header = read_uploaded_file_header(uploaded_file, size=64)
+    if not header:
+        return False
+
+    if extension == "png":
+        return header.startswith(b"\x89PNG\r\n\x1a\n")
+    if extension in {"jpg", "jpeg"}:
+        return header.startswith(b"\xff\xd8\xff")
+    if extension == "gif":
+        return header.startswith((b"GIF87a", b"GIF89a"))
+    if extension == "webp":
+        return len(header) >= 12 and header.startswith(b"RIFF") and header[8:12] == b"WEBP"
+    if extension == "webm":
+        return header.startswith(b"\x1A\x45\xDF\xA3")
+    if extension == "ogg":
+        return header.startswith(b"OggS")
+    if extension in {"mp4", "mov", "m4v"}:
+        return len(header) >= 12 and header[4:8] == b"ftyp"
+
+    return False
 
 
 def is_allowed_image(filename):
@@ -234,6 +375,8 @@ def save_uploaded_media(uploaded_file, allowed_extensions, fallback_base_name, t
     if uploaded_file is None or uploaded_file.filename == "":
         return None
     if not is_allowed_extension(uploaded_file.filename, allowed_extensions):
+        return None
+    if not has_allowed_file_signature(uploaded_file, allowed_extensions):
         return None
 
     raw_filename = uploaded_file.filename.rsplit("/", 1)[-1].rsplit("\\", 1)[-1].strip()
@@ -312,7 +455,8 @@ def collect_news_media_files(uploaded_files):
             media_path = save_news_video(uploaded_file)
 
         if media_path is None:
-            return None, "РќРµ СѓРґР°Р»РѕСЃСЊ СЃРѕС…СЂР°РЅРёС‚СЊ РѕРґРёРЅ РёР· РјРµРґРёР°С„Р°Р№Р»РѕРІ"
+            delete_uploaded_paths([item["media_path"] for item in saved_media])
+            return None, "Не удалось проверить или сохранить один из медиафайлов"
 
         saved_media.append(
             {
@@ -388,6 +532,10 @@ def signin():
     login = request.form.get("login", "").strip()
     password = request.form.get("password", "").strip()
 
+    if is_text_too_long(login, MAX_LOGIN_LENGTH) or is_text_too_long(password, MAX_PASSWORD_LENGTH):
+        flash("Слишком длинный логин или пароль")
+        return redirect(url_for("index"))
+
     ok, message = sign_in_user(login, password, session)
     if ok:
         return redirect(url_for("home_page"))
@@ -396,7 +544,7 @@ def signin():
     return redirect(url_for("index"))
 
 
-@app.route("/logout", methods=["GET"])
+@app.route("/logout", methods=["POST"])
 def logout():
     logout_user(session)
     return redirect(url_for("index"))
@@ -448,7 +596,12 @@ def update_leaderboard_page():
     name = request.form.get("name", "").strip()
     score_raw = request.form.get("score", "").strip()
 
-    if not user_id.isdigit() or not name or not score_raw:
+    if (
+        not user_id.isdigit()
+        or not name
+        or not score_raw
+        or is_text_too_long(name, MAX_LEADERBOARD_NAME_LENGTH)
+    ):
         flash("\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u043e\u0431\u043d\u043e\u0432\u0438\u0442\u044c \u0441\u0442\u0440\u043e\u043a\u0443 \u0442\u0430\u0431\u043b\u0438\u0446\u044b")
         return redirect(url_for("leaderboard_page"))
 
@@ -542,7 +695,12 @@ def add_news_page():
     content = request.form.get("content", "").strip()
     media_files = request.files.getlist("media")
 
-    if not title or not content:
+    if (
+        not title
+        or not content
+        or is_text_too_long(title, MAX_TITLE_LENGTH)
+        or is_text_too_long(content, MAX_NEWS_CONTENT_LENGTH)
+    ):
         flash("\u0417\u0430\u043f\u043e\u043b\u043d\u0438\u0442\u0435 \u0437\u0430\u0433\u043e\u043b\u043e\u0432\u043e\u043a \u0438 \u0442\u0435\u043a\u0441\u0442 \u043d\u043e\u0432\u043e\u0441\u0442\u0438")
         return redirect(url_for("news_page"))
 
@@ -588,7 +746,12 @@ def suggest_news_page():
     content = request.form.get("content", "").strip()
     media_files = request.files.getlist("media")
 
-    if not title or not content:
+    if (
+        not title
+        or not content
+        or is_text_too_long(title, MAX_TITLE_LENGTH)
+        or is_text_too_long(content, MAX_NEWS_CONTENT_LENGTH)
+    ):
         flash("\u0417\u0430\u043f\u043e\u043b\u043d\u0438\u0442\u0435 \u0437\u0430\u0433\u043e\u043b\u043e\u0432\u043e\u043a \u0438 \u0442\u0435\u043a\u0441\u0442 \u043d\u043e\u0432\u043e\u0441\u0442\u0438")
         return redirect(url_for("news_page"))
 
@@ -639,7 +802,13 @@ def update_news_page():
     remove_media_ids_raw = request.form.getlist("remove_media_ids")
     media_files = request.files.getlist("media")
 
-    if not news_id.isdigit() or not title or not content:
+    if (
+        not news_id.isdigit()
+        or not title
+        or not content
+        or is_text_too_long(title, MAX_TITLE_LENGTH)
+        or is_text_too_long(content, MAX_NEWS_CONTENT_LENGTH)
+    ):
         flash("\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u043e\u0431\u043d\u043e\u0432\u0438\u0442\u044c \u043d\u043e\u0432\u043e\u0441\u0442\u044c")
         return redirect(get_news_redirect_url())
 
@@ -797,7 +966,7 @@ def add_news_comment_page():
     comment = request.form.get("comment", "").strip()
     parent_comment_id = request.form.get("parent_comment_id", "").strip()
 
-    if not news_id.isdigit() or not comment:
+    if not news_id.isdigit() or not comment or is_text_too_long(comment, MAX_COMMENT_LENGTH):
         flash("\u041a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u0439 \u043d\u0435 \u0434\u043e\u0431\u0430\u0432\u043b\u0435\u043d")
         return redirect(url_for("news_page"))
 
@@ -899,7 +1068,14 @@ def add_mission_page():
     max_accepted_count_raw = request.form.get("max_accepted_count", "").strip()
     max_accepted_count = int(max_accepted_count_raw) if max_accepted_count_raw.isdigit() else 3
 
-    if not title or not description or not reward.isdigit() or int(reward) <= 0:
+    if (
+        not title
+        or not description
+        or not reward.isdigit()
+        or int(reward) <= 0
+        or is_text_too_long(title, MAX_TITLE_LENGTH)
+        or is_text_too_long(description, MAX_MISSION_DESCRIPTION_LENGTH)
+    ):
         flash("\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u043a\u043e\u0440\u0440\u0435\u043a\u0442\u043d\u044b\u0435 \u0434\u0430\u043d\u043d\u044b\u0435 \u0437\u0430\u0434\u0430\u043d\u0438\u044f \u0438 \u043d\u0430\u0433\u0440\u0430\u0434\u044b")
         return redirect(url_for("missions_page"))
     if max_accepted_count <= 0:
@@ -1056,7 +1232,7 @@ def studios_page():
 
     return render_react_page(
         "studios",
-        "\u0421\u0442\u0443\u0434\u0438\u0438",
+        "\u041a\u0430\u0444\u0435\u0434\u0440\u044b",
         user=user,
         active_section="studios",
         can_manage_studios=can_manage_studios(user),
@@ -1078,14 +1254,22 @@ def add_studio_page():
     image_file = request.files.get("image")
     allowed_audiences = {"all", "middle", "senior"}
 
-    if not title or not description:
-        flash("\u0417\u0430\u043f\u043e\u043b\u043d\u0438\u0442\u0435 \u043d\u0430\u0437\u0432\u0430\u043d\u0438\u0435 \u0438 \u043e\u043f\u0438\u0441\u0430\u043d\u0438\u0435 \u0441\u0442\u0443\u0434\u0438\u0438")
+    if (
+        not title
+        or not description
+        or is_text_too_long(title, MAX_TITLE_LENGTH)
+        or is_text_too_long(description, MAX_STUDIO_DESCRIPTION_LENGTH)
+    ):
+        flash("\u0417\u0430\u043f\u043e\u043b\u043d\u0438\u0442\u0435 \u043d\u0430\u0437\u0432\u0430\u043d\u0438\u0435 \u0438 \u043e\u043f\u0438\u0441\u0430\u043d\u0438\u0435 \u043a\u0430\u0444\u0435\u0434\u0440\u044b")
         return redirect(url_for("studios_page"))
     if audience not in allowed_audiences:
-        flash("\u041d\u0435\u0432\u0435\u0440\u043d\u043e \u0432\u044b\u0431\u0440\u0430\u043d\u0430 \u0430\u0443\u0434\u0438\u0442\u043e\u0440\u0438\u044f \u0441\u0442\u0443\u0434\u0438\u0438")
+        flash("\u041d\u0435\u0432\u0435\u0440\u043d\u043e \u0432\u044b\u0431\u0440\u0430\u043d\u0430 \u0430\u0443\u0434\u0438\u0442\u043e\u0440\u0438\u044f \u043a\u0430\u0444\u0435\u0434\u0440\u044b")
         return redirect(url_for("studios_page"))
 
     image_path = save_studio_image(image_file)
+    if image_file and image_file.filename and image_path is None:
+        flash("Изображение кафедры не прошло проверку")
+        return redirect(url_for("studios_page"))
 
     conn = get_connection()
     try:
@@ -1094,7 +1278,7 @@ def add_studio_page():
     finally:
         conn.close()
 
-    flash("\u0421\u0442\u0443\u0434\u0438\u044f \u0434\u043e\u0431\u0430\u0432\u043b\u0435\u043d\u0430")
+    flash("\u041a\u0430\u0444\u0435\u0434\u0440\u0430 \u0434\u043e\u0431\u0430\u0432\u043b\u0435\u043d\u0430")
     return redirect(url_for("studios_page"))
 
 
@@ -1114,14 +1298,23 @@ def update_studio_page():
     image_file = request.files.get("image")
     allowed_audiences = {"all", "middle", "senior"}
 
-    if not studio_id.isdigit() or not title or not description:
-        flash("\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u043e\u0431\u043d\u043e\u0432\u0438\u0442\u044c \u0441\u0442\u0443\u0434\u0438\u044e")
+    if (
+        not studio_id.isdigit()
+        or not title
+        or not description
+        or is_text_too_long(title, MAX_TITLE_LENGTH)
+        or is_text_too_long(description, MAX_STUDIO_DESCRIPTION_LENGTH)
+    ):
+        flash("\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u043e\u0431\u043d\u043e\u0432\u0438\u0442\u044c \u043a\u0430\u0444\u0435\u0434\u0440\u0443")
         return redirect(url_for("studios_page"))
     if audience not in allowed_audiences:
-        flash("\u041d\u0435\u0432\u0435\u0440\u043d\u043e \u0432\u044b\u0431\u0440\u0430\u043d\u0430 \u0430\u0443\u0434\u0438\u0442\u043e\u0440\u0438\u044f \u0441\u0442\u0443\u0434\u0438\u0438")
+        flash("\u041d\u0435\u0432\u0435\u0440\u043d\u043e \u0432\u044b\u0431\u0440\u0430\u043d\u0430 \u0430\u0443\u0434\u0438\u0442\u043e\u0440\u0438\u044f \u043a\u0430\u0444\u0435\u0434\u0440\u044b")
         return redirect(url_for("studios_page"))
 
     new_image_path = save_studio_image(image_file)
+    if image_file and image_file.filename and new_image_path is None:
+        flash("Изображение кафедры не прошло проверку")
+        return redirect(url_for("studios_page"))
     conn = get_connection()
     studio_item = None
     old_image_path = None
@@ -1143,15 +1336,15 @@ def update_studio_page():
     if studio_item is None:
         if new_image_path:
             delete_uploaded_paths([new_image_path])
-        flash("\u0421\u0442\u0443\u0434\u0438\u044f \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u0430")
+        flash("\u041a\u0430\u0444\u0435\u0434\u0440\u0430 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u0430")
     elif updated:
         if old_image_path and old_image_path != final_image_path:
             delete_uploaded_paths([old_image_path])
-        flash("\u0421\u0442\u0443\u0434\u0438\u044f \u043e\u0431\u043d\u043e\u0432\u043b\u0435\u043d\u0430")
+        flash("\u041a\u0430\u0444\u0435\u0434\u0440\u0430 \u043e\u0431\u043d\u043e\u0432\u043b\u0435\u043d\u0430")
     else:
         if new_image_path:
             delete_uploaded_paths([new_image_path])
-        flash("\u0421\u0442\u0443\u0434\u0438\u044e \u043d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u043e\u0431\u043d\u043e\u0432\u0438\u0442\u044c")
+        flash("\u041a\u0430\u0444\u0435\u0434\u0440\u0443 \u043d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u043e\u0431\u043d\u043e\u0432\u0438\u0442\u044c")
     return redirect(url_for("studios_page"))
 
 
@@ -1165,7 +1358,7 @@ def delete_studio_page():
 
     studio_id = request.form.get("studio_id", "").strip()
     if not studio_id.isdigit():
-        flash("\u041d\u0435\u0432\u0435\u0440\u043d\u044b\u0439 \u0438\u0434\u0435\u043d\u0442\u0438\u0444\u0438\u043a\u0430\u0442\u043e\u0440 \u0441\u0442\u0443\u0434\u0438\u0438")
+        flash("\u041d\u0435\u0432\u0435\u0440\u043d\u044b\u0439 \u0438\u0434\u0435\u043d\u0442\u0438\u0444\u0438\u043a\u0430\u0442\u043e\u0440 \u043a\u0430\u0444\u0435\u0434\u0440\u044b")
         return redirect(url_for("studios_page"))
 
     conn = get_connection()
@@ -1177,15 +1370,9 @@ def delete_studio_page():
         conn.close()
 
     if deleted and studio_item and studio_item.get("image_path"):
-        relative_path = str(studio_item["image_path"]).replace("uploads/", "", 1)
-        studio_file_path = os.path.join(app.config["UPLOAD_ROOT"], relative_path)
-        if os.path.exists(studio_file_path):
-            try:
-                os.remove(studio_file_path)
-            except OSError:
-                pass
+        delete_uploaded_paths([studio_item["image_path"]])
 
-    flash("\u0421\u0442\u0443\u0434\u0438\u044f \u0443\u0434\u0430\u043b\u0435\u043d\u0430")
+    flash("\u041a\u0430\u0444\u0435\u0434\u0440\u0430 \u0443\u0434\u0430\u043b\u0435\u043d\u0430")
     return redirect(url_for("studios_page"))
 
 
@@ -1323,6 +1510,10 @@ def api_add_operation():
     target = request.form.get("user", "").strip()
     score = request.form.get("score", "").strip()
     comment = request.form.get("comment", "").strip()
+
+    if is_text_too_long(comment, MAX_TRANSFER_COMMENT_LENGTH):
+        flash("Комментарий перевода слишком длинный")
+        return redirect(url_for("teams_page"))
 
     conn = get_connection()
     try:
