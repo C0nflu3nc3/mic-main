@@ -268,12 +268,24 @@ a {
 }
 
 .nav-link-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   border: 0;
   background: transparent;
   cursor: pointer;
+  color: inherit;
   text-align: inherit;
-  font: inherit;
+  text-decoration: none;
+  line-height: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  appearance: none;
+  -webkit-appearance: none;
 }
 
 .section-nav .nav-link.has-badge {
@@ -2307,6 +2319,10 @@ a {
   font-weight: 800;
   letter-spacing: 0.03em;
   text-transform: none;
+}
+
+.menu-extra-item .nav-link-button {
+  color: #e7dbbf;
 }
 
 .bank-balance-strip .badge {
