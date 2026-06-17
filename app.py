@@ -1036,7 +1036,8 @@ def missions_page():
             current_team_id = get_current_team_id_by_user_id(conn, int(user["id"]))
             user["team_id"] = current_team_id
             session["user"] = user
-        missions, current_team_mission_count = get_missions(conn, current_team_id)
+        mission_view_team_id = None if is_admin else current_team_id
+        missions, current_team_mission_count = get_missions(conn, mission_view_team_id)
     finally:
         conn.close()
 

@@ -774,6 +774,22 @@ def get_missions(conn, current_team_id=None):
         cursor.execute(assignments_sql)
         assignments = cursor.fetchall()
 
+        cooldown_mission_ids = set()
+        if current_team_id is not None:
+            cooldown_sql = """
+                SELECT DISTINCT mission_id
+                FROM Mission_team
+                WHERE team_id = %s
+                  AND status = 'approved'
+                  AND approved_at IS NOT NULL
+                  AND approved_at > (NOW() - INTERVAL 2 DAY)
+            """
+            cursor.execute(cooldown_sql, (current_team_id,))
+            cooldown_mission_ids = {
+                int(row["mission_id"])
+                for row in cursor.fetchall()
+            }
+
     assignments_by_mission = {}
     active_count_by_team = {}
 
@@ -786,6 +802,8 @@ def get_missions(conn, current_team_id=None):
     result = []
     for mission in missions:
         mission_id = int(mission["id"])
+        if mission_id in cooldown_mission_ids:
+            continue
         mission_assignments = assignments_by_mission.get(mission_id, [])
         mission["accepted_count"] = len(mission_assignments)
         mission["accepted_teams"] = [item["team_name"] for item in mission_assignments]
@@ -819,6 +837,20 @@ def accept_mission(conn, mission_id, team_id):
             return False, "Задание не найдено"
         if int(mission_row.get("is_closed") or 0) == 1:
             return False, "Задание уже закрыто"
+
+        cooldown_sql = """
+            SELECT id
+            FROM Mission_team
+            WHERE mission_id = %s
+              AND team_id = %s
+              AND status = 'approved'
+              AND approved_at IS NOT NULL
+              AND approved_at > (NOW() - INTERVAL 2 DAY)
+            LIMIT 1
+        """
+        cursor.execute(cooldown_sql, (mission_id, team_id))
+        if cursor.fetchone():
+            return False, "Это задание снова станет доступно для вашего Легиона через 2 дня"
 
         same_day_sql = """
             SELECT id
