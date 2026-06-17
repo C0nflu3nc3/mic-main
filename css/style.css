@@ -2214,7 +2214,8 @@ a {
   font-size: clamp(24px, 2.1vw, 30px);
   line-height: 1.22;
   letter-spacing: 0.006em;
-  color: #e7c783;
+  color: rgba(245, 241, 232, 0.98);
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.14);
 }
 
 .mission-actions {
