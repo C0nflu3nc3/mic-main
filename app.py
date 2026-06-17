@@ -1208,7 +1208,7 @@ def update_mission_page():
         or not reward.isdigit()
         or int(reward) <= 0
         or is_text_too_long(title, MAX_TITLE_LENGTH)
-        or is_text_too_long(description, MAX_TEXT_LENGTH)
+        or is_text_too_long(description, MAX_MISSION_DESCRIPTION_LENGTH)
     ):
         flash("Заполните поля задания корректно")
         return redirect(url_for("missions_page"))
@@ -1216,8 +1216,9 @@ def update_mission_page():
         flash("Укажите корректный лимит откликов")
         return redirect(url_for("missions_page"))
 
-    conn = get_connection()
+    conn = None
     try:
+        conn = get_connection()
         ensure_mission_columns(conn)
         ok, message = update_mission(
             conn,
@@ -1233,7 +1234,8 @@ def update_mission_page():
         flash("Не удалось обновить задание")
         return redirect(url_for("missions_page"))
     finally:
-        conn.close()
+        if conn is not None:
+            conn.close()
 
     flash(message if ok else "Не удалось обновить задание")
     return redirect(url_for("missions_page"))
