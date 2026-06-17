@@ -738,6 +738,49 @@ def create_mission(conn, title, description, reward, user_id, is_exclusive=False
     conn.commit()
 
 
+def update_mission(conn, mission_id, title, description, reward, is_exclusive=False, max_accepted_count=3):
+    normalized_limit = max(1, int(max_accepted_count or 1))
+    exclusive_flag = 1 if bool(is_exclusive) else 0
+    with conn.cursor() as cursor:
+        select_sql = """
+            SELECT id
+            FROM Mission
+            WHERE id = %s
+            LIMIT 1
+        """
+        cursor.execute(select_sql, (mission_id,))
+        if cursor.fetchone() is None:
+            return False, "Задание не найдено"
+
+        accepted_sql = """
+            SELECT COUNT(*) AS accepted_count
+            FROM Mission_team
+            WHERE mission_id = %s AND status = 'approved'
+        """
+        cursor.execute(accepted_sql, (mission_id,))
+        accepted_row = cursor.fetchone() or {}
+        accepted_count = int(accepted_row.get("accepted_count") or 0)
+        is_closed = 1 if exclusive_flag and accepted_count >= normalized_limit else 0
+
+        update_sql = """
+            UPDATE Mission
+            SET title = %s,
+                description = %s,
+                reward = %s,
+                is_exclusive = %s,
+                max_accepted_count = %s,
+                is_closed = %s
+            WHERE id = %s
+        """
+        cursor.execute(
+            update_sql,
+            (title, description, reward, exclusive_flag, normalized_limit, is_closed, mission_id),
+        )
+
+    conn.commit()
+    return True, "Задание обновлено"
+
+
 def get_missions(conn, current_team_id=None):
     with conn.cursor() as cursor:
         missions_sql = """

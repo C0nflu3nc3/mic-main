@@ -662,6 +662,40 @@ function SuggestedNewsPage({ suggested_news_items = [] }) {
     );
 }
 
+function MissionEditBlock({ mission }) {
+    return (
+        <details className="news-edit-block news-edit-action is-collapsed">
+            <summary className="news-edit-summary">Редактировать задание</summary>
+            <div className="news-edit-body">
+                <form method="POST" action="/missions/update" className="news-edit-form">
+                    <input type="hidden" name="mission_id" value={mission.id} />
+                    <div className="mb-3">
+                        <label className="form-label" htmlFor={`mission-edit-title-${mission.id}`}>Название задания</label>
+                        <input className="form-control" id={`mission-edit-title-${mission.id}`} name="title" type="text" defaultValue={mission.title} required />
+                    </div>
+                    <div className="mb-3">
+                        <label className="form-label" htmlFor={`mission-edit-description-${mission.id}`}>Текст задания</label>
+                        <textarea className="form-control" id={`mission-edit-description-${mission.id}`} name="description" rows="5" defaultValue={mission.description} required />
+                    </div>
+                    <div className="mb-3">
+                        <label className="form-label" htmlFor={`mission-edit-reward-${mission.id}`}>Награда</label>
+                        <input className="form-control" id={`mission-edit-reward-${mission.id}`} name="reward" type="number" min="1" step="1" defaultValue={mission.reward} required />
+                    </div>
+                    <div className="mb-3 form-check">
+                        <input className="form-check-input" id={`mission-edit-exclusive-${mission.id}`} name="is_exclusive" type="checkbox" value="1" defaultChecked={Boolean(mission.is_exclusive)} />
+                        <label className="form-check-label" htmlFor={`mission-edit-exclusive-${mission.id}`}>Эксклюзивное задание</label>
+                    </div>
+                    <div className="mb-3">
+                        <label className="form-label" htmlFor={`mission-edit-max-accepted-${mission.id}`}>Лимит откликов</label>
+                        <input className="form-control" id={`mission-edit-max-accepted-${mission.id}`} name="max_accepted_count" type="number" min="1" step="1" defaultValue={mission.max_accepted_count || 3} required />
+                    </div>
+                    <button type="submit" className="btn btn-primary">Сохранить изменения</button>
+                </form>
+            </div>
+        </details>
+    );
+}
+
 function MissionsPage({ is_admin = false, can_take_missions = false, current_team_mission_count = 0, missions = [] }) {
     return (
         <div className="section-page missions-page ceremonial-page">
@@ -720,6 +754,7 @@ function MissionsPage({ is_admin = false, can_take_missions = false, current_tea
 
                         {is_admin ? (
                             <div className="mission-actions mission-admin-actions">
+                                <MissionEditBlock mission={mission} />
                                 <form method="POST" action="/missions/delete" onSubmit={(event) => { if (!window.confirm("\u0412\u044b \u0443\u0432\u0435\u0440\u0435\u043d\u044b?")) { event.preventDefault(); } }}>
                                     <input type="hidden" name="mission_id" value={mission.id} />
                                     <button type="submit" className="btn btn-outline-light">РЈРґР°Р»РёС‚СЊ РјРёСЃСЃРёСЋ</button>

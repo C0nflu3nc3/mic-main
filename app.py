@@ -44,6 +44,7 @@ from api.functions import (
     ensure_studios_table,
     reject_mission,
     update_leaderboard_entry,
+    update_mission,
     update_news,
     update_studio,
 )
@@ -1178,6 +1179,59 @@ def delete_mission_page():
         conn.close()
 
     flash(message)
+    return redirect(url_for("missions_page"))
+
+
+@app.route("/missions/update", methods=["POST"])
+def update_mission_page():
+    user, redirect_response = require_user()
+    if redirect_response:
+        return redirect_response
+    if not bool(user["isadmin"]):
+        return redirect(url_for("missions_page"))
+
+    mission_id = request.form.get("mission_id", "").strip()
+    title = request.form.get("title", "").strip()
+    description = request.form.get("description", "").strip()
+    reward = request.form.get("reward", "").strip()
+    is_exclusive = request.form.get("is_exclusive") == "1"
+    max_accepted_count_raw = request.form.get("max_accepted_count", "").strip()
+    max_accepted_count = int(max_accepted_count_raw) if max_accepted_count_raw.isdigit() else 3
+
+    if not mission_id.isdigit():
+        flash("Не удалось обновить задание")
+        return redirect(url_for("missions_page"))
+
+    if (
+        not title
+        or not description
+        or not reward.isdigit()
+        or int(reward) <= 0
+        or is_text_too_long(title, MAX_TITLE_LENGTH)
+        or is_text_too_long(description, MAX_TEXT_LENGTH)
+    ):
+        flash("Заполните поля задания корректно")
+        return redirect(url_for("missions_page"))
+    if max_accepted_count <= 0:
+        flash("Укажите корректный лимит откликов")
+        return redirect(url_for("missions_page"))
+
+    conn = get_connection()
+    try:
+        ensure_mission_columns(conn)
+        ok, message = update_mission(
+            conn,
+            int(mission_id),
+            title,
+            description,
+            int(reward),
+            is_exclusive=is_exclusive,
+            max_accepted_count=max_accepted_count,
+        )
+    finally:
+        conn.close()
+
+    flash(message if ok else "Не удалось обновить задание")
     return redirect(url_for("missions_page"))
 
 
