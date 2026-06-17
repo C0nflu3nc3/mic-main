@@ -1228,6 +1228,10 @@ def update_mission_page():
             is_exclusive=is_exclusive,
             max_accepted_count=max_accepted_count,
         )
+    except Exception:
+        app.logger.exception("Failed to update mission")
+        flash("Не удалось обновить задание")
+        return redirect(url_for("missions_page"))
     finally:
         conn.close()
 

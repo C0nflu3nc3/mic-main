@@ -743,24 +743,16 @@ def update_mission(conn, mission_id, title, description, reward, is_exclusive=Fa
     exclusive_flag = 1 if bool(is_exclusive) else 0
     with conn.cursor() as cursor:
         select_sql = """
-            SELECT id
+            SELECT id, COALESCE(is_closed, 0) AS is_closed
             FROM Mission
             WHERE id = %s
             LIMIT 1
         """
         cursor.execute(select_sql, (mission_id,))
-        if cursor.fetchone() is None:
+        row = cursor.fetchone()
+        if row is None:
             return False, "Задание не найдено"
-
-        accepted_sql = """
-            SELECT COUNT(*) AS accepted_count
-            FROM Mission_team
-            WHERE mission_id = %s AND status = 'approved'
-        """
-        cursor.execute(accepted_sql, (mission_id,))
-        accepted_row = cursor.fetchone() or {}
-        accepted_count = int(accepted_row.get("accepted_count") or 0)
-        is_closed = 1 if exclusive_flag and accepted_count >= normalized_limit else 0
+        is_closed = int(row.get("is_closed") or 0) if exclusive_flag else 0
 
         update_sql = """
             UPDATE Mission
