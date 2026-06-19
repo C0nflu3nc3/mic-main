@@ -1800,6 +1800,12 @@ a {
   max-width: 64ch;
 }
 
+.news-card-editorial .news-body-panel,
+.news-card-editorial .news-content {
+  text-align: left;
+  max-width: none;
+}
+
 .studios-page {
   font-family: "Manrope", Arial, sans-serif;
 }
