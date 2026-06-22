@@ -1006,10 +1006,13 @@ def approve_mission(conn, assignment_id, admin_user_id):
                 Mission_team.mission_id,
                 Mission.title,
                 Mission.reward,
+                Teams.user_id,
+                Teams.name AS team_name,
                 COALESCE(Mission.is_exclusive, 0) AS is_exclusive,
                 GREATEST(COALESCE(Mission.max_accepted_count, 3), 1) AS max_accepted_count
             FROM Mission_team
             JOIN Mission ON Mission.id = Mission_team.mission_id
+            JOIN Teams ON Teams.id = Mission_team.team_id
             WHERE Mission_team.id = %s AND Mission_team.status = 'accepted'
             LIMIT 1
         """
@@ -1020,6 +1023,7 @@ def approve_mission(conn, assignment_id, admin_user_id):
 
         reward = int(row["reward"] or 0)
         team_id = int(row["team_id"])
+        team_user_id = int(row["user_id"])
         mission_id = int(row["mission_id"])
         mission_title = row["title"]
 
@@ -1038,6 +1042,11 @@ def approve_mission(conn, assignment_id, admin_user_id):
             WHERE id = %s
         """
         cursor.execute(update_sql, (admin_user_id, assignment_id))
+
+        cursor.execute(
+            "UPDATE Overall_leader SET score = score + 5 WHERE user_id = %s",
+            (team_user_id,),
+        )
 
         if int(row.get("is_exclusive") or 0) == 1:
             approved_count_sql = """
