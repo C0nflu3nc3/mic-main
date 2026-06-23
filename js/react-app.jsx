@@ -307,7 +307,7 @@ function LeaderboardTable({ title, rows, tableName, canManageLeaderboards }) {
     );
 }
 
-function LeaderboardPage({ overall_leaderboard = [], duel_leaderboard = [], can_manage_leaderboards = false }) {
+function LeaderboardPage({ overall_leaderboard = [], duel_leaderboard = [], can_manage_leaderboards = false, leaderboard_hidden_for_users = false }) {
     return (
         <div className="section-page leaderboard-page ceremonial-page">
             <Hero
@@ -315,11 +315,26 @@ function LeaderboardPage({ overall_leaderboard = [], duel_leaderboard = [], can_
                 description="Р—РґРµСЃСЊ РѕС‚РѕР±СЂР°Р¶Р°СЋС‚СЃСЏ РѕС‚РґРµР»СЊРЅС‹Рµ С‚Р°Р±Р»РёС†С‹ РѕР±С‰РµРіРѕ СЂРµР№С‚РёРЅРіР° Рё РґСѓСЌР»СЊРЅС‹С… РѕС‡РєРѕРІ."
                 extraClass="leaderboard-hero"
             />
+            {can_manage_leaderboards ? (
+                <form method="POST" action="/leaderboard/toggle-visibility" className="mb-4">
+                    <input type="hidden" name="hidden" value={leaderboard_hidden_for_users ? "0" : "1"} />
+                    <button type="submit" className="btn btn-primary">
+                        {leaderboard_hidden_for_users ? "Показать таблицу легионам" : "Скрыть таблицу для легионов"}
+                    </button>
+                </form>
+            ) : null}
 
-            <div className="leaderboard-grid">
-                <LeaderboardTable title="РћС‡РєРё РІР»РёСЏРЅРёСЏ" rows={overall_leaderboard} tableName="Overall_leader" canManageLeaderboards={can_manage_leaderboards} />
-                <LeaderboardTable title="РўСѓСЂРЅРёСЂРЅС‹Рµ РѕС‡РєРё" rows={duel_leaderboard} tableName="Duel_leader" canManageLeaderboards={can_manage_leaderboards} />
-            </div>
+            {!can_manage_leaderboards && leaderboard_hidden_for_users ? (
+                <section className="placeholder-card">
+                    <h3>Таблица лидеров скрыта</h3>
+                    <p>Сейчас рейтинг временно доступен только администраторам.</p>
+                </section>
+            ) : (
+                <div className="leaderboard-grid">
+                    <LeaderboardTable title="РћС‡РєРё РІР»РёСЏРЅРёСЏ" rows={overall_leaderboard} tableName="Overall_leader" canManageLeaderboards={can_manage_leaderboards} />
+                    <LeaderboardTable title="РўСѓСЂРЅРёСЂРЅС‹Рµ РѕС‡РєРё" rows={duel_leaderboard} tableName="Duel_leader" canManageLeaderboards={can_manage_leaderboards} />
+                </div>
+            )}
         </div>
     );
 }

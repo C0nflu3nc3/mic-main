@@ -95,6 +95,7 @@ MAX_TRANSFER_COMMENT_LENGTH = 500
 os.makedirs(app.config["UPLOAD_ROOT"], exist_ok=True)
 os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 os.makedirs(app.config["STUDIOS_UPLOAD_FOLDER"], exist_ok=True)
+LEADERBOARD_HIDDEN_FLAG_PATH = os.path.join(app.config["UPLOAD_ROOT"], "leaderboard_hidden.flag")
 
 
 def bootstrap_news_uploads():
@@ -285,6 +286,19 @@ def can_manage_studios(user):
 
 def can_manage_leaderboards(user):
     return bool(user["isadmin"])
+
+
+def is_leaderboard_hidden_for_users():
+    return os.path.exists(LEADERBOARD_HIDDEN_FLAG_PATH)
+
+
+def set_leaderboard_hidden_for_users(hidden):
+    if hidden:
+        with open(LEADERBOARD_HIDDEN_FLAG_PATH, "w", encoding="utf-8") as flag_file:
+            flag_file.write("1")
+        return
+    if os.path.exists(LEADERBOARD_HIDDEN_FLAG_PATH):
+        os.remove(LEADERBOARD_HIDDEN_FLAG_PATH)
 
 
 def can_take_missions(user):
@@ -566,22 +580,44 @@ def leaderboard_page():
     if redirect_response:
         return redirect_response
 
-    conn = get_connection()
-    try:
-        overall_leaderboard = get_leaderboard_table(conn, "Overall_leader")
-        duel_leaderboard = get_leaderboard_table(conn, "Duel_leader")
-    finally:
-        conn.close()
+    can_manage = can_manage_leaderboards(user)
+    leaderboard_hidden_for_users = is_leaderboard_hidden_for_users()
+
+    overall_leaderboard = []
+    duel_leaderboard = []
+
+    if can_manage or not leaderboard_hidden_for_users:
+        conn = get_connection()
+        try:
+            overall_leaderboard = get_leaderboard_table(conn, "Overall_leader")
+            duel_leaderboard = get_leaderboard_table(conn, "Duel_leader")
+        finally:
+            conn.close()
 
     return render_react_page(
         "leaderboard",
         "Таблица лидеров",
         user=user,
-        can_manage_leaderboards=can_manage_leaderboards(user),
+        can_manage_leaderboards=can_manage,
+        leaderboard_hidden_for_users=leaderboard_hidden_for_users,
         active_section="home",
         overall_leaderboard=overall_leaderboard,
         duel_leaderboard=duel_leaderboard,
     )
+
+
+@app.route("/leaderboard/toggle-visibility", methods=["POST"])
+def toggle_leaderboard_visibility_page():
+    user, redirect_response = require_user()
+    if redirect_response:
+        return redirect_response
+    if not can_manage_leaderboards(user):
+        return redirect(url_for("leaderboard_page"))
+
+    hidden = request.form.get("hidden") == "1"
+    set_leaderboard_hidden_for_users(hidden)
+    flash("Таблица лидеров скрыта для легионов" if hidden else "Таблица лидеров снова видна легионам")
+    return redirect(url_for("leaderboard_page"))
 
 
 @app.route("/leaderboard/update", methods=["POST"])

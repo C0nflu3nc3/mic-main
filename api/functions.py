@@ -982,14 +982,14 @@ def get_approve_queue(conn):
         sql = """
             SELECT
                 Mission_team.id,
-                Mission.title,
-                Mission.description,
-                Mission.reward,
+                COALESCE(Mission.title, CONCAT('Задание #', Mission_team.mission_id)) AS title,
+                COALESCE(Mission.description, '') AS description,
+                COALESCE(Mission.reward, 0) AS reward,
                 Mission_team.accepted_at,
-                Teams.name AS team_name
+                COALESCE(Teams.name, CONCAT('Легион #', Mission_team.team_id)) AS team_name
             FROM Mission_team
-            JOIN Mission ON Mission.id = Mission_team.mission_id
-            JOIN Teams ON Teams.id = Mission_team.team_id
+            LEFT JOIN Mission ON Mission.id = Mission_team.mission_id
+            LEFT JOIN Teams ON Teams.id = Mission_team.team_id
             WHERE Mission_team.status = 'accepted'
             ORDER BY Mission_team.accepted_at ASC, Mission_team.id ASC
         """

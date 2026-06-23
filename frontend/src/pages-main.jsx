@@ -112,14 +112,29 @@ function LeaderboardTable({ title, rows, tableName, canManageLeaderboards }) {
   );
 }
 
-export function LeaderboardPage({ overall_leaderboard = [], duel_leaderboard = [], can_manage_leaderboards = false }) {
+export function LeaderboardPage({ overall_leaderboard = [], duel_leaderboard = [], can_manage_leaderboards = false, leaderboard_hidden_for_users = false }) {
   return (
     <div className="section-page leaderboard-page ceremonial-page">
       <Hero title="Таблица лидеров" description="Здесь отображаются отдельные таблицы общего рейтинга и дуэльных очков." extraClass="leaderboard-hero" />
-      <div className="leaderboard-grid">
-        <LeaderboardTable title="Очки влияния" rows={overall_leaderboard} tableName="Overall_leader" canManageLeaderboards={can_manage_leaderboards} />
-        <LeaderboardTable title="Турнирные очки" rows={duel_leaderboard} tableName="Duel_leader" canManageLeaderboards={can_manage_leaderboards} />
-      </div>
+      {can_manage_leaderboards ? (
+        <form method="POST" action="/leaderboard/toggle-visibility" className="mb-4">
+          <input type="hidden" name="hidden" value={leaderboard_hidden_for_users ? "0" : "1"} />
+          <button type="submit" className="btn btn-primary">
+            {leaderboard_hidden_for_users ? "Показать таблицу легионам" : "Скрыть таблицу для легионов"}
+          </button>
+        </form>
+      ) : null}
+      {!can_manage_leaderboards && leaderboard_hidden_for_users ? (
+        <section className="placeholder-card">
+          <h3>Таблица лидеров скрыта</h3>
+          <p>Сейчас рейтинг временно доступен только администраторам.</p>
+        </section>
+      ) : (
+        <div className="leaderboard-grid">
+          <LeaderboardTable title="Очки влияния" rows={overall_leaderboard} tableName="Overall_leader" canManageLeaderboards={can_manage_leaderboards} />
+          <LeaderboardTable title="Турнирные очки" rows={duel_leaderboard} tableName="Duel_leader" canManageLeaderboards={can_manage_leaderboards} />
+        </div>
+      )}
     </div>
   );
 }
