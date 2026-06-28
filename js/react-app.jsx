@@ -86,7 +86,7 @@ function Header({ user, activeSection, pendingNewsCount = 0 }) {
     const isAdmin = Boolean(user.isadmin);
     const menuItems = [
         { key: "home", href: "/home", label: "Р“Р»Р°РІРЅР°СЏ" },
-        { key: "studios", href: "/studios", label: "РљР°С„РµРґСЂС‹" },
+        { key: "studios", href: "/studios", label: "Гильдии" },
         { key: "history", href: "/history", label: "РСЃС‚РѕСЂРёСЏ Рё РєРѕРґРµРєСЃ" },
         { key: "bonus", href: "/bonus", label: "Р‘РѕРЅСѓСЃРЅР°СЏ СЃРёСЃС‚РµРјР°" },
         { key: "bank", href: "/teams", label: "Р‘Р°РЅРє" },

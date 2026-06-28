@@ -1365,7 +1365,7 @@ def add_studio_page():
 
     image_path = save_studio_image(image_file)
     if image_file and image_file.filename and image_path is None:
-        flash("Изображение кафедры не прошло проверку")
+        flash("Изображение гильдии не прошло проверку")
         return redirect(url_for("studios_page"))
 
     conn = get_connection()
@@ -1410,7 +1410,7 @@ def update_studio_page():
 
     new_image_path = save_studio_image(image_file)
     if image_file and image_file.filename and new_image_path is None:
-        flash("Изображение кафедры не прошло проверку")
+        flash("Изображение гильдии не прошло проверку")
         return redirect(url_for("studios_page"))
     conn = get_connection()
     studio_item = None
