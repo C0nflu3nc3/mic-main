@@ -2214,6 +2214,32 @@ a {
     linear-gradient(180deg, rgba(28, 12, 12, 0.97) 0%, rgba(16, 8, 8, 0.95) 100%) !important;
 }
 
+.mission-card-contract {
+  border-color: rgba(94, 161, 158, 0.62) !important;
+  box-shadow:
+    0 24px 56px rgba(0, 0, 0, 0.22),
+    0 0 0 1px rgba(94, 161, 158, 0.26),
+    inset 0 1px 0 rgba(212, 255, 247, 0.08) !important;
+  background:
+    radial-gradient(circle at top right, rgba(76, 145, 138, 0.2) 0%, transparent 34%),
+    linear-gradient(180deg, rgba(10, 27, 26, 0.98) 0%, rgba(7, 17, 16, 0.96) 100%) !important;
+}
+
+.mission-card-contract h3 {
+  color: rgba(217, 244, 240, 0.98);
+}
+
+.mission-card-contract .mission-info span:first-child,
+.mission-card-contract .mission-exclusive-note {
+  border-color: rgba(94, 161, 158, 0.52);
+  background: rgba(20, 56, 53, 0.5);
+  color: rgba(219, 248, 244, 0.96);
+}
+
+.mission-card-contract .mission-info span:first-child {
+  color: rgba(168, 227, 220, 0.96);
+}
+
 .mission-card .news-content {
   font-family: var(--main-font-story);
   font-weight: 500;

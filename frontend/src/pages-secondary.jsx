@@ -93,7 +93,7 @@ export function MissionsPage({ is_admin = false, can_take_missions = false, curr
       )}
       <div className="news-list">
         {missions.map((mission) => (
-          <article className={`placeholder-card mission-card${mission.is_exclusive ? " mission-card-exclusive" : ""}`} key={mission.id}>
+          <article className={`placeholder-card mission-card${mission.is_contract ? " mission-card-contract" : ""}${mission.is_exclusive ? " mission-card-exclusive" : ""}`} key={mission.id}>
             <div className="news-meta"><span>{mission.author_name}</span><span>{formatDateTime(mission.created_at)}</span></div>
             <h3>{mission.title}</h3>
             <p className="news-content">{mission.description}</p>
@@ -201,7 +201,7 @@ export function ApprovePage({ approve_items = [] }) {
       <Hero title="Подтверждение" description="Здесь администратор подтверждает или отклоняет выполнение принятых заданий. После подтверждения награда автоматически начисляется отряду." />
       <div className="news-list">
         {approve_items.map((item) => (
-          <article className="placeholder-card mission-card" key={item.id}><div className="news-meta"><span>{item.team_name}</span><span>{formatDateTime(item.accepted_at)}</span></div><h3>{item.title}</h3><p className="news-content">{item.description}</p><div className="mission-info"><span>Отряд: {item.team_name}</span><span>{item.is_contract ? `Цена легиона: ${item.bid_reward || 0} GRZ` : `Награда: ${item.reward} GRZ`}</span></div><div className="approve-actions"><form method="POST" action="/approve/confirm">{item.is_contract ? null : <input className="form-control mb-2" name="approved_reward" type="number" min="0" step="1" defaultValue={item.reward} />}<input type="hidden" name="assignment_id" value={item.id} /><button type="submit" className="btn btn-primary">{item.is_contract ? "Передать контракт" : "Подтвердить выполнение"}</button></form><form method="POST" action="/approve/reject"><input type="hidden" name="assignment_id" value={item.id} /><button type="submit" className="btn btn-outline-light">Отклонить выполнение</button></form></div></article>
+          <article className={`placeholder-card mission-card${item.is_contract ? " mission-card-contract" : ""}`} key={item.id}><div className="news-meta"><span>{item.team_name}</span><span>{formatDateTime(item.accepted_at)}</span></div><h3>{item.title}</h3><p className="news-content">{item.description}</p><div className="mission-info"><span>Отряд: {item.team_name}</span><span>{item.is_contract ? `Цена легиона: ${item.bid_reward || 0} GRZ` : `Награда: ${item.reward} GRZ`}</span></div><div className="approve-actions"><form method="POST" action="/approve/confirm">{item.is_contract ? null : <input className="form-control mb-2" name="approved_reward" type="number" min="0" step="1" defaultValue={item.reward} />}<input type="hidden" name="assignment_id" value={item.id} /><button type="submit" className="btn btn-primary">{item.is_contract ? "Передать контракт" : "Подтвердить выполнение"}</button></form><form method="POST" action="/approve/reject"><input type="hidden" name="assignment_id" value={item.id} /><button type="submit" className="btn btn-outline-light">Отклонить выполнение</button></form></div></article>
         ))}
         {!approve_items.length ? <section className="placeholder-card"><h3>Нет заданий на подтверждение</h3><p>Принятые задания отображаются в этом списке.</p></section> : null}
       </div>

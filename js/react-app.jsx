@@ -787,7 +787,7 @@ function MissionsPage({ is_admin = false, can_take_missions = false, current_tea
 
             <div className="news-list">
                 {missions.map((mission) => (
-                    <article className="placeholder-card mission-card" key={mission.id}>
+                    <article className={`placeholder-card mission-card${mission.is_contract ? " mission-card-contract" : ""}${mission.is_exclusive ? " mission-card-exclusive" : ""}`} key={mission.id}>
                         <div className="news-meta">
                             <span>{mission.author_name}</span>
                             <span>{formatDateTime(mission.created_at)}</span>
@@ -1044,7 +1044,7 @@ function ApprovePage({ approve_items = [] }) {
 
             <div className="news-list">
                 {approve_items.map((item) => (
-                    <article className="placeholder-card mission-card" key={item.id}>
+                    <article className={`placeholder-card mission-card${item.is_contract ? " mission-card-contract" : ""}`} key={item.id}>
                         <div className="news-meta">
                             <span>{item.team_name}</span>
                             <span>{formatDateTime(item.accepted_at)}</span>
