@@ -1102,21 +1102,27 @@ def add_mission_page():
     title = request.form.get("title", "").strip()
     description = request.form.get("description", "").strip()
     reward = request.form.get("reward", "").strip()
-    is_exclusive = request.form.get("is_exclusive") == "1"
+    mission_kind = request.form.get("mission_kind", "normal").strip()
     max_accepted_count_raw = request.form.get("max_accepted_count", "").strip()
     max_accepted_count = int(max_accepted_count_raw) if max_accepted_count_raw.isdigit() else 3
+    is_contract = mission_kind == "contract"
+    is_exclusive = mission_kind == "exclusive"
 
+    if mission_kind not in {"normal", "exclusive", "contract"}:
+        flash("Выберите корректный тип задания")
+        return redirect(url_for("missions_page"))
     if (
         not title
         or not description
-        or not reward.isdigit()
-        or int(reward) <= 0
         or is_text_too_long(title, MAX_TITLE_LENGTH)
         or is_text_too_long(description, MAX_MISSION_DESCRIPTION_LENGTH)
     ):
         flash("\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u043a\u043e\u0440\u0440\u0435\u043a\u0442\u043d\u044b\u0435 \u0434\u0430\u043d\u043d\u044b\u0435 \u0437\u0430\u0434\u0430\u043d\u0438\u044f \u0438 \u043d\u0430\u0433\u0440\u0430\u0434\u044b")
         return redirect(url_for("missions_page"))
-    if max_accepted_count <= 0:
+    if not is_contract and (not reward.isdigit() or int(reward) <= 0):
+        flash("\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u043a\u043e\u0440\u0440\u0435\u043a\u0442\u043d\u044b\u0435 \u0434\u0430\u043d\u043d\u044b\u0435 \u0437\u0430\u0434\u0430\u043d\u0438\u044f \u0438 \u043d\u0430\u0433\u0440\u0430\u0434\u044b")
+        return redirect(url_for("missions_page"))
+    if not is_contract and max_accepted_count <= 0:
         flash("Укажите корректный лимит откликов")
         return redirect(url_for("missions_page"))
 
@@ -1127,10 +1133,11 @@ def add_mission_page():
             conn,
             title,
             description,
-            int(reward),
+            0 if is_contract else int(reward),
             int(user["id"]),
             is_exclusive=is_exclusive,
-            max_accepted_count=max_accepted_count,
+            max_accepted_count=1 if is_contract else max_accepted_count,
+            is_contract=is_contract,
         )
     finally:
         conn.close()
@@ -1148,6 +1155,7 @@ def accept_mission_page():
         return redirect(url_for("missions_page"))
 
     mission_id = request.form.get("mission_id", "").strip()
+    bid_reward_raw = request.form.get("bid_reward", "").strip()
     current_team_id = user.get("team_id")
 
     if not mission_id.isdigit() or current_team_id is None:
@@ -1157,7 +1165,13 @@ def accept_mission_page():
     conn = get_connection()
     try:
         ensure_mission_columns(conn)
-        ok, message = accept_mission(conn, int(mission_id), int(current_team_id))
+        bid_reward = None
+        if bid_reward_raw:
+            if not bid_reward_raw.isdigit():
+                flash("Укажите корректную цену для контракта")
+                return redirect(url_for("missions_page"))
+            bid_reward = int(bid_reward_raw)
+        ok, message = accept_mission(conn, int(mission_id), int(current_team_id), bid_reward=bid_reward)
     finally:
         conn.close()
 
@@ -1230,25 +1244,31 @@ def update_mission_page():
     title = request.form.get("title", "").strip()
     description = request.form.get("description", "").strip()
     reward = request.form.get("reward", "").strip()
-    is_exclusive = request.form.get("is_exclusive") == "1"
+    mission_kind = request.form.get("mission_kind", "normal").strip()
     max_accepted_count_raw = request.form.get("max_accepted_count", "").strip()
     max_accepted_count = int(max_accepted_count_raw) if max_accepted_count_raw.isdigit() else 3
+    is_contract = mission_kind == "contract"
+    is_exclusive = mission_kind == "exclusive"
 
     if not mission_id.isdigit():
         flash("Не удалось обновить задание")
         return redirect(url_for("missions_page"))
 
+    if mission_kind not in {"normal", "exclusive", "contract"}:
+        flash("Выберите корректный тип задания")
+        return redirect(url_for("missions_page"))
     if (
         not title
         or not description
-        or not reward.isdigit()
-        or int(reward) <= 0
         or is_text_too_long(title, MAX_TITLE_LENGTH)
         or is_text_too_long(description, MAX_MISSION_DESCRIPTION_LENGTH)
     ):
         flash("Заполните поля задания корректно")
         return redirect(url_for("missions_page"))
-    if max_accepted_count <= 0:
+    if not is_contract and (not reward.isdigit() or int(reward) <= 0):
+        flash("Заполните поля задания корректно")
+        return redirect(url_for("missions_page"))
+    if not is_contract and max_accepted_count <= 0:
         flash("Укажите корректный лимит откликов")
         return redirect(url_for("missions_page"))
 
@@ -1261,9 +1281,10 @@ def update_mission_page():
             int(mission_id),
             title,
             description,
-            int(reward),
+            0 if is_contract else int(reward),
             is_exclusive=is_exclusive,
-            max_accepted_count=max_accepted_count,
+            max_accepted_count=1 if is_contract else max_accepted_count,
+            is_contract=is_contract,
         )
     except Exception:
         app.logger.exception("Failed to update mission")
@@ -1536,14 +1557,22 @@ def approve_confirm_page():
         return redirect(url_for("home_page"))
 
     assignment_id = request.form.get("assignment_id", "").strip()
+    approved_reward_raw = request.form.get("approved_reward", "").strip()
     if not assignment_id.isdigit():
         flash("\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u043f\u043e\u0434\u0442\u0432\u0435\u0440\u0434\u0438\u0442\u044c \u0432\u044b\u043f\u043e\u043b\u043d\u0435\u043d\u0438\u0435")
         return redirect(url_for("approve_page"))
 
+    approved_reward = None
+    if approved_reward_raw:
+        if not approved_reward_raw.isdigit():
+            flash("Укажите корректную сумму награды")
+            return redirect(url_for("approve_page"))
+        approved_reward = int(approved_reward_raw)
+
     conn = get_connection()
     try:
         ensure_mission_columns(conn)
-        ok, message = approve_mission(conn, int(assignment_id), int(user["id"]))
+        ok, message = approve_mission(conn, int(assignment_id), int(user["id"]), approved_reward=approved_reward)
     finally:
         conn.close()
 

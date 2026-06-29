@@ -1,6 +1,27 @@
 import { Hero, formatDate, formatDateTime, uploadedPath } from "./shared";
 
+function getMissionKind(mission) {
+  if (mission.is_contract) return "contract";
+  if (mission.is_exclusive) return "exclusive";
+  return "normal";
+}
+
+function syncMissionKindFields(form, missionKind) {
+  if (!form) return;
+  const isContract = missionKind === "contract";
+  const rewardWrap = form.querySelector("[data-mission-reward-wrap]");
+  const rewardInput = form.querySelector("[data-mission-reward-input]");
+  const maxWrap = form.querySelector("[data-mission-max-wrap]");
+  const maxInput = form.querySelector("[data-mission-max-input]");
+
+  if (rewardWrap) rewardWrap.hidden = isContract;
+  if (maxWrap) maxWrap.hidden = isContract;
+  if (rewardInput) rewardInput.required = !isContract;
+  if (maxInput) maxInput.required = !isContract;
+}
+
 function MissionEditBlock({ mission }) {
+  const missionKind = getMissionKind(mission);
   return (
     <details className="news-edit-block news-edit-action is-collapsed">
       <summary className="news-edit-summary">Редактировать задание</summary>
@@ -16,16 +37,26 @@ function MissionEditBlock({ mission }) {
             <textarea className="form-control" id={`mission-edit-description-${mission.id}`} name="description" rows="5" defaultValue={mission.description} required />
           </div>
           <div className="mb-3">
+            <label className="form-label" htmlFor={`mission-edit-kind-${mission.id}`}>Тип</label>
+            <select
+              className="form-control"
+              id={`mission-edit-kind-${mission.id}`}
+              name="mission_kind"
+              defaultValue={missionKind}
+              onChange={(event) => syncMissionKindFields(event.currentTarget.form, event.currentTarget.value)}
+            >
+              <option value="normal">Обычное задание</option>
+              <option value="exclusive">Эксклюзивное задание</option>
+              <option value="contract">Контракт</option>
+            </select>
+          </div>
+          <div className="mb-3" data-mission-reward-wrap hidden={mission.is_contract}>
             <label className="form-label" htmlFor={`mission-edit-reward-${mission.id}`}>Награда</label>
-            <input className="form-control" id={`mission-edit-reward-${mission.id}`} name="reward" type="number" min="1" step="1" defaultValue={mission.reward} required />
+            <input className="form-control" id={`mission-edit-reward-${mission.id}`} data-mission-reward-input name="reward" type="number" min="1" step="1" defaultValue={mission.is_contract ? "" : mission.reward} required={!mission.is_contract} />
           </div>
-          <div className="mb-3 form-check">
-            <input className="form-check-input" id={`mission-edit-exclusive-${mission.id}`} name="is_exclusive" type="checkbox" value="1" defaultChecked={Boolean(mission.is_exclusive)} />
-            <label className="form-check-label" htmlFor={`mission-edit-exclusive-${mission.id}`}>Эксклюзивное задание</label>
-          </div>
-          <div className="mb-3">
+          <div className="mb-3" data-mission-max-wrap hidden={mission.is_contract}>
             <label className="form-label" htmlFor={`mission-edit-max-accepted-${mission.id}`}>Лимит откликов</label>
-            <input className="form-control" id={`mission-edit-max-accepted-${mission.id}`} name="max_accepted_count" type="number" min="1" step="1" defaultValue={mission.max_accepted_count || 3} required />
+            <input className="form-control" id={`mission-edit-max-accepted-${mission.id}`} data-mission-max-input name="max_accepted_count" type="number" min="1" step="1" defaultValue={mission.max_accepted_count || 3} required={!mission.is_contract} />
           </div>
           <button type="submit" className="btn btn-primary">Сохранить изменения</button>
         </form>
@@ -44,9 +75,16 @@ export function MissionsPage({ is_admin = false, can_take_missions = false, curr
           <form method="POST" action="/missions/add">
             <div className="mb-3"><label className="form-label" htmlFor="mission-title">Название задания</label><input className="form-control" id="mission-title" name="title" type="text" required /></div>
             <div className="mb-3"><label className="form-label" htmlFor="mission-description">Текст задания</label><textarea className="form-control" id="mission-description" name="description" rows="5" required /></div>
-            <div className="mb-3"><label className="form-label" htmlFor="mission-reward">Награда</label><input className="form-control" id="mission-reward" name="reward" type="number" min="1" step="1" required /></div>
-            <div className="mb-3 form-check"><input className="form-check-input" id="mission-exclusive" name="is_exclusive" type="checkbox" value="1" /><label className="form-check-label" htmlFor="mission-exclusive">Эксклюзивное задание</label></div>
-            <div className="mb-3"><label className="form-label" htmlFor="mission-max-accepted">Лимит откликов</label><input className="form-control" id="mission-max-accepted" name="max_accepted_count" type="number" min="1" step="1" defaultValue="3" required /></div>
+            <div className="mb-3">
+              <label className="form-label" htmlFor="mission-kind">Тип</label>
+              <select className="form-control" id="mission-kind" name="mission_kind" defaultValue="normal" onChange={(event) => syncMissionKindFields(event.currentTarget.form, event.currentTarget.value)}>
+                <option value="normal">Обычное задание</option>
+                <option value="exclusive">Эксклюзивное задание</option>
+                <option value="contract">Контракт</option>
+              </select>
+            </div>
+            <div className="mb-3" data-mission-reward-wrap><label className="form-label" htmlFor="mission-reward">Награда</label><input className="form-control" id="mission-reward" data-mission-reward-input name="reward" type="number" min="1" step="1" required /></div>
+            <div className="mb-3" data-mission-max-wrap><label className="form-label" htmlFor="mission-max-accepted">Лимит откликов</label><input className="form-control" id="mission-max-accepted" data-mission-max-input name="max_accepted_count" type="number" min="1" step="1" defaultValue="3" required /></div>
             <button type="submit" className="btn btn-primary">Опубликовать задание</button>
           </form>
         </section>
@@ -59,7 +97,8 @@ export function MissionsPage({ is_admin = false, can_take_missions = false, curr
             <div className="news-meta"><span>{mission.author_name}</span><span>{formatDateTime(mission.created_at)}</span></div>
             <h3>{mission.title}</h3>
             <p className="news-content">{mission.description}</p>
-            <div className="mission-info"><span>Награда: {mission.reward} GRZ</span><span>Откликнулось легионов: {mission.accepted_count} / {mission.max_accepted_count || 3}</span></div>
+            <div className="mission-info"><span>{mission.is_contract ? "Формат: контракт" : `Награда: ${mission.reward} GRZ`}</span><span>{mission.is_contract ? `Откликнулось легионов: ${mission.accepted_count}` : `Откликнулось легионов: ${mission.accepted_count} / ${mission.max_accepted_count || 3}`}</span></div>
+            {mission.is_contract ? <div className="mission-exclusive-note">{mission.awarded_team_name ? `Контракт ушёл легиону: ${mission.awarded_team_name}` : "Контракт: легионы откликаются со своей ценой, победителя выбирает администратор."}</div> : null}
             {mission.is_exclusive ? <div className="mission-exclusive-note">Эксклюзивное задание: после подтверждения всех откликнувшихся автоматически закроется.</div> : null}
             {mission.is_closed ? <div className="mission-status-note">Задание закрыто и больше недоступно.</div> : null}
             {mission.accepted_teams && mission.accepted_teams.length ? <div className="mission-teams">Приняли задание: {mission.accepted_teams.join(", ")}</div> : null}
@@ -70,12 +109,12 @@ export function MissionsPage({ is_admin = false, can_take_missions = false, curr
                 <button type="button" className="btn btn-secondary" disabled>Задание закрыто</button>
               ) : mission.user_has_taken ? (
                 <div className="mission-actions"><div className="mission-status-note">Задание уже выбрано вашим Легионом</div><form method="POST" action="/missions/cancel"><input type="hidden" name="mission_id" value={mission.id} /><button type="submit" className="btn btn-outline-light">Отказаться от задания</button></form></div>
-              ) : mission.accepted_count >= (mission.max_accepted_count || 3) ? (
+              ) : !mission.is_contract && mission.accepted_count >= (mission.max_accepted_count || 3) ? (
                 <button type="button" className="btn btn-secondary" disabled>Лимит легионов достигнут</button>
               ) : current_team_mission_count >= 3 ? (
                 <button type="button" className="btn btn-secondary" disabled>Легион уже взял 3 задания</button>
               ) : (
-                <div className="mission-actions"><form method="POST" action="/missions/accept"><input type="hidden" name="mission_id" value={mission.id} /><button type="submit" className="btn btn-primary">Принять задание</button></form></div>
+                <div className="mission-actions"><form method="POST" action="/missions/accept">{mission.is_contract ? <div className="mb-2"><input className="form-control" name="bid_reward" type="number" min="0" step="1" placeholder="Ваша цена в GRZ" required /></div> : null}<input type="hidden" name="mission_id" value={mission.id} /><button type="submit" className="btn btn-primary">{mission.is_contract ? "Откликнуться на контракт" : "Принять задание"}</button></form></div>
               )
             ) : (
               <button type="button" className="btn btn-secondary" disabled>Журналист не может принимать задания</button>
@@ -162,7 +201,7 @@ export function ApprovePage({ approve_items = [] }) {
       <Hero title="Подтверждение" description="Здесь администратор подтверждает или отклоняет выполнение принятых заданий. После подтверждения награда автоматически начисляется отряду." />
       <div className="news-list">
         {approve_items.map((item) => (
-          <article className="placeholder-card mission-card" key={item.id}><div className="news-meta"><span>{item.team_name}</span><span>{formatDateTime(item.accepted_at)}</span></div><h3>{item.title}</h3><p className="news-content">{item.description}</p><div className="mission-info"><span>Отряд: {item.team_name}</span><span>Награда: {item.reward} GRZ</span></div><div className="approve-actions"><form method="POST" action="/approve/confirm"><input type="hidden" name="assignment_id" value={item.id} /><button type="submit" className="btn btn-primary">Подтвердить выполнение</button></form><form method="POST" action="/approve/reject"><input type="hidden" name="assignment_id" value={item.id} /><button type="submit" className="btn btn-outline-light">Отклонить выполнение</button></form></div></article>
+          <article className="placeholder-card mission-card" key={item.id}><div className="news-meta"><span>{item.team_name}</span><span>{formatDateTime(item.accepted_at)}</span></div><h3>{item.title}</h3><p className="news-content">{item.description}</p><div className="mission-info"><span>Отряд: {item.team_name}</span><span>{item.is_contract ? `Цена легиона: ${item.bid_reward || 0} GRZ` : `Награда: ${item.reward} GRZ`}</span></div><div className="approve-actions"><form method="POST" action="/approve/confirm">{item.is_contract ? null : <input className="form-control mb-2" name="approved_reward" type="number" min="0" step="1" defaultValue={item.reward} />}<input type="hidden" name="assignment_id" value={item.id} /><button type="submit" className="btn btn-primary">{item.is_contract ? "Передать контракт" : "Подтвердить выполнение"}</button></form><form method="POST" action="/approve/reject"><input type="hidden" name="assignment_id" value={item.id} /><button type="submit" className="btn btn-outline-light">Отклонить выполнение</button></form></div></article>
         ))}
         {!approve_items.length ? <section className="placeholder-card"><h3>Нет заданий на подтверждение</h3><p>Принятые задания отображаются в этом списке.</p></section> : null}
       </div>

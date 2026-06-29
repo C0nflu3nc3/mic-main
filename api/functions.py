@@ -721,25 +721,59 @@ def ensure_mission_columns(conn):
             )
             schema_changed = True
 
+        cursor.execute("SHOW COLUMNS FROM Mission LIKE 'is_contract'")
+        if cursor.fetchone() is None:
+            cursor.execute(
+                """
+                ALTER TABLE Mission
+                ADD COLUMN is_contract tinyint(1) NOT NULL DEFAULT 0 AFTER is_closed
+                """
+            )
+            schema_changed = True
+
+        cursor.execute("SHOW COLUMNS FROM Mission_team LIKE 'bid_reward'")
+        if cursor.fetchone() is None:
+            cursor.execute(
+                """
+                ALTER TABLE Mission_team
+                ADD COLUMN bid_reward int NULL DEFAULT NULL AFTER status
+                """
+            )
+            schema_changed = True
+
+        cursor.execute("SHOW COLUMNS FROM Mission_team LIKE 'approved_reward'")
+        if cursor.fetchone() is None:
+            cursor.execute(
+                """
+                ALTER TABLE Mission_team
+                ADD COLUMN approved_reward int NULL DEFAULT NULL AFTER bid_reward
+                """
+            )
+            schema_changed = True
+
     if schema_changed:
         conn.commit()
     mark_schema_ready("mission")
 
 
-def create_mission(conn, title, description, reward, user_id, is_exclusive=False, max_accepted_count=3):
-    normalized_limit = max(1, int(max_accepted_count or 1))
+def create_mission(conn, title, description, reward, user_id, is_exclusive=False, max_accepted_count=3, is_contract=False):
+    contract_flag = 1 if bool(is_contract) else 0
+    normalized_limit = 1 if contract_flag else max(1, int(max_accepted_count or 1))
+    normalized_reward = 0 if contract_flag else int(reward or 0)
     exclusive_flag = 1 if bool(is_exclusive) else 0
     with conn.cursor() as cursor:
         sql = """
-            INSERT INTO Mission (title, description, reward, is_exclusive, max_accepted_count, is_closed, user_id, created_at)
-            VALUES (%s, %s, %s, %s, %s, 0, %s, NOW())
+            INSERT INTO Mission (title, description, reward, is_exclusive, max_accepted_count, is_closed, is_contract, user_id, created_at)
+            VALUES (%s, %s, %s, %s, %s, 0, %s, %s, NOW())
         """
-        cursor.execute(sql, (title, description, reward, exclusive_flag, normalized_limit, user_id))
+        cursor.execute(sql, (title, description, normalized_reward, exclusive_flag, normalized_limit, contract_flag, user_id))
     conn.commit()
 
 
-def update_mission(conn, mission_id, title, description, reward, is_exclusive=False, max_accepted_count=3):
-    normalized_limit = max(1, int(max_accepted_count or 1))
+def update_mission(conn, mission_id, title, description, reward, is_exclusive=False, max_accepted_count=3, is_contract=False):
+    contract_flag = 1 if bool(is_contract) else 0
+    normalized_limit = 1 if contract_flag else max(1, int(max_accepted_count or 1))
+    normalized_reward = 0 if contract_flag else int(reward or 0)
     exclusive_flag = 1 if bool(is_exclusive) else 0
     with conn.cursor() as cursor:
         select_sql = """
@@ -761,12 +795,13 @@ def update_mission(conn, mission_id, title, description, reward, is_exclusive=Fa
                 reward = %s,
                 is_exclusive = %s,
                 max_accepted_count = %s,
-                is_closed = %s
+                is_closed = %s,
+                is_contract = %s
             WHERE id = %s
         """
         cursor.execute(
             update_sql,
-            (title, description, reward, exclusive_flag, normalized_limit, is_closed, mission_id),
+            (title, description, normalized_reward, exclusive_flag, normalized_limit, is_closed, contract_flag, mission_id),
         )
 
     conn.commit()
@@ -784,6 +819,7 @@ def get_missions(conn, current_team_id=None):
                 COALESCE(Mission.is_exclusive, 0) AS is_exclusive,
                 GREATEST(COALESCE(Mission.max_accepted_count, 3), 1) AS max_accepted_count,
                 COALESCE(Mission.is_closed, 0) AS is_closed,
+                COALESCE(Mission.is_contract, 0) AS is_contract,
                 Mission.created_at,
                 users.login AS author_name
             FROM Mission
@@ -800,10 +836,12 @@ def get_missions(conn, current_team_id=None):
                 Mission_team.team_id,
                 Mission_team.status,
                 Mission_team.accepted_at,
+                Mission_team.bid_reward,
+                Mission_team.approved_reward,
                 Teams.name AS team_name
             FROM Mission_team
             JOIN Teams ON Teams.id = Mission_team.team_id
-            WHERE Mission_team.status = 'accepted'
+            WHERE Mission_team.status IN ('accepted', 'approved')
             ORDER BY Mission_team.accepted_at ASC, Mission_team.id ASC
         """
         cursor.execute(assignments_sql)
@@ -832,7 +870,8 @@ def get_missions(conn, current_team_id=None):
         mission_id = int(assignment["mission_id"])
         team_id = int(assignment["team_id"])
         assignments_by_mission.setdefault(mission_id, []).append(assignment)
-        active_count_by_team[team_id] = active_count_by_team.get(team_id, 0) + 1
+        if assignment["status"] == "accepted":
+            active_count_by_team[team_id] = active_count_by_team.get(team_id, 0) + 1
 
     result = []
     for mission in missions:
@@ -840,14 +879,18 @@ def get_missions(conn, current_team_id=None):
         if mission_id in cooldown_mission_ids:
             continue
         mission_assignments = assignments_by_mission.get(mission_id, [])
-        mission["accepted_count"] = len(mission_assignments)
-        mission["accepted_teams"] = [item["team_name"] for item in mission_assignments]
+        pending_assignments = [item for item in mission_assignments if item["status"] == "accepted"]
+        approved_assignments = [item for item in mission_assignments if item["status"] == "approved"]
+        mission["accepted_count"] = len(pending_assignments)
+        mission["accepted_teams"] = [item["team_name"] for item in pending_assignments]
         mission["is_exclusive"] = bool(int(mission.get("is_exclusive") or 0))
+        mission["is_contract"] = bool(int(mission.get("is_contract") or 0))
         mission["max_accepted_count"] = max(1, int(mission.get("max_accepted_count") or 3))
         mission["is_closed"] = bool(int(mission.get("is_closed") or 0))
+        mission["awarded_team_name"] = approved_assignments[0]["team_name"] if approved_assignments else None
         mission["user_has_taken"] = any(
             int(item["team_id"]) == int(current_team_id)
-            for item in mission_assignments
+            for item in pending_assignments
         ) if current_team_id is not None else False
         result.append(mission)
 
@@ -855,12 +898,13 @@ def get_missions(conn, current_team_id=None):
     return result, team_active_count
 
 
-def accept_mission(conn, mission_id, team_id):
+def accept_mission(conn, mission_id, team_id, bid_reward=None):
     with conn.cursor() as cursor:
         mission_sql = """
             SELECT
                 id,
                 COALESCE(is_closed, 0) AS is_closed,
+                COALESCE(is_contract, 0) AS is_contract,
                 GREATEST(COALESCE(max_accepted_count, 3), 1) AS max_accepted_count
             FROM Mission
             WHERE id = %s
@@ -910,7 +954,8 @@ def accept_mission(conn, mission_id, team_id):
         cursor.execute(mission_count_sql, (mission_id,))
         mission_count = int(cursor.fetchone()["total"] or 0)
         mission_limit = max(1, int(mission_row.get("max_accepted_count") or 3))
-        if mission_count >= mission_limit:
+        is_contract = int(mission_row.get("is_contract") or 0) == 1
+        if not is_contract and mission_count >= mission_limit:
             return False, f"На это задание уже откликнулись {mission_limit} отряда"
 
         team_count_sql = """
@@ -923,14 +968,22 @@ def accept_mission(conn, mission_id, team_id):
         if team_count >= 3:
             return False, "Отряд уже взял максимальные 3 задания"
 
+        normalized_bid_reward = None
+        if is_contract:
+            if bid_reward is None:
+                return False, "Укажите цену для контракта"
+            normalized_bid_reward = int(bid_reward)
+            if normalized_bid_reward < 0:
+                return False, "Укажите корректную цену для контракта"
+
         insert_sql = """
-            INSERT INTO Mission_team (mission_id, team_id, status, accepted_at)
-            VALUES (%s, %s, 'accepted', NOW())
+            INSERT INTO Mission_team (mission_id, team_id, status, bid_reward, accepted_at)
+            VALUES (%s, %s, 'accepted', %s, NOW())
         """
-        cursor.execute(insert_sql, (mission_id, team_id))
+        cursor.execute(insert_sql, (mission_id, team_id, normalized_bid_reward))
 
     conn.commit()
-    return True, "Задание принято"
+    return True, "Отклик на контракт отправлен" if is_contract else "Задание принято"
 
 
 def cancel_mission(conn, mission_id, team_id):
@@ -985,7 +1038,9 @@ def get_approve_queue(conn):
                 COALESCE(Mission.title, CONCAT('Задание #', Mission_team.mission_id)) AS title,
                 COALESCE(Mission.description, '') AS description,
                 COALESCE(Mission.reward, 0) AS reward,
+                COALESCE(Mission.is_contract, 0) AS is_contract,
                 Mission_team.accepted_at,
+                Mission_team.bid_reward,
                 COALESCE(Teams.name, CONCAT('Легион #', Mission_team.team_id)) AS team_name
             FROM Mission_team
             LEFT JOIN Mission ON Mission.id = Mission_team.mission_id
@@ -997,7 +1052,7 @@ def get_approve_queue(conn):
         return cursor.fetchall()
 
 
-def approve_mission(conn, assignment_id, admin_user_id):
+def approve_mission(conn, assignment_id, admin_user_id, approved_reward=None):
     with conn.cursor() as cursor:
         select_sql = """
             SELECT
@@ -1006,9 +1061,11 @@ def approve_mission(conn, assignment_id, admin_user_id):
                 Mission_team.mission_id,
                 Mission.title,
                 Mission.reward,
+                Mission_team.bid_reward,
                 Teams.user_id,
                 Teams.name AS team_name,
                 COALESCE(Mission.is_exclusive, 0) AS is_exclusive,
+                COALESCE(Mission.is_contract, 0) AS is_contract,
                 GREATEST(COALESCE(Mission.max_accepted_count, 3), 1) AS max_accepted_count
             FROM Mission_team
             JOIN Mission ON Mission.id = Mission_team.mission_id
@@ -1026,27 +1083,44 @@ def approve_mission(conn, assignment_id, admin_user_id):
         team_user_id = int(row["user_id"])
         mission_id = int(row["mission_id"])
         mission_title = row["title"]
+        team_name = row["team_name"]
+        is_contract = int(row.get("is_contract") or 0) == 1
+        payout_reward = 0 if is_contract else int(approved_reward if approved_reward is not None else reward)
 
-        operation_sql = """
-            INSERT INTO Operation (Period, Score, Team, Comment)
-            VALUES (CURDATE(), %s, %s, %s)
-        """
-        cursor.execute(
-            operation_sql,
-            (reward, team_id, f"Награда за выполнение задания: {mission_title}"),
-        )
+        if not is_contract:
+            operation_sql = """
+                INSERT INTO Operation (Period, Score, Team, Comment)
+                VALUES (CURDATE(), %s, %s, %s)
+            """
+            cursor.execute(
+                operation_sql,
+                (payout_reward, team_id, f"Награда за выполнение задания: {mission_title}"),
+            )
 
         update_sql = """
             UPDATE Mission_team
-            SET status = 'approved', approved_at = NOW(), approved_by = %s
+            SET status = 'approved', approved_reward = %s, approved_at = NOW(), approved_by = %s
             WHERE id = %s
         """
-        cursor.execute(update_sql, (admin_user_id, assignment_id))
+        cursor.execute(update_sql, (None if is_contract else payout_reward, admin_user_id, assignment_id))
 
-        cursor.execute(
-            "UPDATE Overall_leader SET score = score + 5 WHERE user_id = %s",
-            (team_user_id,),
-        )
+        if not is_contract:
+            cursor.execute(
+                "UPDATE Overall_leader SET score = score + 5 WHERE user_id = %s",
+                (team_user_id,),
+            )
+        else:
+            cursor.execute(
+                """
+                UPDATE Mission_team
+                SET status = 'rejected', rejected_at = NOW(), rejected_by = %s
+                WHERE mission_id = %s AND id <> %s AND status = 'accepted'
+                """,
+                (admin_user_id, mission_id, assignment_id),
+            )
+            cursor.execute("UPDATE Mission SET is_closed = 1 WHERE id = %s", (mission_id,))
+            conn.commit()
+            return True, f"Контракт передан легиону {team_name}"
 
         if int(row.get("is_exclusive") or 0) == 1:
             approved_count_sql = """
