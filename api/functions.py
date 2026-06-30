@@ -428,6 +428,20 @@ def publish_news(conn, news_id):
     with conn.cursor() as cursor:
         cursor.execute(
             """
+            SELECT News.user_id, Teams.id AS team_id
+            FROM News
+            LEFT JOIN Teams ON Teams.user_id = News.user_id
+            WHERE News.id = %s AND COALESCE(News.is_published, 1) = 0
+            LIMIT 1
+            """,
+            (news_id,),
+        )
+        news_row = cursor.fetchone()
+        if news_row is None:
+            return False
+
+        cursor.execute(
+            """
             UPDATE News
             SET is_published = 1
             WHERE id = %s AND COALESCE(is_published, 1) = 0
@@ -435,6 +449,18 @@ def publish_news(conn, news_id):
             (news_id,),
         )
         updated = cursor.rowcount > 0
+        if updated and news_row.get("team_id") is not None:
+            cursor.execute(
+                """
+                INSERT INTO Operation (Period, Score, Team, Comment)
+                VALUES (CURDATE(), %s, %s, %s)
+                """,
+                (30, int(news_row["team_id"]), "Награда за публикацию новости"),
+            )
+            cursor.execute(
+                "UPDATE Overall_leader SET score = score + 10 WHERE user_id = %s",
+                (int(news_row["user_id"]),),
+            )
     conn.commit()
     return updated
 
