@@ -820,7 +820,8 @@ function MissionsPage({ is_admin = false, can_take_missions = false, current_tea
                         ) : can_take_missions ? (
                             mission.user_has_taken ? (
                                 <div className="mission-actions">
-                                    <div className="mission-status-note">Р—Р°РґР°РЅРёРµ СѓР¶Рµ РІС‹Р±СЂР°РЅРѕ РІР°С€РёРј Р›РµРіРёРѕРЅРѕРј</div>
+                                    <div className="mission-status-note">{mission.is_contract ? `Вы откликнулись на контракт с ценой ${mission.current_bid_reward || 0} GRZ` : "Р—Р°РґР°РЅРёРµ СѓР¶Рµ РІС‹Р±СЂР°РЅРѕ РІР°С€РёРј Р›РµРіРёРѕРЅРѕРј"}</div>
+                                    {mission.is_contract ? <form method="POST" action="/missions/accept"><div className="mb-2"><input className="form-control" name="bid_reward" type="number" min="0" step="1" defaultValue={mission.current_bid_reward || 0} required /></div><input type="hidden" name="mission_id" value={mission.id} /><button type="submit" className="btn btn-primary">Изменить цену</button></form> : null}
                                     <form method="POST" action="/missions/cancel">
                                         <input type="hidden" name="mission_id" value={mission.id} />
                                         <button type="submit" className="btn btn-outline-light">РћС‚РєР°Р·Р°С‚СЊСЃСЏ РѕС‚ Р·Р°РґР°РЅРёСЏ</button>

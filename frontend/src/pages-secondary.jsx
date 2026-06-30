@@ -108,7 +108,7 @@ export function MissionsPage({ is_admin = false, can_take_missions = false, curr
               mission.is_closed ? (
                 <button type="button" className="btn btn-secondary" disabled>Задание закрыто</button>
               ) : mission.user_has_taken ? (
-                <div className="mission-actions"><div className="mission-status-note">Задание уже выбрано вашим Легионом</div><form method="POST" action="/missions/cancel"><input type="hidden" name="mission_id" value={mission.id} /><button type="submit" className="btn btn-outline-light">Отказаться от задания</button></form></div>
+                <div className="mission-actions"><div className="mission-status-note">{mission.is_contract ? `Вы откликнулись на контракт с ценой ${mission.current_bid_reward || 0} GRZ` : "Задание уже выбрано вашим Легионом"}</div>{mission.is_contract ? <form method="POST" action="/missions/accept"><div className="mb-2"><input className="form-control" name="bid_reward" type="number" min="0" step="1" defaultValue={mission.current_bid_reward || 0} required /></div><input type="hidden" name="mission_id" value={mission.id} /><button type="submit" className="btn btn-primary">Изменить цену</button></form> : null}<form method="POST" action="/missions/cancel"><input type="hidden" name="mission_id" value={mission.id} /><button type="submit" className="btn btn-outline-light">Отказаться от задания</button></form></div>
               ) : !mission.is_contract && mission.accepted_count >= (mission.max_accepted_count || 3) ? (
                 <button type="button" className="btn btn-secondary" disabled>Лимит легионов достигнут</button>
               ) : current_team_mission_count >= 3 ? (

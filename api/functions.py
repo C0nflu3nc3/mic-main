@@ -892,6 +892,14 @@ def get_missions(conn, current_team_id=None):
             int(item["team_id"]) == int(current_team_id)
             for item in pending_assignments
         ) if current_team_id is not None else False
+        mission["current_bid_reward"] = next(
+            (
+                int(item["bid_reward"] or 0)
+                for item in pending_assignments
+                if current_team_id is not None and int(item["team_id"]) == int(current_team_id)
+            ),
+            None,
+        )
         result.append(mission)
 
     team_active_count = active_count_by_team.get(int(current_team_id), 0) if current_team_id is not None else 0
@@ -932,7 +940,7 @@ def accept_mission(conn, mission_id, team_id, bid_reward=None):
             return False, "Это задание снова станет доступно для вашего Легиона через 2 дня"
 
         same_mission_sql = """
-            SELECT id
+            SELECT id, bid_reward
             FROM Mission_team
             WHERE mission_id = %s
               AND team_id = %s
@@ -940,7 +948,20 @@ def accept_mission(conn, mission_id, team_id, bid_reward=None):
             LIMIT 1
         """
         cursor.execute(same_mission_sql, (mission_id, team_id))
-        if cursor.fetchone():
+        existing_assignment = cursor.fetchone()
+        if existing_assignment:
+            if int(mission_row.get("is_contract") or 0) == 1:
+                if bid_reward is None:
+                    return False, "Укажите цену для контракта"
+                normalized_bid_reward = int(bid_reward)
+                if normalized_bid_reward < 0:
+                    return False, "Укажите корректную цену для контракта"
+                cursor.execute(
+                    "UPDATE Mission_team SET bid_reward = %s WHERE id = %s",
+                    (normalized_bid_reward, int(existing_assignment["id"])),
+                )
+                conn.commit()
+                return True, "Цена контракта обновлена"
             return False, "Задание уже выбрано вашим Легионом"
 
         mission_count_sql = """
