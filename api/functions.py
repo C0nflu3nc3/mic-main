@@ -931,20 +931,17 @@ def accept_mission(conn, mission_id, team_id, bid_reward=None):
         if cursor.fetchone():
             return False, "Это задание снова станет доступно для вашего Легиона через 2 дня"
 
-        same_day_sql = """
+        same_mission_sql = """
             SELECT id
             FROM Mission_team
             WHERE mission_id = %s
               AND team_id = %s
-              AND (
-                  DATE(accepted_at) = CURDATE()
-                  OR DATE(rejected_at) = CURDATE()
-              )
+              AND status = 'accepted'
             LIMIT 1
         """
-        cursor.execute(same_day_sql, (mission_id, team_id))
+        cursor.execute(same_mission_sql, (mission_id, team_id))
         if cursor.fetchone():
-            return False, "Этот отряд уже брал это задание сегодня"
+            return False, "Задание уже выбрано вашим Легионом"
 
         mission_count_sql = """
             SELECT COUNT(*) AS total

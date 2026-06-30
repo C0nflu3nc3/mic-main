@@ -1069,10 +1069,9 @@ def missions_page():
     conn = get_connection()
     try:
         ensure_mission_columns(conn)
-        if current_team_id is None:
-            current_team_id = get_current_team_id_by_user_id(conn, int(user["id"]))
-            user["team_id"] = current_team_id
-            session["user"] = user
+        current_team_id = get_current_team_id_by_user_id(conn, int(user["id"]))
+        user["team_id"] = current_team_id
+        session["user"] = user
         mission_view_team_id = None if is_admin else current_team_id
         missions, current_team_mission_count = get_missions(conn, mission_view_team_id)
     finally:
@@ -1156,15 +1155,15 @@ def accept_mission_page():
 
     mission_id = request.form.get("mission_id", "").strip()
     bid_reward_raw = request.form.get("bid_reward", "").strip()
-    current_team_id = user.get("team_id")
-
-    if not mission_id.isdigit() or current_team_id is None:
-        flash("\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u043f\u0440\u0438\u043d\u044f\u0442\u044c \u0437\u0430\u0434\u0430\u043d\u0438\u0435")
-        return redirect(url_for("missions_page"))
-
     conn = get_connection()
     try:
         ensure_mission_columns(conn)
+        current_team_id = get_current_team_id_by_user_id(conn, int(user["id"]))
+        user["team_id"] = current_team_id
+        session["user"] = user
+        if not mission_id.isdigit() or current_team_id is None:
+            flash("\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u043f\u0440\u0438\u043d\u044f\u0442\u044c \u0437\u0430\u0434\u0430\u043d\u0438\u0435")
+            return redirect(url_for("missions_page"))
         bid_reward = None
         if bid_reward_raw:
             if not bid_reward_raw.isdigit():
@@ -1192,10 +1191,9 @@ def cancel_mission_page():
 
     conn = get_connection()
     try:
-        if current_team_id is None:
-            current_team_id = get_current_team_id_by_user_id(conn, int(user["id"]))
-            user["team_id"] = current_team_id
-            session["user"] = user
+        current_team_id = get_current_team_id_by_user_id(conn, int(user["id"]))
+        user["team_id"] = current_team_id
+        session["user"] = user
 
         if not mission_id.isdigit() or current_team_id is None:
             flash("\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u043e\u0442\u043a\u0430\u0437\u0430\u0442\u044c\u0441\u044f \u043e\u0442 \u0437\u0430\u0434\u0430\u043d\u0438\u044f")
