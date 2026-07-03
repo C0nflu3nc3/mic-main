@@ -795,7 +795,7 @@ function MissionsPage({ is_admin = false, can_take_missions = false, current_tea
                         <h3>{mission.title}</h3>
                         <p className="news-content">{mission.description}</p>
                         <div className="mission-info">
-                            <span>{mission.is_contract ? "Формат: контракт" : `РќР°РіСЂР°РґР°: ${mission.reward} GRZ`}</span>
+                            <span>{mission.is_contract ? "Формат: контракт" : `РќР°РіСЂР°РґР°: ${mission.reward} GRZ + 10 влияния`}</span>
                             <span>{mission.is_contract ? `Откликнулось легионов: ${mission.accepted_count}` : `РћС‚РєР»РёРєРЅСѓР»РѕСЃСЊ Р»РµРіРёРѕРЅРѕРІ: ${mission.accepted_count} / ${mission.max_accepted_count || 3}`}</span>
                         </div>
                         {mission.is_contract ? (
@@ -1054,7 +1054,7 @@ function ApprovePage({ approve_items = [] }) {
                         <p className="news-content">{item.description}</p>
                         <div className="mission-info">
                             <span>РћС‚СЂСЏРґ: {item.team_name}</span>
-                            <span>{item.is_contract ? `Цена легиона: ${item.bid_reward || 0} GRZ` : `РќР°РіСЂР°РґР°: ${item.reward} GRZ`}</span>
+                            <span>{item.is_contract ? `Цена легиона: ${item.bid_reward || 0} GRZ` : `РќР°РіСЂР°РґР°: ${item.reward} GRZ + 10 влияния`}</span>
                         </div>
                         <div className="approve-actions">
                             <form method="POST" action="/approve/confirm">

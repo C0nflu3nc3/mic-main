@@ -1150,7 +1150,7 @@ def approve_mission(conn, assignment_id, admin_user_id, approved_reward=None):
 
         if not is_contract:
             cursor.execute(
-                "UPDATE Overall_leader SET score = score + 5 WHERE user_id = %s",
+                "UPDATE Overall_leader SET score = score + 10 WHERE user_id = %s",
                 (team_user_id,),
             )
         else:
