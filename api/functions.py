@@ -27,6 +27,50 @@ def get_leaderboard_table_name(table_name):
     return normalized
 
 
+def ensure_influence_log_table(conn):
+    if is_schema_ready("influence_log"):
+        return
+
+    schema_changed = False
+    with conn.cursor() as cursor:
+        cursor.execute("SHOW TABLES LIKE 'Influence_log'")
+        if cursor.fetchone() is None:
+            cursor.execute(
+                """
+                CREATE TABLE Influence_log (
+                    id int NOT NULL AUTO_INCREMENT,
+                    user_id int NOT NULL,
+                    delta int NOT NULL,
+                    reason varchar(255) NOT NULL,
+                    created_at datetime NOT NULL,
+                    PRIMARY KEY (id),
+                    KEY idx_influence_log_user_id (user_id),
+                    KEY idx_influence_log_created_at (created_at)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+                """
+            )
+            schema_changed = True
+
+    if schema_changed:
+        conn.commit()
+    mark_schema_ready("influence_log")
+
+
+def log_influence_change(conn, user_id, delta, reason):
+    ensure_influence_log_table(conn)
+    if not delta:
+        return
+
+    with conn.cursor() as cursor:
+        cursor.execute(
+            """
+            INSERT INTO Influence_log (user_id, delta, reason, created_at)
+            VALUES (%s, %s, %s, NOW())
+            """,
+            (int(user_id), int(delta), str(reason or "Изменение очков влияния")[:255]),
+        )
+
+
 def get_plt(conn, team_id):
     with conn.cursor() as cursor:
         sql = """
@@ -67,10 +111,40 @@ def get_leaderboard_table(conn, table_name):
         return cursor.fetchall()
 
 
-def update_leaderboard_entry(conn, table_name, user_id, name, score):
-    normalized_table_name = get_leaderboard_table_name(table_name)
+def get_influence_logs(conn, limit=200):
+    ensure_influence_log_table(conn)
 
     with conn.cursor() as cursor:
+        sql = f"""
+            SELECT
+                Influence_log.user_id,
+                COALESCE(Overall_leader.name, users.login) AS name,
+                Influence_log.delta,
+                Influence_log.reason,
+                Influence_log.created_at
+            FROM Influence_log
+            LEFT JOIN users ON users.id = Influence_log.user_id
+            LEFT JOIN Overall_leader ON Overall_leader.user_id = Influence_log.user_id
+            ORDER BY Influence_log.created_at DESC, Influence_log.id DESC
+            LIMIT {max(1, int(limit))}
+        """
+        cursor.execute(sql)
+        return cursor.fetchall()
+
+
+def update_leaderboard_entry(conn, table_name, user_id, name, score):
+    normalized_table_name = get_leaderboard_table_name(table_name)
+    previous_score = None
+
+    with conn.cursor() as cursor:
+        if normalized_table_name == "Overall_leader":
+            cursor.execute(
+                "SELECT score FROM Overall_leader WHERE user_id = %s LIMIT 1",
+                (user_id,),
+            )
+            row = cursor.fetchone()
+            previous_score = int(row["score"] or 0) if row else None
+
         sql = f"""
             UPDATE {normalized_table_name}
             SET name = %s,
@@ -79,6 +153,8 @@ def update_leaderboard_entry(conn, table_name, user_id, name, score):
         """
         cursor.execute(sql, (name, score, user_id))
         updated = cursor.rowcount > 0
+    if updated and normalized_table_name == "Overall_leader" and previous_score is not None:
+        log_influence_change(conn, user_id, int(score) - previous_score, "Ручное изменение администратором")
     conn.commit()
     return updated
 
@@ -461,6 +537,7 @@ def publish_news(conn, news_id):
                 "UPDATE Overall_leader SET score = score + 10 WHERE user_id = %s",
                 (int(news_row["user_id"]),),
             )
+            log_influence_change(conn, int(news_row["user_id"]), 10, "Публикация новости")
     conn.commit()
     return updated
 
@@ -1153,6 +1230,7 @@ def approve_mission(conn, assignment_id, admin_user_id, approved_reward=None):
                 "UPDATE Overall_leader SET score = score + 10 WHERE user_id = %s",
                 (team_user_id,),
             )
+            log_influence_change(conn, team_user_id, 10, f"Выполнение задания: {mission_title}")
         else:
             cursor.execute(
                 """

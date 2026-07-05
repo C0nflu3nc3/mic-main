@@ -26,6 +26,7 @@ from api.functions import (
     delete_mission,
     get_approve_queue,
     get_current_team_id_by_user_id,
+    get_influence_logs,
     get_leaderboard_table,
     get_news_for_update,
     get_missions,
@@ -585,12 +586,15 @@ def leaderboard_page():
 
     overall_leaderboard = []
     duel_leaderboard = []
+    influence_logs = []
 
     if can_manage or not leaderboard_hidden_for_users:
         conn = get_connection()
         try:
             overall_leaderboard = get_leaderboard_table(conn, "Overall_leader")
             duel_leaderboard = get_leaderboard_table(conn, "Duel_leader")
+            if can_manage:
+                influence_logs = get_influence_logs(conn)
         finally:
             conn.close()
 
@@ -603,6 +607,7 @@ def leaderboard_page():
         active_section="home",
         overall_leaderboard=overall_leaderboard,
         duel_leaderboard=duel_leaderboard,
+        influence_logs=influence_logs,
     )
 
 

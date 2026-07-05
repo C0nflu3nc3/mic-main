@@ -89,6 +89,35 @@ function LeaderboardEditBlock({ tableName, rows }) {
   );
 }
 
+function InfluenceLogBlock({ rows }) {
+  return (
+    <details className="news-edit-block is-collapsed">
+      <summary className="news-edit-summary">Логи начислений</summary>
+      <div className="news-edit-body">
+        <section className="placeholder-card table-card">
+          <div className="table-responsive">
+            <table className="table elegant-table">
+              <thead>
+                <tr><th>Время</th><th>Легион</th><th>Начисление</th><th>Причина</th></tr>
+              </thead>
+              <tbody>
+                {rows.length ? rows.map((row, index) => (
+                  <tr key={`${row.user_id}-${row.created_at}-${index}`}>
+                    <td>{formatDateTime(row.created_at)}</td>
+                    <td>{row.name}</td>
+                    <td>{row.delta > 0 ? `+${row.delta}` : row.delta}</td>
+                    <td>{row.reason}</td>
+                  </tr>
+                )) : <tr><td colSpan="4">Логов пока нет</td></tr>}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </details>
+  );
+}
+
 function LeaderboardTable({ title, rows, tableName, canManageLeaderboards }) {
   return (
     <section className="leaderboard-panel">
@@ -112,7 +141,7 @@ function LeaderboardTable({ title, rows, tableName, canManageLeaderboards }) {
   );
 }
 
-export function LeaderboardPage({ overall_leaderboard = [], duel_leaderboard = [], can_manage_leaderboards = false, leaderboard_hidden_for_users = false }) {
+export function LeaderboardPage({ overall_leaderboard = [], duel_leaderboard = [], influence_logs = [], can_manage_leaderboards = false, leaderboard_hidden_for_users = false }) {
   return (
     <div className="section-page leaderboard-page ceremonial-page">
       <Hero title="Таблица лидеров" description="Здесь отображаются отдельные таблицы общего рейтинга и дуэльных очков." extraClass="leaderboard-hero" />
@@ -135,6 +164,7 @@ export function LeaderboardPage({ overall_leaderboard = [], duel_leaderboard = [
           <LeaderboardTable title="Турнирные очки" rows={duel_leaderboard} tableName="Duel_leader" canManageLeaderboards={can_manage_leaderboards} />
         </div>
       )}
+      {can_manage_leaderboards ? <InfluenceLogBlock rows={influence_logs} /> : null}
     </div>
   );
 }
