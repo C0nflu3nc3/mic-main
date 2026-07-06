@@ -8,6 +8,12 @@ _LEADERBOARD_TABLES = {
     "Overall_leader": "Overall_leader",
     "Duel_leader": "Duel_leader",
 }
+NEWS_REWARD_DAILY_LIMIT = 3
+NEWS_REWARD_AMOUNT = 30
+NEWS_REWARD_COMMENT = "Награда за публикацию новости"
+COMMENT_REWARD_AMOUNT = 5
+COMMENT_REWARD_DAILY_LIMIT = 25
+COMMENT_REWARD_COMMENT = "Награда за комментарий под новостью"
 
 
 def is_schema_ready(schema_name):
@@ -69,6 +75,46 @@ def log_influence_change(conn, user_id, delta, reason):
             """,
             (int(user_id), int(delta), str(reason or "Изменение очков влияния")[:255]),
         )
+
+
+def _can_pay_news_reward(rewarded_news_today):
+    return int(rewarded_news_today or 0) < NEWS_REWARD_DAILY_LIMIT
+
+
+def _get_comment_reward_amount(comment_reward_today):
+    return COMMENT_REWARD_AMOUNT if int(comment_reward_today or 0) < COMMENT_REWARD_DAILY_LIMIT else 0
+
+
+def get_daily_rewarded_news_count(conn, team_id):
+    with conn.cursor() as cursor:
+        cursor.execute(
+            """
+            SELECT COUNT(*) AS total
+            FROM Operation
+            WHERE Team = %s
+              AND Period = CURDATE()
+              AND Comment = %s
+            """,
+            (team_id, NEWS_REWARD_COMMENT),
+        )
+        row = cursor.fetchone()
+        return int(row["total"] or 0)
+
+
+def get_daily_comment_reward_total(conn, team_id):
+    with conn.cursor() as cursor:
+        cursor.execute(
+            """
+            SELECT COALESCE(SUM(Score), 0) AS total
+            FROM Operation
+            WHERE Team = %s
+              AND Period = CURDATE()
+              AND Comment = %s
+            """,
+            (team_id, COMMENT_REWARD_COMMENT),
+        )
+        row = cursor.fetchone()
+        return int(row["total"] or 0)
 
 
 def get_plt(conn, team_id):
@@ -526,13 +572,15 @@ def publish_news(conn, news_id):
         )
         updated = cursor.rowcount > 0
         if updated and news_row.get("team_id") is not None:
-            cursor.execute(
-                """
-                INSERT INTO Operation (Period, Score, Team, Comment)
-                VALUES (CURDATE(), %s, %s, %s)
-                """,
-                (30, int(news_row["team_id"]), "Награда за публикацию новости"),
-            )
+            team_id = int(news_row["team_id"])
+            if _can_pay_news_reward(get_daily_rewarded_news_count(conn, team_id)):
+                cursor.execute(
+                    """
+                    INSERT INTO Operation (Period, Score, Team, Comment)
+                    VALUES (CURDATE(), %s, %s, %s)
+                    """,
+                    (NEWS_REWARD_AMOUNT, team_id, NEWS_REWARD_COMMENT),
+                )
             cursor.execute(
                 "UPDATE Overall_leader SET score = score + 10 WHERE user_id = %s",
                 (int(news_row["user_id"]),),
@@ -621,6 +669,17 @@ def add_news_comment(conn, news_id, user_id, comment, parent_comment_id=None):
             VALUES (%s, %s, %s, %s, NOW())
         """
         cursor.execute(sql, (news_id, user_id, parent_comment_id, comment))
+        team_id = get_current_team_id_by_user_id(conn, user_id)
+        if team_id is not None:
+            comment_reward = _get_comment_reward_amount(get_daily_comment_reward_total(conn, team_id))
+            if comment_reward:
+                cursor.execute(
+                    """
+                    INSERT INTO Operation (Period, Score, Team, Comment)
+                    VALUES (CURDATE(), %s, %s, %s)
+                    """,
+                    (comment_reward, team_id, COMMENT_REWARD_COMMENT),
+                )
     conn.commit()
     return True
 
