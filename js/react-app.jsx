@@ -212,7 +212,7 @@ function HomePage() {
             icon: "рџЏ†",
             variant: "leaderboard",
             title: "РўР°Р±Р»РёС†Р° Р»РёРґРµСЂРѕРІ",
-            text: "Р—РґРµСЃСЊ РѕС‚РѕР±СЂР°Р¶Р°СЋС‚СЃСЏ РґРІРµ С‚Р°Р±Р»РёС†С‹: РґСѓСЌР»СЊРЅС‹Р№ Р·Р°С‡РµС‚ Рё РѕР±С‰РёР№ СЂРµР№С‚РёРЅРі Р»РµРіРёРѕРЅРѕРІ.",
+            text: "Р—РґРµСЃСЊ РѕС‚РѕР±СЂР°Р¶Р°РµС‚СЃСЏ РѕР±С‰РёР№ СЂРµР№С‚РёРЅРі Р»РµРіРёРѕРЅРѕРІ РїРѕ РѕС‡РєР°Рј РІР»РёСЏРЅРёСЏ.",
         },
         {
             href: "/news",
@@ -341,12 +341,12 @@ function LeaderboardTable({ title, rows, tableName, canManageLeaderboards }) {
     );
 }
 
-function LeaderboardPage({ overall_leaderboard = [], duel_leaderboard = [], influence_logs = [], can_manage_leaderboards = false, leaderboard_hidden_for_users = false }) {
+function LeaderboardPage({ overall_leaderboard = [], influence_logs = [], can_manage_leaderboards = false, leaderboard_hidden_for_users = false }) {
     return (
         <div className="section-page leaderboard-page ceremonial-page">
             <Hero
                 title="РўР°Р±Р»РёС†Р° Р»РёРґРµСЂРѕРІ"
-                description="Р—РґРµСЃСЊ РѕС‚РѕР±СЂР°Р¶Р°СЋС‚СЃСЏ РѕС‚РґРµР»СЊРЅС‹Рµ С‚Р°Р±Р»РёС†С‹ РѕР±С‰РµРіРѕ СЂРµР№С‚РёРЅРіР° Рё РґСѓСЌР»СЊРЅС‹С… РѕС‡РєРѕРІ."
+                description="Р—РґРµСЃСЊ РѕС‚РѕР±СЂР°Р¶Р°РµС‚СЃСЏ РѕР±С‰РёР№ СЂРµР№С‚РёРЅРі Р»РµРіРёРѕРЅРѕРІ РїРѕ РѕС‡РєР°Рј РІР»РёСЏРЅРёСЏ."
                 extraClass="leaderboard-hero"
             />
             {can_manage_leaderboards ? (
@@ -366,7 +366,6 @@ function LeaderboardPage({ overall_leaderboard = [], duel_leaderboard = [], infl
             ) : (
                 <div className="leaderboard-grid">
                     <LeaderboardTable title="РћС‡РєРё РІР»РёСЏРЅРёСЏ" rows={overall_leaderboard} tableName="Overall_leader" canManageLeaderboards={can_manage_leaderboards} />
-                    <LeaderboardTable title="РўСѓСЂРЅРёСЂРЅС‹Рµ РѕС‡РєРё" rows={duel_leaderboard} tableName="Duel_leader" canManageLeaderboards={can_manage_leaderboards} />
                 </div>
             )}
             {can_manage_leaderboards ? <InfluenceLogBlock rows={influence_logs} /> : null}

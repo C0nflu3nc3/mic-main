@@ -585,14 +585,12 @@ def leaderboard_page():
     leaderboard_hidden_for_users = is_leaderboard_hidden_for_users()
 
     overall_leaderboard = []
-    duel_leaderboard = []
     influence_logs = []
 
     if can_manage or not leaderboard_hidden_for_users:
         conn = get_connection()
         try:
             overall_leaderboard = get_leaderboard_table(conn, "Overall_leader")
-            duel_leaderboard = get_leaderboard_table(conn, "Duel_leader")
             if can_manage:
                 influence_logs = get_influence_logs(conn)
         finally:
@@ -606,7 +604,6 @@ def leaderboard_page():
         leaderboard_hidden_for_users=leaderboard_hidden_for_users,
         active_section="home",
         overall_leaderboard=overall_leaderboard,
-        duel_leaderboard=duel_leaderboard,
         influence_logs=influence_logs,
     )
 

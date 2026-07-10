@@ -40,7 +40,7 @@ export function LoginPage({ messages }) {
 
 export function HomePage() {
   const cards = [
-    { href: "/leaderboard", title: "Таблица лидеров", icon: "🏆", variant: "leaderboard", text: "Здесь отображаются две таблицы: дуэльный зачет и общий рейтинг легионов." },
+    { href: "/leaderboard", title: "Таблица лидеров", icon: "🏆", variant: "leaderboard", text: "Здесь отображается общий рейтинг легионов по очкам влияния." },
     { href: "/news", title: "Новости", icon: "📜", variant: "news", text: "Здесь публикуются новости с изображениями и видео, а пользователи добавляют комментарии." },
     { href: "/missions", title: "Доска заказов", icon: "✦", variant: "missions", text: "Здесь легионы выбирают задания, видят лимиты по контрактам и отправляют выполнение на подтверждение." }
   ];
@@ -141,10 +141,10 @@ function LeaderboardTable({ title, rows, tableName, canManageLeaderboards }) {
   );
 }
 
-export function LeaderboardPage({ overall_leaderboard = [], duel_leaderboard = [], influence_logs = [], can_manage_leaderboards = false, leaderboard_hidden_for_users = false }) {
+export function LeaderboardPage({ overall_leaderboard = [], influence_logs = [], can_manage_leaderboards = false, leaderboard_hidden_for_users = false }) {
   return (
     <div className="section-page leaderboard-page ceremonial-page">
-      <Hero title="Таблица лидеров" description="Здесь отображаются отдельные таблицы общего рейтинга и дуэльных очков." extraClass="leaderboard-hero" />
+      <Hero title="Таблица лидеров" description="Здесь отображается общий рейтинг легионов по очкам влияния." extraClass="leaderboard-hero" />
       {can_manage_leaderboards ? (
         <form method="POST" action="/leaderboard/toggle-visibility" className="mb-4">
           <input type="hidden" name="hidden" value={leaderboard_hidden_for_users ? "0" : "1"} />
@@ -161,7 +161,6 @@ export function LeaderboardPage({ overall_leaderboard = [], duel_leaderboard = [
       ) : (
         <div className="leaderboard-grid">
           <LeaderboardTable title="Очки влияния" rows={overall_leaderboard} tableName="Overall_leader" canManageLeaderboards={can_manage_leaderboards} />
-          <LeaderboardTable title="Турнирные очки" rows={duel_leaderboard} tableName="Duel_leader" canManageLeaderboards={can_manage_leaderboards} />
         </div>
       )}
       {can_manage_leaderboards ? <InfluenceLogBlock rows={influence_logs} /> : null}

@@ -6,7 +6,6 @@ _SCHEMA_READY = set()
 _SCHEMA_LOCK = Lock()
 _LEADERBOARD_TABLES = {
     "Overall_leader": "Overall_leader",
-    "Duel_leader": "Duel_leader",
 }
 NEWS_REWARD_DAILY_LIMIT = 3
 NEWS_REWARD_AMOUNT = 30
