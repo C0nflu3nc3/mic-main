@@ -207,7 +207,7 @@ def update_leaderboard_entry(conn, table_name, user_id, name, score):
     return updated
 
 
-def get_news(conn, publication_status=1, author_user_id=None):
+def get_news(conn, publication_status=1, author_user_id=None, review_status=None):
     with conn.cursor() as cursor:
         where_conditions = []
         params = []
@@ -217,6 +217,25 @@ def get_news(conn, publication_status=1, author_user_id=None):
         if author_user_id is not None:
             where_conditions.append("News.user_id = %s")
             params.append(int(author_user_id))
+        if review_status is not None:
+            where_conditions.append(
+                """
+                COALESCE(
+                    News.review_status,
+                    CASE
+                        WHEN COALESCE(News.is_published, 1) = 1 THEN %s
+                        ELSE %s
+                    END
+                ) = %s
+                """.strip()
+            )
+            params.extend(
+                [
+                    NEWS_REVIEW_STATUS_PUBLISHED,
+                    NEWS_REVIEW_STATUS_PENDING,
+                    review_status,
+                ]
+            )
 
         where_clause = f"WHERE {' AND '.join(where_conditions)}" if where_conditions else ""
 

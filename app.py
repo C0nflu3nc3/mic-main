@@ -717,7 +717,7 @@ def suggested_news_page():
         ensure_news_comment_columns(conn)
         ensure_news_media_columns(conn)
         suggested_news_items = (
-            get_news(conn, publication_status=0)
+            get_news(conn, publication_status=0, review_status="pending")
             if can_review
             else get_news(conn, publication_status=0, author_user_id=int(user["id"]))
         )
