@@ -2031,6 +2031,22 @@ a {
   text-transform: uppercase;
 }
 
+.news-suggestion-status.is-rejected {
+  border-color: rgba(215, 124, 124, 0.45);
+  background: rgba(83, 24, 24, 0.45);
+  color: #ffd2d2;
+}
+
+.news-review-comment {
+  margin-top: 14px;
+  padding: 14px 16px;
+  border: 1px solid rgba(194, 149, 78, 0.24);
+  border-radius: 14px;
+  background: rgba(15, 26, 20, 0.72);
+  color: #f4efe4;
+  white-space: pre-wrap;
+}
+
 .news-suggestion-actions {
   align-items: flex-start;
 }

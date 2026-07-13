@@ -484,6 +484,42 @@ function NewsDeleteForm({ newsId, redirectTo = "" }) {
     );
 }
 
+function getSuggestedNewsStatusLabel(reviewStatus) {
+    if (reviewStatus === "rejected") return "Отклонено";
+    if (reviewStatus === "published") return "Опубликовано";
+    return "На рассмотрении";
+}
+
+function getSuggestedNewsStatusClassName(reviewStatus) {
+    return reviewStatus === "rejected"
+        ? "news-suggestion-status is-rejected"
+        : "news-suggestion-status";
+}
+
+function NewsRejectBlock({ newsId }) {
+    return (
+        <details className="news-edit-block news-edit-action is-collapsed">
+            <summary className="news-edit-summary">Отклонить</summary>
+            <div className="news-edit-body">
+                <form method="POST" action="/news/reject" className="news-edit-form">
+                    <input type="hidden" name="news_id" value={newsId} />
+                    <div className="mb-3">
+                        <label className="form-label" htmlFor={`reject-comment-${newsId}`}>Комментарий для легиона</label>
+                        <textarea
+                            className="form-control"
+                            id={`reject-comment-${newsId}`}
+                            name="review_comment"
+                            rows="3"
+                            placeholder="Например: поправьте формулировки или добавьте источник"
+                        />
+                    </div>
+                    <button type="submit" className="btn btn-outline-light">Отклонить новость</button>
+                </form>
+            </div>
+        </details>
+    );
+}
+
 function SuggestedNewsForm() {
     return (
         <section className="placeholder-card news-form-card news-suggest-card">
@@ -560,6 +596,8 @@ function NewsCommentItem({ comment, newsId, currentUserId, canManageNews }) {
 
 function NewsPage({ news_items = [], can_manage_news = false, can_suggest_news = false, pending_news_count = 0, user = null }) {
     const pendingCount = Number(pending_news_count) || 0;
+    const showSuggestionsLink = can_manage_news || can_suggest_news;
+    const suggestionsLinkLabel = can_manage_news ? "Предложенные новости" : "Моя предложка";
 
     return (
         <div className="section-page news-page ceremonial-page">
@@ -568,11 +606,11 @@ function NewsPage({ news_items = [], can_manage_news = false, can_suggest_news =
                 description="Р—РґРµСЃСЊ РїСѓР±Р»РёРєСѓСЋС‚СЃСЏ РЅРѕРІРѕСЃС‚Рё РїСЂРѕРµРєС‚Р°, РёР·РѕР±СЂР°Р¶РµРЅРёСЏ, РІРёРґРµРѕ Рё РєРѕРјРјРµРЅС‚Р°СЂРёРё РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№."
             />
 
-            {can_manage_news ? (
+            {showSuggestionsLink ? (
                 <div className="news-page-actions">
                     <a className="btn btn-outline-light news-suggestions-link" href="/news/suggestions">
-                        РџСЂРµРґР»РѕР¶РµРЅРЅС‹Рµ РЅРѕРІРѕСЃС‚Рё
-                        {pendingCount ? <span className="news-page-badge">{pendingCount}</span> : null}
+                        {suggestionsLinkLabel}
+                        {can_manage_news && pendingCount ? <span className="news-page-badge">{pendingCount}</span> : null}
                     </a>
                 </div>
             ) : null}
@@ -657,12 +695,20 @@ function NewsPage({ news_items = [], can_manage_news = false, can_suggest_news =
     );
 }
 
-function SuggestedNewsPage({ suggested_news_items = [] }) {
+function SuggestedNewsPage({ suggested_news_items = [], can_review_suggested_news = false }) {
+    const heroDescription = can_review_suggested_news
+        ? "Здесь администратор просматривает новости на рассмотрении, редактирует их, публикует или отклоняет."
+        : "Здесь вы можете смотреть статус своих предложенных новостей, редактировать их и удалять при необходимости.";
+    const emptyTitle = can_review_suggested_news ? "Предложенных новостей нет" : "У вас пока нет предложенных новостей";
+    const emptyDescription = can_review_suggested_news
+        ? "Когда пользователи отправят новости на рассмотрение, они появятся здесь."
+        : "Отправленные вами новости на рассмотрение будут отображаться здесь.";
+
     return (
         <div className="section-page news-page news-suggestions-page ceremonial-page">
             <Hero
-                title="РџСЂРµРґР»РѕР¶РµРЅРЅС‹Рµ РЅРѕРІРѕСЃС‚Рё"
-                description="Р—РґРµСЃСЊ Р°РґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂ РїСЂРѕСЃРјР°С‚СЂРёРІР°РµС‚ РЅРѕРІРѕСЃС‚Рё РЅР° СЂР°СЃСЃРјРѕС‚СЂРµРЅРёРё, СЂРµРґР°РєС‚РёСЂСѓРµС‚ РёС…, РїСѓР±Р»РёРєСѓРµС‚ РёР»Рё РѕС‚РєР»РѕРЅСЏРµС‚."
+                title="Предложенные новости"
+                description={heroDescription}
             />
 
             <div className="news-list">
@@ -673,7 +719,7 @@ function SuggestedNewsPage({ suggested_news_items = [] }) {
                                 <span>{item.author_name}</span>
                                 <span>{formatDateTime(item.created_at)}</span>
                             </div>
-                            <div className="news-suggestion-status">РќР° СЂР°СЃСЃРјРѕС‚СЂРµРЅРёРё</div>
+                            <div className={getSuggestedNewsStatusClassName(item.review_status)}>{getSuggestedNewsStatusLabel(item.review_status)}</div>
                             <h3>{item.title}</h3>
                         </div>
                         {item.media && item.media.length ? (
@@ -683,18 +729,18 @@ function SuggestedNewsPage({ suggested_news_items = [] }) {
                         ) : null}
                         <div className="news-body-panel">
                             <p className="news-content">{item.content}</p>
+                            {item.review_comment ? <div className="news-review-comment">{item.review_comment}</div> : null}
                         </div>
 
                         <div className="news-card-actions news-suggestion-actions">
-                            <form method="POST" action="/news/publish">
-                                <input type="hidden" name="news_id" value={item.id} />
-                                <button type="submit" className="btn btn-primary">РћРїСѓР±Р»РёРєРѕРІР°С‚СЊ</button>
-                    </form>
+                            {can_review_suggested_news ? (
+                                <form method="POST" action="/news/publish">
+                                    <input type="hidden" name="news_id" value={item.id} />
+                                    <button type="submit" className="btn btn-primary">Опубликовать</button>
+                                </form>
+                            ) : null}
                             <NewsDeleteForm newsId={item.id} redirectTo="/news/suggestions" />
-                            <form method="POST" action="/news/reject">
-                                <input type="hidden" name="news_id" value={item.id} />
-                                <button type="submit" className="btn btn-outline-light">РћС‚РєР»РѕРЅРёС‚СЊ</button>
-                    </form>
+                            {can_review_suggested_news ? <NewsRejectBlock newsId={item.id} /> : null}
                             <NewsEditBlock item={item} summaryLabel="РџРѕРґСЂРµРґР°РєС‚РёСЂРѕРІР°С‚СЊ" redirectTo="/news/suggestions" />
                         </div>
                     </article>
@@ -702,8 +748,8 @@ function SuggestedNewsPage({ suggested_news_items = [] }) {
 
                 {!suggested_news_items.length ? (
                     <section className="placeholder-card">
-                        <h3>РџСЂРµРґР»РѕР¶РµРЅРЅС‹С… РЅРѕРІРѕСЃС‚РµР№ РЅРµС‚</h3>
-                        <p>РљРѕРіРґР° РїРѕР»СЊР·РѕРІР°С‚РµР»Рё РѕС‚РїСЂР°РІСЏС‚ РЅРѕРІРѕСЃС‚Рё РЅР° СЂР°СЃСЃРјРѕС‚СЂРµРЅРёРµ, РѕРЅРё РїРѕСЏРІСЏС‚СЃСЏ Р·РґРµСЃСЊ.</p>
+                        <h3>{emptyTitle}</h3>
+                        <p>{emptyDescription}</p>
                     </section>
                 ) : null}
             </div>

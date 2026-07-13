@@ -281,6 +281,14 @@ def can_suggest_news(user):
     return not bool(user["isadmin"]) and not bool(user.get("isjournalist"))
 
 
+def can_manage_news_item(user, news_item):
+    if can_manage_news(user):
+        return True
+    if not can_suggest_news(user) or news_item is None:
+        return False
+    return int(news_item.get("is_published") or 0) == 0 and int(news_item.get("user_id") or 0) == int(user["id"])
+
+
 def can_manage_studios(user):
     return bool(user["isadmin"])
 
@@ -699,15 +707,21 @@ def suggested_news_page():
     user, redirect_response = require_user()
     if redirect_response:
         return redirect_response
-    if not can_review_suggested_news(user):
+    can_review = can_review_suggested_news(user)
+    can_suggest = can_suggest_news(user)
+    if not can_review and not can_suggest:
         return redirect(url_for("news_page"))
 
     conn = get_connection()
     try:
         ensure_news_comment_columns(conn)
         ensure_news_media_columns(conn)
-        suggested_news_items = get_news(conn, publication_status=0)
-        pending_news_count = count_pending_news(conn)
+        suggested_news_items = (
+            get_news(conn, publication_status=0)
+            if can_review
+            else get_news(conn, publication_status=0, author_user_id=int(user["id"]))
+        )
+        pending_news_count = count_pending_news(conn) if can_review else 0
     finally:
         conn.close()
 
@@ -716,6 +730,7 @@ def suggested_news_page():
         "\u041f\u0440\u0435\u0434\u043b\u043e\u0436\u0435\u043d\u043d\u044b\u0435 \u043d\u043e\u0432\u043e\u0441\u0442\u0438",
         user=user,
         can_manage_news=can_manage_news(user),
+        can_review_suggested_news=can_review,
         pending_news_count=pending_news_count,
         active_section="news_suggestions",
         suggested_news_items=suggested_news_items,
@@ -832,7 +847,7 @@ def update_news_page():
     user, redirect_response = require_user()
     if redirect_response:
         return redirect_response
-    if not can_manage_news(user):
+    if not (can_manage_news(user) or can_suggest_news(user)):
         return redirect(url_for("news_page"))
 
     news_id = request.form.get("news_id", "").strip()
@@ -874,11 +889,10 @@ def update_news_page():
             delete_uploaded_paths(new_media_paths)
             flash("\u041d\u043e\u0432\u043e\u0441\u0442\u044c \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u0430")
             return redirect(redirect_url)
-        if int(news_item.get("is_published") or 0) == 0 and not can_review_suggested_news(user):
+        redirect_url = get_news_redirect_url(news_item)
+        if not can_manage_news_item(user, news_item):
             delete_uploaded_paths(new_media_paths)
             return redirect(redirect_url)
-
-        redirect_url = get_news_redirect_url(news_item)
         final_media, final_media_error = build_updated_news_media(
             news_item["media"],
             removed_media_ids,
@@ -895,7 +909,16 @@ def update_news_page():
             for item in news_item["media"]
             if item.get("media_path") and item["media_path"] not in final_media_paths
         ]
-        update_news(conn, int(news_id), title, content, final_media)
+        reset_review = int(news_item.get("is_published") or 0) == 0 and not can_review_suggested_news(user)
+        update_news(
+            conn,
+            int(news_id),
+            title,
+            content,
+            final_media,
+            review_status="pending" if reset_review else None,
+            review_comment=None if reset_review else None,
+        )
         update_succeeded = True
     finally:
         conn.close()
@@ -904,7 +927,11 @@ def update_news_page():
         else:
             delete_uploaded_paths(new_media_paths)
 
-    flash("\u041d\u043e\u0432\u043e\u0441\u0442\u044c \u043e\u0431\u043d\u043e\u0432\u043b\u0435\u043d\u0430")
+    flash(
+        "\u041d\u043e\u0432\u043e\u0441\u0442\u044c \u043e\u0431\u043d\u043e\u0432\u043b\u0435\u043d\u0430 \u0438 \u0441\u043d\u043e\u0432\u0430 \u043e\u0442\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u0430 \u043d\u0430 \u0440\u0430\u0441\u0441\u043c\u043e\u0442\u0440\u0435\u043d\u0438\u0435"
+        if int(news_item.get("is_published") or 0) == 0 and not can_review_suggested_news(user)
+        else "\u041d\u043e\u0432\u043e\u0441\u0442\u044c \u043e\u0431\u043d\u043e\u0432\u043b\u0435\u043d\u0430"
+    )
     return redirect(redirect_url)
 
 
@@ -941,23 +968,18 @@ def reject_news_page():
         return redirect(url_for("news_page"))
 
     news_id = request.form.get("news_id", "").strip()
+    review_comment = request.form.get("review_comment", "").strip()
     if not news_id.isdigit():
         flash("\u041d\u043e\u0432\u043e\u0441\u0442\u044c \u043d\u0435 \u043e\u0442\u043a\u043b\u043e\u043d\u0435\u043d\u0430")
         return redirect(url_for("suggested_news_page"))
 
     conn = get_connection()
-    deleted_paths = []
     try:
         ensure_news_media_columns(conn)
-        news_item = get_news_for_update(conn, int(news_id))
-        if news_item is not None:
-            deleted_paths = [item["media_path"] for item in news_item.get("media", []) if item.get("media_path")]
-        ok = reject_news(conn, int(news_id))
+        ok = reject_news(conn, int(news_id), review_comment)
     finally:
         conn.close()
 
-    if ok:
-        delete_uploaded_paths(deleted_paths)
     flash("\u041d\u043e\u0432\u043e\u0441\u0442\u044c \u043e\u0442\u043a\u043b\u043e\u043d\u0435\u043d\u0430" if ok else "\u041d\u043e\u0432\u043e\u0441\u0442\u044c \u043d\u0435 \u043e\u0442\u043a\u043b\u043e\u043d\u0435\u043d\u0430")
     return redirect(url_for("suggested_news_page"))
 
@@ -967,7 +989,7 @@ def delete_news_page():
     user, redirect_response = require_user()
     if redirect_response:
         return redirect_response
-    if not can_manage_news(user):
+    if not (can_manage_news(user) or can_suggest_news(user)):
         return redirect(url_for("news_page"))
 
     news_id = request.form.get("news_id", "").strip()
@@ -984,6 +1006,8 @@ def delete_news_page():
         news_item = get_news_for_update(conn, int(news_id))
         if news_item is not None:
             redirect_url = get_news_redirect_url(news_item)
+            if not can_manage_news_item(user, news_item):
+                return redirect(redirect_url)
             deleted_paths = [item["media_path"] for item in news_item.get("media", []) if item.get("media_path")]
         ok = delete_news(conn, int(news_id))
     finally:

@@ -13,6 +13,9 @@ NEWS_REWARD_COMMENT = "Награда за публикацию новости"
 COMMENT_REWARD_AMOUNT = 5
 COMMENT_REWARD_DAILY_LIMIT = 25
 COMMENT_REWARD_COMMENT = "Награда за комментарий под новостью"
+NEWS_REVIEW_STATUS_PENDING = "pending"
+NEWS_REVIEW_STATUS_REJECTED = "rejected"
+NEWS_REVIEW_STATUS_PUBLISHED = "published"
 
 
 def is_schema_ready(schema_name):
@@ -204,13 +207,18 @@ def update_leaderboard_entry(conn, table_name, user_id, name, score):
     return updated
 
 
-def get_news(conn, publication_status=1):
+def get_news(conn, publication_status=1, author_user_id=None):
     with conn.cursor() as cursor:
-        where_clause = ""
-        params = ()
+        where_conditions = []
+        params = []
         if publication_status is not None:
-            where_clause = "WHERE COALESCE(News.is_published, 1) = %s"
-            params = (int(publication_status),)
+            where_conditions.append("COALESCE(News.is_published, 1) = %s")
+            params.append(int(publication_status))
+        if author_user_id is not None:
+            where_conditions.append("News.user_id = %s")
+            params.append(int(author_user_id))
+
+        where_clause = f"WHERE {' AND '.join(where_conditions)}" if where_conditions else ""
 
         sql = """
             SELECT
@@ -219,7 +227,16 @@ def get_news(conn, publication_status=1):
                 News.content,
                 News.image_path,
                 News.video_path,
+                News.user_id,
                 COALESCE(News.is_published, 1) AS is_published,
+                COALESCE(
+                    News.review_status,
+                    CASE
+                        WHEN COALESCE(News.is_published, 1) = 1 THEN %s
+                        ELSE %s
+                    END
+                ) AS review_status,
+                COALESCE(News.review_comment, '') AS review_comment,
                 News.created_at,
                 users.login AS author_name
             FROM News
@@ -227,7 +244,14 @@ def get_news(conn, publication_status=1):
             {where_clause}
             ORDER BY News.created_at DESC, News.id DESC
         """
-        cursor.execute(sql.format(where_clause=where_clause), params)
+        cursor.execute(
+            sql.format(where_clause=where_clause),
+            (
+                NEWS_REVIEW_STATUS_PUBLISHED,
+                NEWS_REVIEW_STATUS_PENDING,
+                *params,
+            ),
+        )
         news_rows = cursor.fetchall()
 
         if not news_rows:
@@ -350,6 +374,46 @@ def ensure_news_media_columns(conn):
             )
             schema_changed = True
 
+        cursor.execute("SHOW COLUMNS FROM News LIKE 'review_status'")
+        if cursor.fetchone() is None:
+            cursor.execute(
+                """
+                ALTER TABLE News
+                ADD COLUMN review_status varchar(20) NOT NULL DEFAULT 'published' AFTER is_published
+                """
+            )
+            schema_changed = True
+
+        cursor.execute("SHOW COLUMNS FROM News LIKE 'review_comment'")
+        if cursor.fetchone() is None:
+            cursor.execute(
+                """
+                ALTER TABLE News
+                ADD COLUMN review_comment text DEFAULT NULL AFTER review_status
+                """
+            )
+            schema_changed = True
+
+        cursor.execute(
+            """
+            UPDATE News
+            SET review_status = CASE
+                WHEN COALESCE(is_published, 1) = 1 THEN %s
+                ELSE %s
+            END
+            WHERE review_status IS NULL
+               OR review_status = ''
+               OR (review_status = %s AND COALESCE(is_published, 1) = 0)
+            """,
+            (
+                NEWS_REVIEW_STATUS_PUBLISHED,
+                NEWS_REVIEW_STATUS_PENDING,
+                NEWS_REVIEW_STATUS_PUBLISHED,
+            ),
+        )
+        if cursor.rowcount > 0:
+            schema_changed = True
+
         cursor.execute("SHOW TABLES LIKE 'News_media'")
         if cursor.fetchone() is None:
             cursor.execute(
@@ -443,10 +507,31 @@ def ensure_news_comment_columns(conn):
 def add_news(conn, user_id, title, content, image_path, video_path, media_items=None, is_published=1):
     with conn.cursor() as cursor:
         sql = """
-            INSERT INTO News (title, content, image_path, video_path, user_id, is_published, created_at)
-            VALUES (%s, %s, %s, %s, %s, %s, NOW())
+            INSERT INTO News (
+                title,
+                content,
+                image_path,
+                video_path,
+                user_id,
+                is_published,
+                review_status,
+                review_comment,
+                created_at
+            )
+            VALUES (%s, %s, %s, %s, %s, %s, %s, NULL, NOW())
         """
-        cursor.execute(sql, (title, content, image_path, video_path, user_id, int(is_published)))
+        cursor.execute(
+            sql,
+            (
+                title,
+                content,
+                image_path,
+                video_path,
+                user_id,
+                int(is_published),
+                NEWS_REVIEW_STATUS_PUBLISHED if int(is_published) else NEWS_REVIEW_STATUS_PENDING,
+            ),
+        )
         news_id = int(cursor.lastrowid)
 
         if media_items:
@@ -473,12 +558,32 @@ def add_news(conn, user_id, title, content, image_path, video_path, media_items=
 def get_news_for_update(conn, news_id):
     with conn.cursor() as cursor:
         news_sql = """
-            SELECT id, title, content, COALESCE(is_published, 1) AS is_published
+            SELECT
+                id,
+                user_id,
+                title,
+                content,
+                COALESCE(is_published, 1) AS is_published,
+                COALESCE(
+                    review_status,
+                    CASE
+                        WHEN COALESCE(is_published, 1) = 1 THEN %s
+                        ELSE %s
+                    END
+                ) AS review_status,
+                COALESCE(review_comment, '') AS review_comment
             FROM News
             WHERE id = %s
             LIMIT 1
         """
-        cursor.execute(news_sql, (news_id,))
+        cursor.execute(
+            news_sql,
+            (
+                NEWS_REVIEW_STATUS_PUBLISHED,
+                NEWS_REVIEW_STATUS_PENDING,
+                news_id,
+            ),
+        )
         news_row = cursor.fetchone()
         if news_row is None:
             return None
@@ -494,7 +599,7 @@ def get_news_for_update(conn, news_id):
         return news_row
 
 
-def update_news(conn, news_id, title, content, media_items):
+def update_news(conn, news_id, title, content, media_items, review_status=None, review_comment=None):
     image_path = next((item["media_path"] for item in media_items if item["media_type"] == "image"), None)
     video_path = next((item["media_path"] for item in media_items if item["media_type"] == "video"), None)
 
@@ -507,7 +612,21 @@ def update_news(conn, news_id, title, content, media_items):
                 video_path = %s
             WHERE id = %s
         """
-        cursor.execute(update_sql, (title, content, image_path, video_path, news_id))
+        update_params = [title, content, image_path, video_path]
+        if review_status is not None:
+            update_sql = """
+                UPDATE News
+                SET title = %s,
+                    content = %s,
+                    image_path = %s,
+                    video_path = %s,
+                    review_status = %s,
+                    review_comment = %s
+                WHERE id = %s
+            """
+            update_params.extend([review_status, review_comment])
+        update_params.append(news_id)
+        cursor.execute(update_sql, tuple(update_params))
 
         cursor.execute("DELETE FROM News_media WHERE news_id = %s", (news_id,))
 
@@ -539,7 +658,12 @@ def count_pending_news(conn):
             SELECT COUNT(*) AS total
             FROM News
             WHERE COALESCE(is_published, 1) = 0
-            """
+              AND COALESCE(review_status, %s) = %s
+            """,
+            (
+                NEWS_REVIEW_STATUS_PENDING,
+                NEWS_REVIEW_STATUS_PENDING,
+            ),
         )
         row = cursor.fetchone()
         return int(row["total"] or 0)
@@ -564,10 +688,12 @@ def publish_news(conn, news_id):
         cursor.execute(
             """
             UPDATE News
-            SET is_published = 1
+            SET is_published = 1,
+                review_status = %s,
+                review_comment = NULL
             WHERE id = %s AND COALESCE(is_published, 1) = 0
             """,
-            (news_id,),
+            (NEWS_REVIEW_STATUS_PUBLISHED, news_id),
         )
         updated = cursor.rowcount > 0
         if updated and news_row.get("team_id") is not None:
@@ -589,28 +715,20 @@ def publish_news(conn, news_id):
     return updated
 
 
-def reject_news(conn, news_id):
+def reject_news(conn, news_id, review_comment=""):
     with conn.cursor() as cursor:
         cursor.execute(
             """
-            DELETE FROM News_comment
-            WHERE news_id = %s
-            """,
-            (news_id,),
-        )
-        cursor.execute(
-            """
-            DELETE FROM News_media
-            WHERE news_id = %s
-            """,
-            (news_id,),
-        )
-        cursor.execute(
-            """
-            DELETE FROM News
+            UPDATE News
+            SET review_status = %s,
+                review_comment = %s
             WHERE id = %s AND COALESCE(is_published, 1) = 0
             """,
-            (news_id,),
+            (
+                NEWS_REVIEW_STATUS_REJECTED,
+                review_comment or None,
+                news_id,
+            ),
         )
         deleted = cursor.rowcount > 0
     conn.commit()
