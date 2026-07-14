@@ -239,20 +239,21 @@ export function ApprovePage({ approve_items = [] }) {
     <div className="section-page">
       <Hero title="Подтверждение" description="Здесь администратор подтверждает или отклоняет выполнение принятых заданий. После подтверждения награда автоматически начисляется отряду." />
       {approve_items.length ? (
-        <div className="approve-toolbar">
-          <div className="approve-sort-label">Группировка</div>
-          <div className="approve-group-toggle" role="tablist" aria-label="Группировка подтверждений">
-            <button type="button" className={`approve-group-option${groupBy === "missions" ? " is-active" : ""}`} onClick={() => setGroupBy("missions")}>По заданиям</button>
-            <button type="button" className={`approve-group-option${groupBy === "teams" ? " is-active" : ""}`} onClick={() => setGroupBy("teams")}>По легионам</button>
+        <section className="placeholder-card approve-toolbar-card">
+          <div className="approve-toolbar">
+            <div className="approve-sort-label">Группировка</div>
+            <div className="approve-group-toggle" role="tablist" aria-label="Группировка подтверждений">
+              <button type="button" className={`approve-group-option${groupBy === "missions" ? " is-active" : ""}`} onClick={() => setGroupBy("missions")}>По заданиям</button>
+              <button type="button" className={`approve-group-option${groupBy === "teams" ? " is-active" : ""}`} onClick={() => setGroupBy("teams")}>По легионам</button>
+            </div>
           </div>
-        </div>
+        </section>
       ) : null}
       <div className="news-list">
         {groupedItems.map((group, index) => (
           <section className="approve-group" key={`${group.label}-${index}`}>
-            <div className="approve-group-header">
+            <div className="placeholder-card approve-group-header">
               <h3 className="approve-group-title">{groupBy === "teams" ? `Легион: ${group.label}` : group.label}</h3>
-              <span className="approve-group-count">{group.items.length}</span>
             </div>
             <div className="approve-group-list">
               {group.items.map((item) => <ApproveCard key={item.id} item={item} />)}

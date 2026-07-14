@@ -2312,12 +2312,16 @@ a {
 }
 
 .approve-toolbar {
-  max-width: 1040px;
-  margin: 0 auto 18px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   gap: 12px;
+}
+
+.approve-toolbar-card {
+  max-width: 1040px;
+  margin: 0 auto 18px;
+  padding: 18px 22px;
 }
 
 .approve-sort-label {
@@ -2367,12 +2371,13 @@ a {
 }
 
 .approve-group-header {
+  width: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 12px;
   margin: 0 0 14px;
-  padding: 0 2px;
+  padding: 16px 22px;
 }
 
 .approve-group-title {
@@ -2382,21 +2387,6 @@ a {
   font-weight: 700;
   line-height: 1.2;
   text-align: left;
-}
-
-.approve-group-count {
-  min-width: 28px;
-  height: 28px;
-  padding: 0 10px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 999px;
-  border: 1px solid rgba(194, 149, 78, 0.28);
-  background: rgba(26, 39, 36, 0.72);
-  color: #e4d7bc;
-  font-size: 13px;
-  font-weight: 700;
 }
 
 .approve-group-list {
@@ -3361,6 +3351,10 @@ img {
     margin-bottom: 14px;
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .approve-toolbar-card {
+    padding: 16px 14px;
   }
 
   .approve-group-toggle {
