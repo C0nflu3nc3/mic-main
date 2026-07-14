@@ -1,6 +1,7 @@
 ﻿const HistoryPage = window.HistoryPage;
 
 const bootstrap = window.__BOOTSTRAP__ || {};
+const DISPLAY_TIME_ZONE = "Etc/GMT-5";
 
 function formatDateTime(value) {
     if (!value) {
@@ -18,6 +19,7 @@ function formatDateTime(value) {
         year: "numeric",
         hour: "2-digit",
         minute: "2-digit",
+        timeZone: DISPLAY_TIME_ZONE,
     }).format(date);
 }
 
@@ -35,6 +37,7 @@ function formatDate(value) {
         day: "2-digit",
         month: "2-digit",
         year: "numeric",
+        timeZone: DISPLAY_TIME_ZONE,
     }).format(date);
 }
 
@@ -729,7 +732,12 @@ function SuggestedNewsPage({ suggested_news_items = [], can_review_suggested_new
                         ) : null}
                         <div className="news-body-panel">
                             <p className="news-content">{item.content}</p>
-                            {item.review_comment ? <div className="news-review-comment">{item.review_comment}</div> : null}
+                            {item.review_comment ? (
+                                <div className="news-review-note">
+                                    <div className="news-review-note-title">Комментарий администратора</div>
+                                    <div className="news-review-comment">{item.review_comment}</div>
+                                </div>
+                            ) : null}
                         </div>
 
                         <div className="news-card-actions news-suggestion-actions">

@@ -451,7 +451,12 @@ export function SuggestedNewsPage({ suggested_news_items = [], can_review_sugges
             ) : null}
             <div className="news-body-panel">
               <p className="news-content">{item.content}</p>
-              {item.review_comment ? <div className="news-review-comment">{item.review_comment}</div> : null}
+              {item.review_comment ? (
+                <div className="news-review-note">
+                  <div className="news-review-note-title">Комментарий администратора</div>
+                  <div className="news-review-comment">{item.review_comment}</div>
+                </div>
+              ) : null}
             </div>
             <div className="news-card-actions news-suggestion-actions">
               {can_review_suggested_news ? (

@@ -2037,12 +2037,25 @@ a {
   color: #ffd2d2;
 }
 
-.news-review-comment {
-  margin-top: 14px;
+.news-review-note {
+  margin-top: 16px;
   padding: 14px 16px;
-  border: 1px solid rgba(194, 149, 78, 0.24);
+  border: 1px solid rgba(190, 64, 64, 0.34);
   border-radius: 14px;
-  background: rgba(15, 26, 20, 0.72);
+  background: rgba(38, 14, 14, 0.52);
+  text-align: left;
+}
+
+.news-review-note-title {
+  margin-bottom: 8px;
+  color: #ffb3b3;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.news-review-comment {
   color: #f4efe4;
   white-space: pre-wrap;
 }

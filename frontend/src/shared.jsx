@@ -1,4 +1,6 @@
-﻿export function formatDateTime(value) {
+const DISPLAY_TIME_ZONE = "Etc/GMT-5";
+
+export function formatDateTime(value) {
   if (!value) return "";
 
   const date = new Date(value);
@@ -9,7 +11,8 @@
     month: "2-digit",
     year: "numeric",
     hour: "2-digit",
-    minute: "2-digit"
+    minute: "2-digit",
+    timeZone: DISPLAY_TIME_ZONE
   }).format(date);
 }
 
@@ -22,7 +25,8 @@ export function formatDate(value) {
   return new Intl.DateTimeFormat("ru-RU", {
     day: "2-digit",
     month: "2-digit",
-    year: "numeric"
+    year: "numeric",
+    timeZone: DISPLAY_TIME_ZONE
   }).format(date);
 }
 
