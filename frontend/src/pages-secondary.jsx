@@ -239,7 +239,7 @@ export function ApprovePage({ approve_items = [] }) {
     <div className="section-page">
       <Hero title="Подтверждение" description="Здесь администратор подтверждает или отклоняет выполнение принятых заданий. После подтверждения награда автоматически начисляется отряду." />
       {approve_items.length ? (
-        <section className="placeholder-card approve-toolbar-card">
+        <section className="approve-toolbar-card">
           <div className="approve-toolbar">
             <div className="approve-sort-label">Группировка</div>
             <div className="approve-group-toggle" role="tablist" aria-label="Группировка подтверждений">
@@ -252,7 +252,7 @@ export function ApprovePage({ approve_items = [] }) {
       <div className="news-list">
         {groupedItems.map((group, index) => (
           <section className="approve-group" key={`${group.label}-${index}`}>
-            <div className="placeholder-card approve-group-header">
+            <div className="approve-group-header">
               <h3 className="approve-group-title">{groupBy === "teams" ? `Легион: ${group.label}` : group.label}</h3>
             </div>
             <div className="approve-group-list">
