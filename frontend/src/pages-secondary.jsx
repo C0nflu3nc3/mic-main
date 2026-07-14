@@ -240,11 +240,11 @@ export function ApprovePage({ approve_items = [] }) {
       <Hero title="Подтверждение" description="Здесь администратор подтверждает или отклоняет выполнение принятых заданий. После подтверждения награда автоматически начисляется отряду." />
       {approve_items.length ? (
         <div className="approve-toolbar">
-          <label className="approve-sort-label" htmlFor="approve-group-by">Группировка</label>
-          <select className="form-control approve-sort-select" id="approve-group-by" value={groupBy} onChange={(event) => setGroupBy(event.target.value)}>
-            <option value="missions">По заданиям</option>
-            <option value="teams">По легионам</option>
-          </select>
+          <div className="approve-sort-label">Группировка</div>
+          <div className="approve-group-toggle" role="tablist" aria-label="Группировка подтверждений">
+            <button type="button" className={`approve-group-option${groupBy === "missions" ? " is-active" : ""}`} onClick={() => setGroupBy("missions")}>По заданиям</button>
+            <button type="button" className={`approve-group-option${groupBy === "teams" ? " is-active" : ""}`} onClick={() => setGroupBy("teams")}>По легионам</button>
+          </div>
         </div>
       ) : null}
       <div className="news-list">
