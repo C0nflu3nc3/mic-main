@@ -2,7 +2,7 @@
 import os
 import secrets
 import shutil
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from functools import lru_cache
 from urllib.parse import urlparse
 
@@ -121,7 +121,11 @@ bootstrap_news_uploads()
 
 
 def serialize_for_react(value):
-    if isinstance(value, (datetime, date)):
+    if isinstance(value, datetime):
+        if value.tzinfo is None:
+            value = value.replace(tzinfo=timezone.utc)
+        return value.isoformat()
+    if isinstance(value, date):
         return value.isoformat()
     if isinstance(value, dict):
         return {key: serialize_for_react(item) for key, item in value.items()}
