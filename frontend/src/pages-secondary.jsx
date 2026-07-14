@@ -1,3 +1,4 @@
+import { useMemo, useState } from "react";
 import { Hero, formatDate, formatDateTime, uploadedPath } from "./shared";
 
 function getMissionKind(mission) {
@@ -195,13 +196,68 @@ export function TeamsPage(props) {
   return <div className="bank-page section-page">{props.is_admin ? <AdminBankView scoreboard={props.scoreboard} /> : <UserBankView current_plt={props.current_plt} />}<BankOperations {...props} /></div>;
 }
 
+function groupApproveItems(items, groupBy) {
+  const groups = new Map();
+  const fallbackLabel = groupBy === "teams" ? "Без легиона" : "Без названия";
+
+  items.forEach((item) => {
+    const label = (groupBy === "teams" ? item.team_name : item.title) || fallbackLabel;
+    if (!groups.has(label)) groups.set(label, []);
+    groups.get(label).push(item);
+  });
+
+  return Array.from(groups, ([label, groupItems]) => ({ label, items: groupItems }));
+}
+
+function ApproveCard({ item }) {
+  return (
+    <article className={`placeholder-card mission-card${item.is_contract ? " mission-card-contract" : ""}`} key={item.id}>
+      <div className="news-meta"><span>{item.team_name}</span><span>{formatDateTime(item.accepted_at)}</span></div>
+      <h3>{item.title}</h3>
+      <p className="news-content">{item.description}</p>
+      <div className="mission-info"><span>Отряд: {item.team_name}</span><span>{item.is_contract ? `Цена легиона: ${item.bid_reward || 0} GRZ` : `Награда: ${item.reward} GRZ + 10 влияния`}</span></div>
+      <div className="approve-actions">
+        <form method="POST" action="/approve/confirm">
+          {item.is_contract ? null : <input className="form-control mb-2" name="approved_reward" type="number" min="0" step="1" defaultValue={item.reward} />}
+          <input type="hidden" name="assignment_id" value={item.id} />
+          <button type="submit" className="btn btn-primary">{item.is_contract ? "Передать контракт" : "Подтвердить выполнение"}</button>
+        </form>
+        <form method="POST" action="/approve/reject">
+          <input type="hidden" name="assignment_id" value={item.id} />
+          <button type="submit" className="btn btn-outline-light">Отклонить выполнение</button>
+        </form>
+      </div>
+    </article>
+  );
+}
+
 export function ApprovePage({ approve_items = [] }) {
+  const [groupBy, setGroupBy] = useState("missions");
+  const groupedItems = useMemo(() => groupApproveItems(approve_items, groupBy), [approve_items, groupBy]);
+
   return (
     <div className="section-page">
       <Hero title="Подтверждение" description="Здесь администратор подтверждает или отклоняет выполнение принятых заданий. После подтверждения награда автоматически начисляется отряду." />
+      {approve_items.length ? (
+        <div className="approve-toolbar">
+          <label className="approve-sort-label" htmlFor="approve-group-by">Группировка</label>
+          <select className="form-control approve-sort-select" id="approve-group-by" value={groupBy} onChange={(event) => setGroupBy(event.target.value)}>
+            <option value="missions">По заданиям</option>
+            <option value="teams">По легионам</option>
+          </select>
+        </div>
+      ) : null}
       <div className="news-list">
-        {approve_items.map((item) => (
-          <article className={`placeholder-card mission-card${item.is_contract ? " mission-card-contract" : ""}`} key={item.id}><div className="news-meta"><span>{item.team_name}</span><span>{formatDateTime(item.accepted_at)}</span></div><h3>{item.title}</h3><p className="news-content">{item.description}</p><div className="mission-info"><span>Отряд: {item.team_name}</span><span>{item.is_contract ? `Цена легиона: ${item.bid_reward || 0} GRZ` : `Награда: ${item.reward} GRZ + 10 влияния`}</span></div><div className="approve-actions"><form method="POST" action="/approve/confirm">{item.is_contract ? null : <input className="form-control mb-2" name="approved_reward" type="number" min="0" step="1" defaultValue={item.reward} />}<input type="hidden" name="assignment_id" value={item.id} /><button type="submit" className="btn btn-primary">{item.is_contract ? "Передать контракт" : "Подтвердить выполнение"}</button></form><form method="POST" action="/approve/reject"><input type="hidden" name="assignment_id" value={item.id} /><button type="submit" className="btn btn-outline-light">Отклонить выполнение</button></form></div></article>
+        {groupedItems.map((group, index) => (
+          <section className="approve-group" key={`${group.label}-${index}`}>
+            <div className="approve-group-header">
+              <h3 className="approve-group-title">{groupBy === "teams" ? `Легион: ${group.label}` : group.label}</h3>
+              <span className="approve-group-count">{group.items.length}</span>
+            </div>
+            <div className="approve-group-list">
+              {group.items.map((item) => <ApproveCard key={item.id} item={item} />)}
+            </div>
+          </section>
         ))}
         {!approve_items.length ? <section className="placeholder-card"><h3>Нет заданий на подтверждение</h3><p>Принятые задания отображаются в этом списке.</p></section> : null}
       </div>
