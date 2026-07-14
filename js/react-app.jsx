@@ -639,7 +639,7 @@ function NewsPage({ news_items = [], can_manage_news = false, can_suggest_news =
 
             <div className="news-list">
                 {news_items.map((item) => (
-                    <article className="placeholder-card news-card news-card-editorial" key={item.id}>
+                    <article className={`placeholder-card news-card news-card-editorial${item.review_status === "rejected" ? " is-rejected" : ""}`} key={item.id}>
                         <div className="news-card-header">
                             <div className="news-meta">
                                 <span>{item.author_name}</span>
