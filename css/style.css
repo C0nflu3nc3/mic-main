@@ -2741,13 +2741,52 @@ a {
   min-width: 320px;
 }
 
-.leaderboard-edit-modal .modal-dialog {
-  max-width: 640px;
+.leaderboard-edit-block {
+  margin-top: 0;
+  margin-left: 0;
+  width: 100%;
 }
 
-.leaderboard-edit-modal textarea.form-control {
+.leaderboard-edit-block[open] {
+  width: 100%;
+}
+
+.leaderboard-edit-summary {
+  min-width: 320px;
+}
+
+.leaderboard-editor-card {
+  min-height: 0;
+  max-width: 780px;
+  margin-top: 16px;
+  padding: 22px 24px;
+}
+
+.leaderboard-edit-form {
+  max-width: 560px;
+  display: grid;
+  gap: 12px;
+}
+
+.leaderboard-edit-form label {
+  display: block;
+  margin: 0;
+  color: #c8a869;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.leaderboard-edit-form textarea.form-control {
   min-height: 120px;
   resize: vertical;
+}
+
+.leaderboard-edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
 }
 
 .modal-content {

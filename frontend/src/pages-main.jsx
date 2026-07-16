@@ -67,7 +67,6 @@ export function HomePage() {
 function LeaderboardEditBlock({ tableName, rows }) {
   if (!rows.length) return null;
 
-  const modalId = `${tableName}-editor-modal`;
   const selectId = `${tableName}-editor-user`;
   const nameId = `${tableName}-editor-name`;
   const scoreId = `${tableName}-editor-score`;
@@ -76,43 +75,32 @@ function LeaderboardEditBlock({ tableName, rows }) {
   const defaultRow = rows[0];
 
   return (
-    <>
-      <div className="bank-action-bar leaderboard-action-bar">
-        <button type="button" className="btn btn-primary bank-action-button leaderboard-action-button" data-bs-toggle="modal" data-bs-target={`#${modalId}`}>Изменить таблицу</button>
-      </div>
-      <div className="modal fade leaderboard-edit-modal" id={modalId} tabIndex="-1" aria-labelledby={`${modalId}-label`} aria-hidden="true">
-        <form method="POST" action="/leaderboard/update">
-          <input type="hidden" name="table_name" value={tableName} />
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h1 className="modal-title fs-5" id={`${modalId}-label`}>Редактирование очков влияния</h1>
-                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
-              </div>
-              <div className="modal-body">
-                <label htmlFor={selectId}>Легион</label>
-                <select className="form-control" id={selectId} name="user_id" defaultValue={defaultRow.user_id} data-leaderboard-sync="true" data-name-target={nameId} data-score-target={scoreId} data-state-target={stateId}>
-                  {rows.map((row) => (
-                    <option key={`${tableName}-${row.user_id}`} value={row.user_id} data-name={row.Name} data-score={row.Scores}>{row.Name}</option>
-                  ))}
-                </select>
-                <label htmlFor={nameId}>Название</label>
-                <input className="form-control" id={nameId} name="name" type="text" defaultValue={defaultRow.Name} required />
-                <label htmlFor={scoreId}>Очки</label>
-                <input className="form-control" id={scoreId} name="score" type="number" defaultValue={defaultRow.Scores} required />
-                <label htmlFor={reasonId}>Комментарий в лог</label>
-                <textarea className="form-control" id={reasonId} name="reason" rows="3" maxLength="255" placeholder="Например: бонус, штраф или исправление баллов"></textarea>
-                <div className="form-text" id={stateId}>{`Сейчас у легиона ${defaultRow.Scores} очков влияния.`}</div>
-              </div>
-              <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                <button type="submit" className="btn btn-primary">Сохранить</button>
-              </div>
+    <details className="news-edit-block news-edit-action is-collapsed leaderboard-edit-block">
+      <summary className="news-edit-summary leaderboard-edit-summary">Изменить таблицу</summary>
+      <div className="news-edit-body">
+        <section className="placeholder-card leaderboard-editor-card">
+          <form method="POST" action="/leaderboard/update" className="news-edit-form leaderboard-edit-form">
+            <input type="hidden" name="table_name" value={tableName} />
+            <label htmlFor={selectId}>Легион</label>
+            <select className="form-control" id={selectId} name="user_id" defaultValue={defaultRow.user_id} data-leaderboard-sync="true" data-name-target={nameId} data-score-target={scoreId} data-state-target={stateId}>
+              {rows.map((row) => (
+                <option key={`${tableName}-${row.user_id}`} value={row.user_id} data-name={row.Name} data-score={row.Scores}>{row.Name}</option>
+              ))}
+            </select>
+            <label htmlFor={nameId}>Название</label>
+            <input className="form-control" id={nameId} name="name" type="text" defaultValue={defaultRow.Name} required />
+            <label htmlFor={scoreId}>Очки</label>
+            <input className="form-control" id={scoreId} name="score" type="number" defaultValue={defaultRow.Scores} required />
+            <label htmlFor={reasonId}>Комментарий в лог</label>
+            <textarea className="form-control" id={reasonId} name="reason" rows="3" maxLength="255" placeholder="Например: бонус, штраф или исправление баллов"></textarea>
+            <div className="form-text" id={stateId}>{`Сейчас у легиона ${defaultRow.Scores} очков влияния.`}</div>
+            <div className="leaderboard-edit-actions">
+              <button type="submit" className="btn btn-primary">Сохранить</button>
             </div>
-          </div>
-        </form>
+          </form>
+        </section>
       </div>
-    </>
+    </details>
   );
 }
 
