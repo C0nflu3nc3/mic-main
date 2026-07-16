@@ -92,6 +92,7 @@ MAX_NEWS_CONTENT_LENGTH = 12000
 MAX_COMMENT_LENGTH = 2000
 MAX_MISSION_DESCRIPTION_LENGTH = 8000
 MAX_STUDIO_DESCRIPTION_LENGTH = 8000
+MAX_INFLUENCE_COMMENT_LENGTH = 255
 MAX_TRANSFER_COMMENT_LENGTH = 500
 os.makedirs(app.config["UPLOAD_ROOT"], exist_ok=True)
 os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
@@ -646,12 +647,14 @@ def update_leaderboard_page():
     user_id = request.form.get("user_id", "").strip()
     name = request.form.get("name", "").strip()
     score_raw = request.form.get("score", "").strip()
+    reason = request.form.get("reason", "").strip()
 
     if (
         not user_id.isdigit()
         or not name
         or not score_raw
         or is_text_too_long(name, MAX_LEADERBOARD_NAME_LENGTH)
+        or is_text_too_long(reason, MAX_INFLUENCE_COMMENT_LENGTH)
     ):
         flash("\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u043e\u0431\u043d\u043e\u0432\u0438\u0442\u044c \u0441\u0442\u0440\u043e\u043a\u0443 \u0442\u0430\u0431\u043b\u0438\u0446\u044b")
         return redirect(url_for("leaderboard_page"))
@@ -664,7 +667,7 @@ def update_leaderboard_page():
 
     conn = get_connection()
     try:
-        updated = update_leaderboard_entry(conn, table_name, int(user_id), name, score)
+        updated = update_leaderboard_entry(conn, table_name, int(user_id), name, score, reason)
     except ValueError:
         flash("\u041d\u0435\u0432\u0435\u0440\u043d\u0430\u044f \u0442\u0430\u0431\u043b\u0438\u0446\u0430")
         return redirect(url_for("leaderboard_page"))

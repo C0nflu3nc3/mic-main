@@ -87,20 +87,59 @@ def _get_comment_reward_amount(comment_reward_today):
     return COMMENT_REWARD_AMOUNT if int(comment_reward_today or 0) < COMMENT_REWARD_DAILY_LIMIT else 0
 
 
-def get_daily_rewarded_news_count(conn, team_id):
+def ensure_news_reward_columns(conn):
+    if is_schema_ready("news_reward"):
+        return
+
+    schema_changed = False
     with conn.cursor() as cursor:
+        cursor.execute("SHOW COLUMNS FROM News LIKE 'reward_granted_at'")
+        if cursor.fetchone() is None:
+            cursor.execute(
+                """
+                ALTER TABLE News
+                ADD COLUMN reward_granted_at datetime DEFAULT NULL AFTER created_at
+                """
+            )
+            schema_changed = True
+
+    if schema_changed:
+        conn.commit()
+    mark_schema_ready("news_reward")
+
+
+def get_daily_rewarded_news_count(conn, team_id):
+    ensure_news_reward_columns(conn)
+
+    with conn.cursor() as cursor:
+        cursor.execute(
+            """
+            SELECT COUNT(*) AS total
+            FROM News
+            JOIN Teams ON Teams.user_id = News.user_id
+            WHERE Teams.id = %s
+              AND News.reward_granted_at >= CURDATE()
+              AND News.reward_granted_at < CURDATE() + INTERVAL 1 DAY
+            """,
+            (team_id,),
+        )
+        tracked_row = cursor.fetchone()
+        tracked_total = int(tracked_row["total"] or 0)
+
         cursor.execute(
             """
             SELECT COUNT(*) AS total
             FROM Operation
             WHERE Team = %s
-              AND Period = CURDATE()
+              AND Period >= CURDATE()
+              AND Period < CURDATE() + INTERVAL 1 DAY
               AND Comment = %s
             """,
             (team_id, NEWS_REWARD_COMMENT),
         )
-        row = cursor.fetchone()
-        return int(row["total"] or 0)
+        legacy_row = cursor.fetchone()
+        legacy_total = int(legacy_row["total"] or 0)
+        return max(tracked_total, legacy_total)
 
 
 def get_daily_comment_reward_total(conn, team_id):
@@ -110,7 +149,8 @@ def get_daily_comment_reward_total(conn, team_id):
             SELECT COALESCE(SUM(Score), 0) AS total
             FROM Operation
             WHERE Team = %s
-              AND Period = CURDATE()
+              AND Period >= CURDATE()
+              AND Period < CURDATE() + INTERVAL 1 DAY
               AND Comment = %s
             """,
             (team_id, COMMENT_REWARD_COMMENT),
@@ -180,7 +220,7 @@ def get_influence_logs(conn, limit=200):
         return cursor.fetchall()
 
 
-def update_leaderboard_entry(conn, table_name, user_id, name, score):
+def update_leaderboard_entry(conn, table_name, user_id, name, score, reason=""):
     normalized_table_name = get_leaderboard_table_name(table_name)
     previous_score = None
 
@@ -202,7 +242,12 @@ def update_leaderboard_entry(conn, table_name, user_id, name, score):
         cursor.execute(sql, (name, score, user_id))
         updated = cursor.rowcount > 0
     if updated and normalized_table_name == "Overall_leader" and previous_score is not None:
-        log_influence_change(conn, user_id, int(score) - previous_score, "Ручное изменение администратором")
+        log_influence_change(
+            conn,
+            user_id,
+            int(score) - previous_score,
+            str(reason or "").strip() or "Ручное изменение администратором",
+        )
     conn.commit()
     return updated
 
@@ -689,6 +734,8 @@ def count_pending_news(conn):
 
 
 def publish_news(conn, news_id):
+    ensure_news_reward_columns(conn)
+
     with conn.cursor() as cursor:
         cursor.execute(
             """
@@ -724,6 +771,14 @@ def publish_news(conn, news_id):
                     VALUES (CURDATE(), %s, %s, %s)
                     """,
                     (NEWS_REWARD_AMOUNT, team_id, NEWS_REWARD_COMMENT),
+                )
+                cursor.execute(
+                    """
+                    UPDATE News
+                    SET reward_granted_at = NOW()
+                    WHERE id = %s AND reward_granted_at IS NULL
+                    """,
+                    (news_id,),
                 )
             cursor.execute(
                 "UPDATE Overall_leader SET score = score + 10 WHERE user_id = %s",

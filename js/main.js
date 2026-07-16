@@ -84,6 +84,41 @@ function initMainUi() {
         });
     });
 
+    document.querySelectorAll("[data-leaderboard-sync='true']").forEach(function (select) {
+        if (select.dataset.uiBound === "true") {
+            return;
+        }
+
+        select.dataset.uiBound = "true";
+        const nameInput = document.getElementById(select.dataset.nameTarget || "");
+        const scoreInput = document.getElementById(select.dataset.scoreTarget || "");
+        const stateBlock = document.getElementById(select.dataset.stateTarget || "");
+
+        if (!nameInput || !scoreInput) {
+            return;
+        }
+
+        const syncLeaderboardForm = function () {
+            const selectedOption = select.options[select.selectedIndex];
+            if (!selectedOption) {
+                return;
+            }
+
+            const currentName = selectedOption.dataset.name || selectedOption.textContent || "";
+            const currentScore = selectedOption.dataset.score || "0";
+
+            nameInput.value = currentName;
+            scoreInput.value = currentScore;
+
+            if (stateBlock) {
+                stateBlock.textContent = `Сейчас у легиона ${currentScore} очков влияния.`;
+            }
+        };
+
+        select.addEventListener("change", syncLeaderboardForm);
+        syncLeaderboardForm();
+    });
+
     if (menuCollapseElement && menuToggleButton && !menuCollapseElement.dataset.uiBound) {
         menuCollapseElement.dataset.uiBound = "true";
         const desktopMenuQuery = window.matchMedia("(min-width: 993px)");

@@ -2732,6 +2732,24 @@ a {
   padding-right: 28px;
 }
 
+.leaderboard-action-bar {
+  max-width: 780px;
+  margin-top: 0;
+}
+
+.leaderboard-action-button {
+  min-width: 320px;
+}
+
+.leaderboard-edit-modal .modal-dialog {
+  max-width: 640px;
+}
+
+.leaderboard-edit-modal textarea.form-control {
+  min-height: 120px;
+  resize: vertical;
+}
+
 .modal-content {
   border: 1px solid rgba(194, 149, 78, 0.34);
   border-radius: 24px;
