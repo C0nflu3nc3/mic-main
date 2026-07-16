@@ -81,14 +81,13 @@ function LeaderboardEditBlock({ tableName, rows }) {
         <section className="placeholder-card leaderboard-editor-card">
           <form method="POST" action="/leaderboard/update" className="news-edit-form leaderboard-edit-form">
             <input type="hidden" name="table_name" value={tableName} />
+            <input id={nameId} name="name" type="hidden" defaultValue={defaultRow.Name} />
             <label htmlFor={selectId}>Легион</label>
             <select className="form-control" id={selectId} name="user_id" defaultValue={defaultRow.user_id} data-leaderboard-sync="true" data-name-target={nameId} data-score-target={scoreId} data-state-target={stateId}>
               {rows.map((row) => (
                 <option key={`${tableName}-${row.user_id}`} value={row.user_id} data-name={row.Name} data-score={row.Scores}>{row.Name}</option>
               ))}
             </select>
-            <label htmlFor={nameId}>Название</label>
-            <input className="form-control" id={nameId} name="name" type="text" defaultValue={defaultRow.Name} required />
             <label htmlFor={scoreId}>Очки</label>
             <input className="form-control" id={scoreId} name="score" type="number" defaultValue={defaultRow.Scores} required />
             <label htmlFor={reasonId}>Комментарий в лог</label>
