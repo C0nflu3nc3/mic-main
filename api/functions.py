@@ -1406,6 +1406,7 @@ def get_approve_queue(conn):
         sql = """
             SELECT
                 Mission_team.id,
+                Mission_team.team_id,
                 COALESCE(Mission.title, CONCAT('Задание #', Mission_team.mission_id)) AS title,
                 COALESCE(Mission.description, '') AS description,
                 COALESCE(Mission.reward, 0) AS reward,

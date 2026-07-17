@@ -1172,7 +1172,17 @@ function groupApproveItems(items, groupBy) {
         groups.get(label).push(item);
     });
 
-    return Array.from(groups, ([label, groupItems]) => ({ label, items: groupItems }));
+    const groupedItems = Array.from(groups, ([label, groupItems]) => ({ label, items: groupItems }));
+
+    if (groupBy !== "teams") {
+        return groupedItems;
+    }
+
+    return groupedItems.sort((left, right) => {
+        const leftTeamId = Number(left.items[0]?.team_id || 0);
+        const rightTeamId = Number(right.items[0]?.team_id || 0);
+        return leftTeamId - rightTeamId;
+    });
 }
 
 function ApproveCard({ item }) {
