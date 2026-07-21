@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 const DISPLAY_TIME_ZONE = "Etc/GMT-5";
 
 export function formatDateTime(value) {
@@ -46,6 +48,61 @@ export function FlashMessages({ messages }) {
         </div>
       ))}
     </div>
+  );
+}
+
+export function SiteNotification({ notice }) {
+  const [isVisible, setIsVisible] = useState(false);
+  const storageKey = notice?.kind ? `site-notice:${notice.kind}` : "";
+
+  useEffect(() => {
+    if (typeof window === "undefined") return undefined;
+
+    const clearDismissedNotices = () => {
+      try {
+        window.localStorage.removeItem("site-notice:pending_news");
+        window.localStorage.removeItem("site-notice:rejected_news");
+      } catch (_error) {
+        return;
+      }
+    };
+
+    if (!notice?.signature || !storageKey) {
+      clearDismissedNotices();
+      setIsVisible(false);
+      return undefined;
+    }
+
+    try {
+      setIsVisible(window.localStorage.getItem(storageKey) !== notice.signature);
+    } catch (_error) {
+      setIsVisible(true);
+    }
+    return undefined;
+  }, [notice?.signature, storageKey]);
+
+  if (!notice?.signature || !isVisible) return null;
+
+  const dismiss = () => {
+    if (typeof window !== "undefined" && storageKey) {
+      try {
+        window.localStorage.setItem(storageKey, notice.signature);
+      } catch (_error) {
+        // ponytail: best-effort persistence, in-memory dismissal is enough if storage is blocked.
+      }
+    }
+    setIsVisible(false);
+  };
+
+  return (
+    <aside className="site-notice" role="dialog" aria-live="polite" aria-label={notice.title || "Уведомление"}>
+      <div className="site-notice-title">{notice.title}</div>
+      <div className="site-notice-text">{notice.message}</div>
+      <div className="site-notice-actions">
+        <button type="button" className="btn btn-outline-light" onClick={dismiss}>{notice.dismiss_label || "Окей"}</button>
+        {notice.action_href ? <a className="btn btn-primary" href={notice.action_href} onClick={dismiss}>{notice.action_label || "Перейти"}</a> : null}
+      </div>
+    </aside>
   );
 }
 

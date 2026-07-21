@@ -29,6 +29,7 @@ from api.functions import (
     get_influence_logs,
     get_leaderboard_table,
     get_news_for_update,
+    get_rejected_news_notice,
     get_missions,
     get_news,
     get_studio,
@@ -191,11 +192,46 @@ def render_react_page(page, page_title, user=None, active_section=None, **page_d
         "user": serialize_for_react(user) if user else None,
         "messages": get_flashed_messages(),
     }
-    if user and can_review_suggested_news(user) and "pending_news_count" not in page_data:
+    if user and ("pending_news_count" not in page_data or "site_notification" not in page_data):
         conn = get_connection()
         try:
             ensure_news_media_columns(conn)
-            page_data["pending_news_count"] = count_pending_news(conn)
+            pending_news_count = int(page_data.get("pending_news_count") or 0)
+            rejected_news_notice = {"count": 0, "latest_id": 0}
+
+            if can_review_suggested_news(user):
+                if "pending_news_count" not in page_data:
+                    pending_news_count = count_pending_news(conn)
+                    page_data["pending_news_count"] = pending_news_count
+            elif can_suggest_news(user):
+                rejected_news_notice = get_rejected_news_notice(conn, int(user["id"]))
+
+            if "site_notification" not in page_data:
+                if can_review_suggested_news(user) and pending_news_count > 0:
+                    page_data["site_notification"] = {
+                        "kind": "pending_news",
+                        "title": "Новости в предложке",
+                        "message": f"В предложке новостей на рассмотрении: {pending_news_count}.",
+                        "action_href": "/news/suggestions",
+                        "action_label": "Перейти в новости",
+                        "dismiss_label": "Окей",
+                        "signature": f"pending:{pending_news_count}",
+                    }
+                elif can_suggest_news(user) and rejected_news_notice["count"] > 0:
+                    rejected_count = int(rejected_news_notice["count"])
+                    page_data["site_notification"] = {
+                        "kind": "rejected_news",
+                        "title": "Предложенная новость",
+                        "message": (
+                            "Ваша новость была отменена."
+                            if rejected_count == 1
+                            else f"Ваши новости были отменены. Количество: {rejected_count}."
+                        ),
+                        "action_href": "/news/suggestions",
+                        "action_label": "Перейти в новости",
+                        "dismiss_label": "Окей",
+                        "signature": f"rejected:{rejected_news_notice['latest_id']}:{rejected_count}",
+                    }
         finally:
             conn.close()
     bootstrap.update(serialize_for_react(page_data))

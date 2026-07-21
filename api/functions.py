@@ -733,6 +733,31 @@ def count_pending_news(conn):
         return int(row["total"] or 0)
 
 
+def get_rejected_news_notice(conn, user_id):
+    with conn.cursor() as cursor:
+        cursor.execute(
+            """
+            SELECT
+                COUNT(*) AS total,
+                COALESCE(MAX(id), 0) AS latest_id
+            FROM News
+            WHERE user_id = %s
+              AND COALESCE(is_published, 1) = 0
+              AND COALESCE(review_status, %s) = %s
+            """,
+            (
+                user_id,
+                NEWS_REVIEW_STATUS_PENDING,
+                NEWS_REVIEW_STATUS_REJECTED,
+            ),
+        )
+        row = cursor.fetchone()
+        return {
+            "count": int(row["total"] or 0),
+            "latest_id": int(row["latest_id"] or 0),
+        }
+
+
 def publish_news(conn, news_id):
     ensure_news_reward_columns(conn)
 
@@ -780,11 +805,11 @@ def publish_news(conn, news_id):
                     """,
                     (news_id,),
                 )
-            cursor.execute(
-                "UPDATE Overall_leader SET score = score + 10 WHERE user_id = %s",
-                (int(news_row["user_id"]),),
-            )
-            log_influence_change(conn, int(news_row["user_id"]), 10, "Публикация новости")
+                cursor.execute(
+                    "UPDATE Overall_leader SET score = score + 10 WHERE user_id = %s",
+                    (int(news_row["user_id"]),),
+                )
+                log_influence_change(conn, int(news_row["user_id"]), 10, "Публикация новости")
     conn.commit()
     return updated
 

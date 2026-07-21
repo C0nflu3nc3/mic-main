@@ -1,6 +1,6 @@
 ﻿import { useEffect } from "react";
 
-import { FlashMessages, Header } from "./shared";
+import { FlashMessages, Header, SiteNotification } from "./shared";
 import { HomePage, LeaderboardPage, LoginPage, NewsPage, SuggestedNewsPage } from "./pages-main";
 import { HistoryPage } from "./history-page.jsx";
 import { BonusPage } from "./bonus-page.jsx";
@@ -59,6 +59,7 @@ function App({ bootstrapData }) {
   return (
     <>
       <Header user={bootstrapData.user} activeSection={bootstrapData.activeSection} pendingNewsCount={bootstrapData.pending_news_count} />
+      <SiteNotification notice={bootstrapData.site_notification} />
       <div className="container">
         <FlashMessages messages={bootstrapData.messages} />
         {renderPage()}
